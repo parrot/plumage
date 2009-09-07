@@ -12,10 +12,27 @@
 load_bytecode('Glue.pir');
 say("Glue loaded.\n");
 
+# Inline PIR
+print("Inline PIR says:  ");
+test_inline_pir('Plumage');
+
+sub test_inline_pir ($name) {
+    my $string := Q:PIR{
+        $S0  = 'Hello, '
+        $P0  = find_lex '$name'
+	$S1  = $P0
+	$S0 .= $S1
+	$S0 .= '!'
+	%r   = box $S0
+    };
+
+    say($string);
+}
+
 # Binding only, no assignment.  Also no interpolation.
 our %VM;
 our $libdir := get_versioned_libdir();
-say('Versioned libdir: ' ~ $libdir);
+say("\nVersioned libdir: " ~ $libdir);
 
 sub get_versioned_libdir () {
     my $config := %VM<config>;
