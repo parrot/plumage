@@ -5,7 +5,7 @@
 # TO USE:
 #   * Make sure parrot and parrot_config are in your path, then:
 #   $ export  NQP_PBC=$(parrot_config libdir)$(parrot_config versiondir)/languages/nqp/nqp.pbc
-#   $ parrot $NQP_PBC test.nqp
+#   $ parrot $NQP_PBC cap-test.nqp
 
 
 # First, load the "glue builtins" borrowed from Rakudo.
@@ -56,3 +56,19 @@ my $status := run('ls', '-l');
 say("\nEnvironment variables:");
 my $output := qx('env');
 print($output);
+
+# Test that %ENV is writable
+say("\nSetting environment variables:");
+say('%ENV<PATH> before: ' ~ %ENV<PATH>);
+say('echo $PATH before: ' ~ qx('echo $PATH'));
+
+# XXXX: Need system-dependent path separator
+%ENV<PATH> := '/foo/bar:' ~ %ENV<PATH>;
+
+say('%ENV<PATH> after:  ' ~ %ENV<PATH>);
+say('echo $PATH after:  ' ~ qx('echo $PATH'));
+
+# Load JSON
+say("\nLoad JSON:");
+my $json := eval('{"a":[null,false,true,3.5,"Hello from JSON"]}', 'data_json');
+say($json<a>[4]);
