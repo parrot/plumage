@@ -1,25 +1,53 @@
+Study:
+------
+* CPAN META/MYMETA changes afoot
+* proto changes afoot
+* Haskell Cabal
+* Ruby Rake
+* ExtUtils::Liblist
+
+
 Plumage:
 --------
 * Still in pre-prototype phase
   * Researching NQP capabilities and limits
   * Spackling over missing bits
   * Exploring for platform gotchas
+* Spec:
+  * Add Stakeholders section
+  * Add Usage Scenarios section
+  * Author v. User dynamic dependency differences (aka META v. MYMETA)
+  * DSLIP info in META?
+  * Interoperate with pkg-config and/or ExtUtils::Liblist?
+    * Use them to find system libs?  Or use their *algorithms* to do so?
+      * #toolchain considered writing a Pure Perl pkg-config workalike
+      * ExtUtils::PkgConfig exists ...
+    * Generate .pc files if module install type does not automatically do so
+    * Hmmm, seems to be some fail here WRT standardizing lib names ...
+* Misc suggestions
+  * Avoid asking questions (after first setup?) if at all possible
+  * rake madness (from Cardinal):
+    * rake clobber
+    * git pull
+    * PARROT_CONFIG={{parrot_dir whatever}}/parrot_config rake cardinal
+    * rake test:all
+* Suggestions from proto-ng team
+  * $PREFIX defaults to $HOME/.ecosystem/lib
+  * Rakudo doing:
+    * [builtins/globals.pir] preload $HOME/.perl6lib and languages/perl6/lib in @*INC
 
 
 Parrot:
 -------
-* Needs more secure pipe spawn
-  * Current insecure version does 'sh', '-c', 'command and args'
+* Fixes needed:
+  * More secure pipe spawn
+    * current insecure version does 'sh', '-c', 'command and args'
+* Config values needed:
+  * PATH separator
 
 
 NQP:
 ----
-* HLL interop (Tene on the case)
-  * Priority is using other languages
-  * Second is being used *by* other languages
-* Q:PIR{...} style inline PIR syntax
-  * This appears to be partially implemented, but not working
+* HLL interop: allow NQP to be used by other languages
 * Have to say 'our $OS;' to declare variable defined in Glue.pir
-* Talk to pmichaud about making Glue.pir a 'standard option' for NQP
 * How to create/set/use class attributes in NQP?
-
