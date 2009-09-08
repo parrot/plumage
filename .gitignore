@@ -1,0 +1,9 @@
+# Editor backup files
+*~
+
+# Generated files
+*.c
+*.o
+*.pbc
+plumage.pir
+plumage
