@@ -100,6 +100,9 @@ Operating system version
     set_hll_global '%VM', $P2
 
     $P1 = $P0[.IGLOBALS_ARGV_LIST]
+    if $P1 goto have_args
+    unshift $P1, '<anonymous>'
+  have_args:
     $S0 = shift $P1
     $P2 = box $S0
     set_hll_global '$PROGRAM_NAME', $P2
