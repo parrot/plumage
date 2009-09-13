@@ -99,6 +99,12 @@ Operating system version
     $P2['config'] = $P1
     set_hll_global '%VM', $P2
 
+    $P1 = $P0[.IGLOBALS_ARGV_LIST]
+    $S0 = shift $P1
+    $P2 = box $S0
+    set_hll_global '$PROGRAM_NAME', $P2
+    set_hll_global '@ARGS', $P1
+
     $P0 = root_new ['parrot';'Env']
     set_hll_global '%ENV', $P0
 
