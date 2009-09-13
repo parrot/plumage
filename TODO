@@ -13,6 +13,9 @@ Plumage:
   * Researching NQP capabilities and limits
   * Spackling over missing bits
   * Exploring for platform gotchas
+* Get Infinoid to add source repo to #parrot's dalek bot
+  * May need help to modify github parser to work with gitorious
+  * http://github.com/Infinoid/dalek-plugins/blob/master/modules/local/githubparser.pm
 * Spec:
   * Add Stakeholders section
   * Add Usage Scenarios section
@@ -35,7 +38,11 @@ Plumage:
   * $PREFIX defaults to $HOME/.ecosystem/lib
   * Rakudo doing:
     * [builtins/globals.pir] preload $HOME/.perl6lib and languages/perl6/lib in @*INC
-
+    * $HOME/.perl6/lib + $HOME/.perl6/proto/config ?
+    * parrot_install/bin + parrot_install/lib/1.5.0-devel/languages/perl6/
+    * From #perl6:
+      * mberends does not like adding directories to PATH
+        mberends does 'sudo ln -s <parrot_install>/bin/perl6 /usr/local/bin' instead
 
 Parrot:
 -------
