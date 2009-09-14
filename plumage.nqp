@@ -18,12 +18,22 @@ our @ARGS;
 # NQP doesn't support array or hash literals, so parse main structure
 # from JSON and then fix up values that can't be represented in JSON.
 #
-# NOTE: The data_json parser is very strict!  No extra commas, pedantic
+# XXXX: The data_json parser is very strict!  No extra commas, pedantic
 #       quoting, the works.  Whitespace is perhaps your only freedom.
 my  $_COMMANDS_JSON := '
 {
-    "usage"  : "action_usage",
-    "version": "action_version"
+    "usage"      : {
+        "action" : "action_usage",
+        "args"   : "none"
+    },
+    "version"    : {
+        "action" : "action_version",
+        "args"   : "none"
+    },
+    "info"       : {
+        "action" : "action_info",
+        "args"   : "project"
+    }
 }
 ';
 our %COMMANDS := fixup_commands(eval($_COMMANDS_JSON, 'data_json'));
@@ -45,10 +55,22 @@ sub load_helper_libraries () {
 }
 
 sub fixup_commands ($commands) {
-    $commands<usage>   := action_usage;
-    $commands<version> := action_version;
+    # Convert action sub *names* into actual action subs
+    Q:PIR{
+        $P0 = find_lex '$commands'
+        $P1 = iter $P0
+      fixup_loop:
+        unless $P1 goto fixup_loop_end
+        $S0 = shift $P1
+        $P2 = $P1[$S0]
+        $S1 = $P2['action']
+        $P3 = get_hll_global $S1
+        $P2['action'] = $P3
+        goto fixup_loop
+      fixup_loop_end:
+    };
 
-    return($commands);
+    return $commands;
 }
 
 
@@ -65,19 +87,23 @@ sub MAIN () {
 }
 
 sub parse_command_line () {
-    my $command := @ARGS ?? @ARGS[0] !! 'usage';
+    my $command := 'usage';
+
+    if (@ARGS) {
+        $command := @ARGS.shift;
+    }
 
     return $command;
 }
 
 sub execute_command ($command) {
-    my $action := %COMMANDS{$command};
+    my $action := %COMMANDS{$command}<action>;
 
     if ($action) {
-	$action();
+        $action(@ARGS);
     }
     else {
-	say("I don't know how to '" ~ $command ~ "'!");
+        say("I don't know how to '" ~ $command ~ "'!");
     }
 }
 
@@ -92,14 +118,16 @@ sub action_usage () {
 }
 
 sub usage_info () {
-    return (
+    return
 'Usage: ' ~ $PROGRAM_NAME ~ ' [<options>] <command> [<arguments>]
 
 Available commands:
 
-    version   Print program version and copyright
-    usage     Print this usage info
-');
+    info <project>   Print info about a particular project
+
+    version          Print program version and copyright
+    usage            Print this usage info
+';
 }
 
 
@@ -109,7 +137,7 @@ sub action_version () {
 
 sub version_info () {
     my $version := '0';
-    return (
+    return
 'This is Parrot Plumage, version ' ~ $version ~ '.
 
 Copyright (C) 2009, Parrot Foundation.
@@ -117,5 +145,24 @@ Copyright (C) 2009, Parrot Foundation.
 This code is distributed under the terms of the Artistic License 2.0.
 For more details, see the full text of the license in the LICENSE file
 included in the Parrot Plumage source tree.
-');
+';
+}
+
+
+sub action_info (@projects) {
+    unless (@projects) {
+        say('Please include the name of the project you wish info for.');
+    }
+
+    for @projects {
+        my $info := get_project_metadata($_);
+
+        _dumper($info, 'INFO');
+    }
+}
+
+sub get_project_metadata ($project) {
+    load_bytecode('Config/JSON.pbc');
+
+    return Config::JSON::ReadConfig('metadata/' ~ $project ~ '.json');
 }
