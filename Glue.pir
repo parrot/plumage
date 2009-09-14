@@ -71,6 +71,14 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
 
 =over 4
 
+=item $PROGRAM_NAME
+
+Name of running program (argv[0] in C)
+
+=item @ARGS
+
+Program's command line arguments (including options, which are NOT parsed)
+
 =item %VM
 
 Parrot configuration
