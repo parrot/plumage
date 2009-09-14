@@ -7,12 +7,18 @@ Study:
 * ExtUtils::Liblist
 
 
+Metadata:
+---------
+* general
+  * Easy way to reference CREDITS file in contributors key?
+* instructions
+  * What about update and cleanup?
+  * What about multiple instructions per key?
+    * Allow either string or array value
+
 Plumage:
 --------
-* Still in pre-prototype phase
-  * Researching NQP capabilities and limits
-  * Spackling over missing bits
-  * Exploring for platform gotchas
+* Starting prototype phase
 * Get Infinoid to add source repo to #parrot's dalek bot
   * May need help to modify github parser to work with gitorious
   * http://github.com/Infinoid/dalek-plugins/blob/master/modules/local/githubparser.pm
@@ -62,3 +68,11 @@ NQP:
 * Have to say 'our $OS;' to declare variable defined in Glue.pir
 * How to create/set/use class attributes in NQP?
 * Fix needing executable fix hack at top of file: Q:PIR{load_language 'nqp'};
+
+
+data_json:
+----------
+* Less pedantic parse
+  * Allow trailing comma in array and hash
+  * Allow unquoted keys
+* Better error messages!
