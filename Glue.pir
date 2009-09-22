@@ -65,7 +65,116 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
 .end
 
 
+=item $contents := slurp($filename)
+
+Reads the C<$contents> of a file as a single string.
+
+=cut
+
+.sub 'slurp'
+    .param string filename
+    .local string contents
+
+    $P0 = open filename, 'r'
+    contents = $P0.'readall'()
+    close $P0
+    .return(contents)
+.end
+
+
+=item spew($filename, $contents)
+
+Writes the string C<$contents> to a file.
+
+=cut
+
+.sub 'spew'
+    .param string filename
+    .param string contents
+
+    $P0 = open filename, 'w'
+    $P0.'print'(contents)
+    close $P0
+.end
+
+
+=item $edited := subst($original, $regex, $replacement)
+
+Substitute all matches of the C<$regex> in the C<$original> string with the
+C<$replacement>, and return the edited string.  The C<$regex> must be a simple
+string to be compiled using the C<PGE::Perl6Regex> language.
+
+The C<$replacement> may be either a simple string or a sub that will be called
+with each match object in turn, and must return the proper replacement string
+for that match.
+
+=cut
+
+.sub 'subst'
+    .param string original
+    .param string regex
+    .param pmc    replacement
+
+    # Compile the string regex into a regex object
+    .local pmc p6regex, matcher
+    p6regex = compreg 'PGE::Perl6Regex'
+    matcher = p6regex(regex)
+
+    # Find all matches in the original string
+    .local pmc matches, match
+    matches = root_new ['parrot';'ResizablePMCArray']
+    match   = matcher(original)
+    unless match goto done_matching
+
+  match_loop:
+    push matches, match
+
+    $I0 = match.'to'()
+    match = matcher(match, 'continue' => $I0)
+
+    unless match goto done_matching
+    goto match_loop
+  done_matching:
+
+    # Do the substitutions on a clone of the original string
+    .local string edited
+    edited = clone original
+
+    # Now replace all the matched substrings
+    .local int offset
+    offset = 0
+  replace_loop:
+    unless matches goto done_replacing
+    match = shift matches
+
+    # Handle either string or sub replacement
+    .local string replace_string
+    $I0 = isa replacement, 'Sub'
+    if $I0 goto call_replacement_sub
+    replace_string = replacement
+    goto have_replace_string
+  call_replacement_sub:
+    replace_string = replacement(match)
+  have_replace_string:
+
+    # Perform the replacement
+    $I0 = match.'from'()
+    $I1 = match.'to'()
+    $I2 = $I1 - $I0
+    $I0 += offset
+    substr edited, $I0, $I2, replace_string
+    $I3 = length replace_string
+    $I3 -= $I2
+    offset += $I3
+    goto replace_loop
+  done_replacing:
+
+    .return(edited)
+.end
+
+
 =back
+
 
 =head1 Global Variables
 

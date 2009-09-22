@@ -16,6 +16,23 @@ vortex to begin our descent".  We expect to make many changes as we
 discover new issues during implementation.
 
 
+BUILDING
+--------
+
+Configure and make as usual, except the configure script must be run using
+Parrot's NQP interpreter:
+
+  $ parrot_nqp Configure.nqp
+  $ make
+
+If your parrot does not have a parrot_nqp binary, then you can achieve
+the same result in a somewhat more longwinded fashion:
+
+  $ export NQP_PBC=$(parrot_config libdir)$(parrot_config versiondir)/languages/nqp/nqp.pbc
+  $ parrot $NQP_PBC Configure.nqp
+  $ make
+
+
 LICENSE
 -------
 

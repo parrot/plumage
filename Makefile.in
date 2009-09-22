@@ -1,15 +1,14 @@
 # Copyright (C) 2009, Parrot Foundation.
 
-# Command aliases
-PERL        := /usr/bin/perl
-RM_F        := $(PERL) -MExtUtils::Command -e rm_f
+# Command aliases and portability fixes
+PERL        := @perl@
+RM_F        := @rm_f@
 
-O           := .o
-EXE         :=
+O           := @o@
+EXE         := @exe@
 
-PARROT_ROOT := $(HOME)/git/rakudo/parrot_install
-PARROT_BIN  := $(PARROT_ROOT)/bin
-PARROT_LIB  := $(PARROT_ROOT)/lib/1.5.0-devel
+PARROT_BIN  := @bindir@
+PARROT_LIB  := @libdir@@versiondir@
 
 PARROT      := $(PARROT_BIN)/parrot
 PBC_TO_EXE  := $(PARROT_BIN)/pbc_to_exe
@@ -41,7 +40,7 @@ plumage.pir: plumage.nqp
 realclean: clean
 
 clean:
-	$(RM_F) "*~" "*.pbc" "*$(O)" "*.c" plumage.pir plumage$(EXE)
+	$(RM_F) "*~" "*.pbc" "*$(O)" "*.c" plumage.pir plumage$(EXE) Makefile
 
 # Local variables:
 #   mode: makefile
