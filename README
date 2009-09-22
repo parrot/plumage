@@ -38,7 +38,8 @@ CONTRIBUTING
 
 Commit bits are given freely, just ping japhb on #parrot at irc.parrot.org
 and ask.  If you prefer, you are welcome to clone the git repository and
-send patches.
+send patches.  With your first patch or commit, please add yourself to the
+CREDITS file.
 
 To contribute code right now you will want to be familiar with both the
 NQP and PIR languages.  Our metadata is stored as JSON, which should be
