@@ -33,6 +33,29 @@ the same result in a somewhat more longwinded fashion:
   $ make
 
 
+CONTRIBUTING
+------------
+
+Commit bits are given freely, just ping japhb on #parrot at irc.parrot.org
+and ask.  If you prefer, you are welcome to clone the git repository and
+send patches.
+
+To contribute code right now you will want to be familiar with both the
+NQP and PIR languages.  Our metadata is stored as JSON, which should be
+fairly easy to understand, but currently the Parrot JSON parser is rather
+picky, so it helps to be pedantic if it's whining at you.
+
+Our code layout conventions match those in most common use on the Parrot
+project, and are all relatively common sense.
+
+Fundamentally, our committer rules boil down to the same ones Parrot uses:
+
+  Rule 1: Don't break the build.
+  Rule 2: Increase the awesome.
+
+(chromatic++ for these.)
+
+
 LICENSE
 -------
 
