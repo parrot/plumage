@@ -10,7 +10,7 @@ The initial overall design document can be found at:
 
     https://trac.parrot.org/parrot/wiki/ModuleEcosystem
 
-We practice the 'whirpool' development model, so this design document
+We practice the 'whirlpool' development model, so this design document
 could at best be described as "getting us close enough to the sucking
 vortex to begin our descent".  We expect to make many changes as we
 discover new issues during implementation.
