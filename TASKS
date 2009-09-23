@@ -1,0 +1,41 @@
+SHARE-A-TASK
+
+We need these tasks done, and anyone can do them.
+Take one and run with it.  Please.
+
+
+--------
+Adding more "builtins" to Glue.pir:
+
+The guiding principles are:
+
+1. Do the most with the least.
+2. It doesn't have to be perfect.
+3. It's handy if the arguments are similar to the ones in Perl 6.
+
+What we need:
+
+* Filesystem
+  * Examples: mkdir(), chdir(), cwd(), stat() and/or file tests
+
+* String slinging and especially filesystem path string munging
+  * Examples: split(), join(), catdir(), catfile(), etc.
+
+--------
+Data structure merge/overlay
+
+The basic use case: Take a data structure of default configuration or
+metadata, overlay it with values from a "user defaults" JSON file, overlay
+that with values from a parsed JSON file for a particular project, and then
+overlay *that* with command line options or other runtime values.
+
+Two possible ways to do this:
+
+1. Actually merge the trees into a single data structure, replacing "older"
+   values with the same key path as "newer" values.
+
+2. Make a proxy object that can store references to several data structures.
+   Any lookups in the proxy data structure are looked up in turn in each real
+   structure in order until a matching entry is found.  Sets to the proxy are
+   passed on to only the first of the real structures (which may start empty,
+   for convenience in implementation).
