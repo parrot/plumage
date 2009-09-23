@@ -37,5 +37,6 @@ Two possible ways to do this:
 2. Make a proxy object that can store references to several data structures.
    Any lookups in the proxy data structure are looked up in turn in each real
    structure in order until a matching entry is found.  Sets to the proxy are
-   passed on to only the first of the real structures (which may start empty,
-   for convenience in implementation).
+   passed on to only the real structure which is at the top of the "stack".
+   (For convenience in implementation, the writable structure may be special
+   in some way, such as always starting empty.)
