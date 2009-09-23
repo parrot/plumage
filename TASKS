@@ -40,3 +40,17 @@ Two possible ways to do this:
    passed on to only the real structure which is at the top of the "stack".
    (For convenience in implementation, the writable structure may be special
    in some way, such as always starting empty.)
+
+--------
+Teach dalek about Gitorious
+
+dalek is the repository commit feed bot stationed in #parrot.  It understands
+Trac-based Subversion repositories, and GitHub-based Git repositories, but
+does not yet understand Gitorious feeds, where the parrot-plumage repository
+is hosted.
+
+According to Infinoid, dalek's owner:
+
+"It needs a gitorious equivalent of
+ http://github.com/Infinoid/dalek-plugins/blob/master/modules/local/githubparser.pm
+"
