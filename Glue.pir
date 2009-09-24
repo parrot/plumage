@@ -172,6 +172,48 @@ for that match.
     .return(edited)
 .end
 
+=item  chdir($path)  
+
+Changes the current working directory to the one specified by C<path>.
+
+=cut
+
+.sub 'chdir'
+    .param string path
+    .local pmc os
+    os = root_new [ 'parrot' ; 'OS' ]
+    os.'chdir'(path)
+.end
+
+=item $path := cwd()
+
+Returns the current working directory.
+
+=cut
+
+.sub 'cwd'  
+    .local pmc os
+    os = root_new [ 'parrot' ; 'OS' ]
+
+    .local string path
+    path = os.'cwd'()
+    .return(path)
+.end
+
+=item mkdir($path, $mode)
+
+Creates a directory specified by C<path> with mode C<mode>.
+
+=cut
+
+.sub 'mkdir'
+    .param string path
+    .param int mode
+
+    .local pmc os
+    os = root_new [ 'parrot' ; 'OS' ]
+    os.'mkdir'(path, mode)
+.end
 
 =back
 
