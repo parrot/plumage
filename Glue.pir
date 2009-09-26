@@ -215,6 +215,74 @@ Creates a directory specified by C<path> with mode C<mode>.
     os.'mkdir'(path, mode)
 .end
 
+=item stat($path)
+
+Returns a 13-item list of information about the given path, as in Perl.
+
+=cut
+
+.sub 'stat'
+    .param string path
+
+    .local pmc os, retval
+    os = root_new [ 'parrot' ; 'OS' ]
+    retval = os.'stat'(path)
+    .return (retval)
+.end
+
+=item fscat(@pathparts[, $filename)
+
+Join strings together with the appropriate OS separator.
+
+=cut
+
+.sub 'fscat'
+    .param pmc parts
+    .param string filename :optional
+    .param int has_filename :opt_flag
+
+    .local string retval
+    .local string sep
+    sep = '/' # afaik, this works on linux and windows... should maybe be fixed
+
+    retval = join sep, parts
+    unless has_filename == 1 goto no_filename
+    concat retval, sep
+    concat retval, filename
+  no_filename:
+    .return (retval)
+.end
+
+=item join($delim, @strings)
+
+Join strings together with the specified delimiter.
+
+=cut
+
+.sub 'join'
+    .param string delim
+    .param pmc parts
+
+    .local string retval
+    retval = join delim, parts
+    .return (retval)
+.end
+
+=item split($delim, $string)
+
+Split $string with the specified delimiter.
+
+=cut
+
+.sub 'split'
+    .param string delim
+    .param string text
+
+    .local pmc retval
+    retval = split delim, text
+    .return (retval)
+.end
+
 =back
 
 
