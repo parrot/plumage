@@ -16,10 +16,10 @@ The guiding principles are:
 What we need:
 
 * Filesystem
-  * Examples: mkdir(), chdir(), cwd(), stat() and/or file tests
+  * Examples: file tests, more?
 
 * String slinging and especially filesystem path string munging
-  * Examples: split(), join(), catdir(), catfile(), etc.
+  * Examples: more?
 
 --------
 Data structure merge/overlay
