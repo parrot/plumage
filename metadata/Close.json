@@ -1,0 +1,49 @@
+{
+    "meta-spec"    : {
+        "version"  : 0,
+        "url"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "Close",
+        "abstract" : "Systems programming language (C-like) for the Parrot VM",
+        "authority": "unknown",
+        "version"  : "0.1.1",
+        "license"  : {
+            "type" : "Artistic or GPL",
+            "uri"  : "http://dev.perl.org/licenses/"
+        },
+        "copyright_holder" : "Austin Hastings <austin_hastings@yahoo.com>",
+        "generated_by"     : "Austin Hastings <austin_hastings@yahoo.com>",
+        "keywords"         : ["systems programming", "C", "PIR", "HLL", "HLLCompiler"],
+	"description"      :
+"Close supports systems programming - the kind of stuff you might use C to do on
+another platform - for Parrot."
+    },
+    "instructions" : {
+        "type"     : "custom",
+        "fetch"    : "#SVN# checkout #REPOSITORY#",
+        "configure": "#PERL# Configure.pl",
+        "build"    : "#MAKE#",
+        "test"     : "#MAKE# test",
+        "install"  : "#MAKE# install"
+    },
+    "dependency-info"  : {
+        "provides"     : "Close",
+        "requires"     : {
+            "fetch"    : "svn",
+            "configure": "perl5",
+            "build"    : ["perl5", "make"],
+            "test"     : "make",
+            "install"  : "make",
+            "runtime"  : ""
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "svn",
+	     "checkout_uri": "http://close.googlecode.com/svn/trunk",
+	     "browser_uri" : "http://code.google.com/p/close/source/browse",
+             "project_uri" : "http://code.google.com/p/close/"
+        }
+    }
+}

@@ -16,7 +16,7 @@ The guiding principles are:
 What we need:
 
 * Filesystem
-  * Examples: file tests, more?
+  * Examples: file tests, directory tree walker, rm_rf, more?
 
 * String slinging and especially filesystem path string munging
   * Examples: more?

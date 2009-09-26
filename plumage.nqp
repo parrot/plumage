@@ -33,6 +33,10 @@ my  $_COMMANDS_JSON := '
     "info"       : {
         "action" : "action_info",
         "args"   : "project"
+    },
+    "fetch"      : {
+        "action" : "action_fetch",
+        "args"   : "project"
     }
 }
 ';
@@ -127,6 +131,7 @@ Available commands:
 
     version          Print program version and copyright
     usage            Print this usage info
+    fetch            Download a project
 ';
 }
 
@@ -165,4 +170,33 @@ sub get_project_metadata ($project) {
     load_bytecode('Config/JSON.pbc');
 
     return Config::JSON::ReadConfig('metadata/' ~ $project ~ '.json');
+}
+
+sub fetch_git ($uri, $dest) {
+    run('git', 'clone', $uri, $dest);
+}
+sub fetch_svn ($uri, $dest) {
+    run('svn', 'checkout', $uri, $dest);
+}
+
+sub action_fetch (@projects) {
+    my %fetch;
+    for split(' ', 'git svn') {
+        %fetch{$_} := Q:PIR {
+            $P0 = find_lex '$_'
+            $S0 = $P0
+            $S0 = concat 'fetch_', $S0
+            %r = get_hll_global $S0
+        };
+    }
+    unless (@projects) {
+        say('Please include the name of the project you wish info for.');
+    }
+
+    for @projects {
+        my %info := get_project_metadata($_);
+        my %repo := %info<resources><repository>;
+
+        %fetch{%repo<type>}(%repo<checkout_uri>, $_);
+    }
 }
