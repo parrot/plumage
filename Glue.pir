@@ -17,7 +17,7 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
 =item $status_code := run($command, $and, $args, ...)
 
-Spawns the command with the given arguments as a new process; returns
+Spawn the command with the given arguments as a new process; return
 the spawn status code when the process exits.
 
 =cut
@@ -34,8 +34,8 @@ the spawn status code when the process exits.
 
 =item $output := qx($command, $and, $args, ...)
 
-Spawns the command with the given arguments as a read only pipe;
-returns the output of the command as a single string.
+Spawn the command with the given arguments as a read only pipe;
+return the output of the command as a single string.
 
 B<WARNING>: Parrot currently implements this B<INSECURELY>!
 
@@ -67,7 +67,7 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
 
 =item $contents := slurp($filename)
 
-Reads the C<$contents> of a file as a single string.
+Read the C<$contents> of a file as a single string.
 
 =cut
 
@@ -84,7 +84,7 @@ Reads the C<$contents> of a file as a single string.
 
 =item spew($filename, $contents)
 
-Writes the string C<$contents> to a file.
+Write the string C<$contents> to a file.
 
 =cut
 
@@ -158,12 +158,12 @@ for that match.
   have_replace_string:
 
     # Perform the replacement
-    $I0 = match.'from'()
-    $I1 = match.'to'()
-    $I2 = $I1 - $I0
+    $I0  = match.'from'()
+    $I1  = match.'to'()
+    $I2  = $I1 - $I0
     $I0 += offset
     substr edited, $I0, $I2, replace_string
-    $I3 = length replace_string
+    $I3  = length replace_string
     $I3 -= $I2
     offset += $I3
     goto replace_loop
@@ -172,14 +172,15 @@ for that match.
     .return(edited)
 .end
 
-=item  chdir($path)  
+=item chdir($path)
 
-Changes the current working directory to the one specified by C<path>.
+Change the current working directory to the specified C<$path>.
 
 =cut
 
 .sub 'chdir'
     .param string path
+
     .local pmc os
     os = root_new [ 'parrot' ; 'OS' ]
     os.'chdir'(path)
@@ -187,100 +188,120 @@ Changes the current working directory to the one specified by C<path>.
 
 =item $path := cwd()
 
-Returns the current working directory.
+Return the current working directory.
 
 =cut
 
-.sub 'cwd'  
+.sub 'cwd'
     .local pmc os
     os = root_new [ 'parrot' ; 'OS' ]
 
     .local string path
     path = os.'cwd'()
+
     .return(path)
 .end
 
-=item mkdir($path, $mode)
+=item mkdir($path [, $mode])
 
-Creates a directory specified by C<path> with mode C<mode>.
+Create a directory specified by C<$path> with mode C<$mode>.  C<$mode> is
+optional and defaults to octal C<777> (full permissions) if absent.  C<$mode>
+is modified by the user's current C<umask> as usual.
 
 =cut
 
 .sub 'mkdir'
     .param string path
-    .param int mode
+    .param int    mode     :optional
+    .param int    has_mode :opt_flag
+
+    if has_mode goto have_mode
+    mode = 0o777
+  have_mode:
 
     .local pmc os
     os = root_new [ 'parrot' ; 'OS' ]
     os.'mkdir'(path, mode)
 .end
 
-=item stat($path)
+=item @info := stat($path)
 
-Returns a 13-item list of information about the given path, as in Perl.
+Returns a 13-item list of information about the given C<$path>, as in Perl 5.
+(See C<perldoc -f stat> for more details.)
 
 =cut
 
 .sub 'stat'
     .param string path
 
-    .local pmc os, retval
+    .local pmc os, stat_list
     os = root_new [ 'parrot' ; 'OS' ]
-    retval = os.'stat'(path)
-    .return (retval)
+    stat_list = os.'stat'(path)
+
+    .return (stat_list)
 .end
 
-=item fscat(@pathparts[, $filename)
+=item $path := fscat(@path_parts [, $filename])
 
-Join strings together with the appropriate OS separator.
+Join C<@path_parts> and C<$filename> strings together with the appropriate
+OS separator.  If no C<$filename> is supplied, C<fscat()> will I<not> add a
+trailing slash (though slashes inside the C<@path_parts> will not be removed,
+so don't do that).
 
 =cut
 
 .sub 'fscat'
-    .param pmc parts
-    .param string filename :optional
-    .param int has_filename :opt_flag
+    .param pmc    parts
+    .param string filename     :optional
+    .param int    has_filename :opt_flag
 
-    .local string retval
     .local string sep
-    sep = '/' # afaik, this works on linux and windows... should maybe be fixed
+    $P0 = getinterp
+    $P1 = $P0[.IGLOBALS_CONFIG_HASH]
+    sep = $P1['slash']
 
-    retval = join sep, parts
-    unless has_filename == 1 goto no_filename
-    concat retval, sep
-    concat retval, filename
+    .local string joined
+    joined = join sep, parts
+
+    unless has_filename goto no_filename
+    joined .= sep
+    joined .= filename
   no_filename:
-    .return (retval)
+
+    .return (joined)
 .end
 
-=item join($delim, @strings)
+=item $joined := join($delimiter, @strings)
 
-Join strings together with the specified delimiter.
+Join C<@strings> together with the specified C<$delimiter>.
 
 =cut
 
 .sub 'join'
     .param string delim
-    .param pmc parts
+    .param pmc    strings
 
-    .local string retval
-    retval = join delim, parts
-    .return (retval)
+    .local string joined
+    joined = join delim, strings
+
+    .return (joined)
 .end
 
-=item split($delim, $string)
+=item @pieces := split($delimiter, $original)
 
-Split $string with the specified delimiter.
+Split the C<$original> string with the specified C<$delimiter>, which is not
+included in the resulting C<@pieces>.
 
 =cut
 
 .sub 'split'
     .param string delim
-    .param string text
+    .param string original
 
-    .local pmc retval
-    retval = split delim, text
-    .return (retval)
+    .local pmc pieces
+    pieces = split delim, original
+
+    .return (pieces)
 .end
 
 =back
