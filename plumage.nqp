@@ -186,6 +186,39 @@ sub get_project_metadata ($project) {
     return Config::JSON::ReadConfig('metadata/' ~ $project ~ '.json');
 }
 
+sub metadata_valid (%info) {
+    my %spec          := %info<meta-spec>;
+    my $known_uri     := 'https://trac.parrot.org/parrot/wiki/ModuleEcosystem';
+    my $known_version := 1;
+
+    unless %spec && %spec<uri> {
+        say("I don't understand this project's metadata at all.");
+        return 0;
+    }
+
+    unless %spec<uri> eq $known_uri {
+        say("This project's metadata specifies unknown metadata spec URI '"
+            ~ %spec<uri> ~ "'.");
+        return 0;
+    }
+
+    if    %spec<version> == $known_version {
+        return 1;
+    }
+    elsif %spec<version>  > $known_version {
+        say("This project's metadata is too new to parse; it is version "
+            ~ %spec<version> ~ " and I only understand version "
+            ~ $known_version ~ ".");
+    }
+    else {
+        say("This project's metadata is too old to parse; it is version "
+            ~ %spec<version> ~ " and I only understand version "
+            ~ $known_version ~ ".");
+    }
+
+    return 0;
+}
+
 sub fetch_git ($uri, $dest) {
     run('git', 'clone', $uri, $dest);
 }
@@ -200,8 +233,10 @@ sub action_fetch (@projects) {
 
     for @projects {
         my %info := get_project_metadata($_);
-        my %repo := %info<resources><repository>;
+        if metadata_valid(%info) {
+            my %repo := %info<resources><repository>;
 
-        %FETCH_ACTION{%repo<type>}(%repo<checkout_uri>, $_);
+            %FETCH_ACTION{%repo<type>}(%repo<checkout_uri>, $_);
+        }
     }
 }

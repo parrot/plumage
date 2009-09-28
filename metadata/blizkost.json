@@ -1,7 +1,7 @@
 {
     "meta-spec"    : {
-        "version"  : 0,
-        "url"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
     },
     "general"      : {
         "name"     : "Blizkost",
@@ -15,35 +15,47 @@
         "copyright_holder" : "Jonathan Worthington <jnthn@jnthn.net>",
         "generated_by"     : "Geoffrey Broadwell <geoff@broadwell.org>",
         "keywords"         : ["Perl5", "embed", "HLL", "HLLCompiler"],
-	"description"      :
+        "description"      :
 "Blizkost exposes Perl 5 in Parrot and make it accessible through the standard
 HLLCompiler interface. It does this by embedding Perl 5, and then building out
 from there."
     },
     "instructions" : {
-        "type"     : "custom",
-        "fetch"    : "#GIT# clone #REPOSITORY#",
-        "configure": "#PERL# Configure.pl --parrot-config=#PARROT_CONFIG#",
-        "build"    : "#MAKE#",
-        "test"     : "#MAKE# test",
-        "install"  : "#MAKE# install"
+        "fetch"    : {
+            "type" : "git"
+        },
+        "configure": {
+            "type" : "perl5-configure",
+            "extra_args" : [
+                "--parrot-config=#PARROT_CONFIG#"
+            ]
+        },
+        "build"    : {
+            "type" : "make"
+        },
+        "test"     : {
+            "type" : "make"
+        },
+        "install"  : {
+            "type" : "make"
+        }
     },
     "dependency-info"  : {
         "provides"     : "blizkost",
         "requires"     : {
-            "fetch"    : "git",
-            "configure": "perl5",
+            "fetch"    : ["git"],
+            "configure": ["perl5"],
             "build"    : ["perl5", "make"],
-            "test"     : "make",
-            "install"  : "make",
-            "runtime"  : "perl5"
+            "test"     : ["make"],
+            "install"  : ["make"],
+            "runtime"  : ["perl5"]
         }
     },
     "resources"            : {
         "repository"       : {
              "type"        : "git",
-	     "checkout_uri": "git://github.com/jnthn/blizkost.git",
-	     "browser_uri" : "http://github.com/jnthn/blizkost",
+             "checkout_uri": "git://github.com/jnthn/blizkost.git",
+             "browser_uri" : "http://github.com/jnthn/blizkost",
              "project_uri" : "http://github.com/jnthn/blizkost"
         }
     }
