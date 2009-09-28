@@ -50,6 +50,8 @@ MAIN();
 ### INIT
 ###
 
+our %FETCH_ACTION;
+
 sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
     load_bytecode('Glue.pir');
@@ -77,6 +79,17 @@ sub fixup_commands ($commands) {
     return $commands;
 }
 
+sub init_sub_actions () {
+    for split(' ', 'git svn') {
+        %FETCH_ACTION{$_} := Q:PIR {
+            $P0 = find_lex '$_'
+            $S0 = $P0
+            $S0 = concat 'fetch_', $S0
+            %r = get_hll_global $S0
+        };
+    }
+}
+
 
 ###
 ### MAIN
@@ -84,6 +97,7 @@ sub fixup_commands ($commands) {
 
 sub MAIN () {
     load_helper_libraries();
+    init_sub_actions();
 
     my $command := parse_command_line();
 
@@ -127,11 +141,11 @@ sub usage_info () {
 
 Available commands:
 
-    info <project>   Print info about a particular project
+    info  <project>  Print info about a particular project
+    fetch <project>  Download source for a project
 
     version          Print program version and copyright
     usage            Print this usage info
-    fetch            Download a project
 ';
 }
 
@@ -180,15 +194,6 @@ sub fetch_svn ($uri, $dest) {
 }
 
 sub action_fetch (@projects) {
-    my %fetch;
-    for split(' ', 'git svn') {
-        %fetch{$_} := Q:PIR {
-            $P0 = find_lex '$_'
-            $S0 = $P0
-            $S0 = concat 'fetch_', $S0
-            %r = get_hll_global $S0
-        };
-    }
     unless (@projects) {
         say('Please include the name of the project you wish info for.');
     }
@@ -197,6 +202,6 @@ sub action_fetch (@projects) {
         my %info := get_project_metadata($_);
         my %repo := %info<resources><repository>;
 
-        %fetch{%repo<type>}(%repo<checkout_uri>, $_);
+        %FETCH_ACTION{%repo<type>}(%repo<checkout_uri>, $_);
     }
 }
