@@ -5,6 +5,20 @@ Take one and run with it.  Please.
 
 
 --------
+Gracefully handle authenticated Subversion submodules
+
+Most of the time when fetching from a source repository the top level project
+checkout_uri will be public, and anyone will be able to download it.  Not so
+the submodules; in fact our very first Subversion project, Close, has private
+(authenticated) submodules.  If the user does not have the proper credentials
+for a submodule, the fetch should gracefully continue on the assumption that
+these submodules are not necessary for building the base project.
+
+We will eventually need to deal with proper error handling if the top level
+project itself requires unavailable credentials or the project won't build
+with missing submodules, but that can probably be put off for now.
+
+--------
 Adding more "builtins" to Glue.pir:
 
 The guiding principles are:
