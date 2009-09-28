@@ -21,6 +21,8 @@ Metadata:
   * Source patching phase between fetch and configure
   * What about multiple instructions per key?
     * Allow either string or array value
+* dependency-info
+  * Always array-valued?
 
 Plumage:
 --------
