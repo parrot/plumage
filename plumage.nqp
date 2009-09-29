@@ -107,11 +107,11 @@ sub fixup_sub_actions (%actions) {
                 %r  = get_hll_global $S0
             };
 
-	    if $sub {
-	        %ACTION{$stage}{$_} := $sub;
+            if $sub {
+                %ACTION{$stage}{$_} := $sub;
             }
-	    else {
-	        die("Action sub '" ~ $sub_name ~ "' is missing!\n");
+            else {
+                die("Action sub '" ~ $sub_name ~ "' is missing!\n");
             }
         }
     }
@@ -260,10 +260,16 @@ sub action_fetch (@projects) {
     for @projects {
         my %info := get_project_metadata($_);
         if metadata_valid(%info) {
-            my %repo   := %info<resources><repository>;
-            my &action := %ACTION<fetch>{%repo<type>};
+            my %repo := %info<resources><repository>;
+            if %repo {
+                say("Fetching " ~ $_ ~ ' ...');
 
-            &action($_, %repo<checkout_uri>);
+                my &action := %ACTION<fetch>{%repo<type>};
+                &action($_, %repo<checkout_uri>);
+            }
+            else {
+                say("Don't know how to fetch " ~ project ~ ".");
+            }
         }
     }
 }
@@ -285,10 +291,16 @@ sub action_configure (@projects) {
     for @projects {
         my %info := get_project_metadata($_);
         if metadata_valid(%info) {
-            my %conf   := %info<instructions><configure>;
-            my &action := %ACTION<configure>{%conf<type>};
+            my %conf := %info<instructions><configure>;
+            if %conf {
+                say("\nConfiguring " ~ $_ ~ ' ...');
 
-            &action($_, %conf);
+                my &action := %ACTION<configure>{%conf<type>};
+                &action($_, %conf);
+            }
+            else {
+                say("\nConfiguration not required for " ~ $_ ~ ".");
+            }
         }
     }
 }
