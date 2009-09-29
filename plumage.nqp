@@ -362,12 +362,7 @@ sub perform_actions_on_project (@actions, $project, %info) {
 ###
 
 
-sub fetch_git ($project, $uri) {
-    run('git', 'clone', $uri, $project);
-}
-sub fetch_svn ($project, $uri) {
-    run('svn', 'checkout', $uri, $project);
-}
+# FETCH
 
 sub action_fetch ($project, %info) {
     my %repo := %info<resources><repository>;
@@ -382,16 +377,15 @@ sub action_fetch ($project, %info) {
     }
 }
 
-
-sub configure_perl5_configure ($project, %conf) {
-    my $cwd := cwd();
-    chdir($project);
-
-    my $perl5 := %VM<config><perl>;
-    run($perl5, 'Configure.pl');
-
-    chdir($cwd);
+sub fetch_git ($project, $uri) {
+    run('git', 'clone', $uri, $project);
 }
+sub fetch_svn ($project, $uri) {
+    run('svn', 'checkout', $uri, $project);
+}
+
+
+# CONFIGURE
 
 sub action_configure ($project, %info) {
     my %conf := %info<instructions><configure>;
@@ -406,16 +400,18 @@ sub action_configure ($project, %info) {
     }
 }
 
-
-sub build_make ($project) {
+sub configure_perl5_configure ($project, %conf) {
     my $cwd := cwd();
     chdir($project);
 
-    my $make := %VM<config><make>;
-    run($make);
+    my $perl5 := %VM<config><perl>;
+    run($perl5, 'Configure.pl');
 
     chdir($cwd);
 }
+
+
+# MAKE
 
 sub action_build ($project, %info) {
     my %conf := %info<instructions><build>;
@@ -430,16 +426,18 @@ sub action_build ($project, %info) {
     }
 }
 
-
-sub test_make ($project) {
+sub build_make ($project) {
     my $cwd := cwd();
     chdir($project);
 
     my $make := %VM<config><make>;
-    run($make, 'test');
+    run($make);
 
     chdir($cwd);
 }
+
+
+# TEST
 
 sub action_test ($project, %info) {
     my %conf := %info<instructions><test>;
@@ -454,16 +452,18 @@ sub action_test ($project, %info) {
     }
 }
 
-
-sub install_make ($project) {
+sub test_make ($project) {
     my $cwd := cwd();
     chdir($project);
 
     my $make := %VM<config><make>;
-    run($make, 'install');
+    run($make, 'test');
 
     chdir($cwd);
 }
+
+
+# INSTALL
 
 sub action_install ($project, %info) {
     my %conf := %info<instructions><install>;
@@ -476,6 +476,16 @@ sub action_install ($project, %info) {
     else {
         say("Don't know how to install " ~ project ~ ".");
     }
+}
+
+sub install_make ($project) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $make := %VM<config><make>;
+    run($make, 'install');
+
+    chdir($cwd);
 }
 
 
