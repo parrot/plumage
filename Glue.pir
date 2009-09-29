@@ -65,6 +65,32 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
 .end
 
 
+=item @keys := keys(%hash)
+
+Return an array containing the keys of the C<%hash>.
+
+=cut
+
+.sub 'keys'
+    .param pmc hash
+
+    .local pmc key_list, it
+    key_list = root_new ['parrot';'ResizableStringArray']
+    it       = iter hash
+
+  key_loop:
+    unless it goto no_more_keys
+
+    $S0 = shift it
+    push key_list, $S0
+
+    goto key_loop
+  no_more_keys:
+
+    .return(key_list)
+.end
+
+
 =item $contents := slurp($filename)
 
 Read the C<$contents> of a file as a single string.
