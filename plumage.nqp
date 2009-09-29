@@ -14,6 +14,7 @@ Q:PIR{
 #               know about variables created at load_bytecode time.
 our $PROGRAM_NAME;
 our @ARGS;
+our %VM;
 
 # NQP doesn't support array or hash literals, so parse main structure
 # from JSON and then fix up values that can't be represented in JSON.
@@ -37,10 +38,24 @@ my  $_COMMANDS_JSON := '
     "fetch"      : {
         "action" : "action_fetch",
         "args"   : "project"
+    },
+    "configure"  : {
+        "action" : "action_configure",
+        "args"   : "project"
     }
 }
 ';
 our %COMMANDS := fixup_commands(eval($_COMMANDS_JSON, 'data_json'));
+
+my  $_ACTIONS_JSON := '
+{
+    "fetch"     : [ "git", "svn" ],
+    "configure" : [ "perl5_configure" ]
+}
+';
+our %ACTION;
+load_helper_libraries();
+fixup_sub_actions(eval($_ACTIONS_JSON, 'data_json'));
 
 # NQP does not automatically call MAIN()
 MAIN();
@@ -49,8 +64,6 @@ MAIN();
 ###
 ### INIT
 ###
-
-our %FETCH_ACTION;
 
 sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
@@ -79,14 +92,31 @@ sub fixup_commands ($commands) {
     return $commands;
 }
 
-sub init_sub_actions () {
-    for split(' ', 'git svn') {
-        %FETCH_ACTION{$_} := Q:PIR {
-            $P0 = find_lex '$_'
-            $S0 = $P0
-            $S0 = concat 'fetch_', $S0
-            %r = get_hll_global $S0
-        };
+sub fixup_sub_actions (%actions) {
+    my @stages := keys(%actions);
+
+    for @stages {
+        my $stage   := $_;
+        my @actions := %actions{$stage};
+
+        for @actions {
+            my $sub_name := $stage ~ '_' ~ $_;
+
+            %ACTION{$stage}{$_} := Q:PIR {
+                $P0 = find_lex '$sub_name'
+                $S0 = $P0
+                $P1 = get_hll_global $S0
+
+                if $P1 goto have_fetch
+                $S1  = "Action sub '"
+                $S1 .= $S0
+                $S1 .= "' is missing!\n"
+                die $S1
+
+              have_fetch:
+                %r   = $P1
+            };
+        }
     }
 }
 
@@ -96,9 +126,6 @@ sub init_sub_actions () {
 ###
 
 sub MAIN () {
-    load_helper_libraries();
-    init_sub_actions();
-
     my $command := parse_command_line();
 
     execute_command($command);
@@ -219,11 +246,11 @@ sub metadata_valid (%info) {
     return 0;
 }
 
-sub fetch_git ($uri, $dest) {
-    run('git', 'clone', $uri, $dest);
+sub fetch_git ($project, $uri) {
+    run('git', 'clone', $uri, $project);
 }
-sub fetch_svn ($uri, $dest) {
-    run('svn', 'checkout', $uri, $dest);
+sub fetch_svn ($project, $uri) {
+    run('svn', 'checkout', $uri, $project);
 }
 
 sub action_fetch (@projects) {
@@ -234,9 +261,34 @@ sub action_fetch (@projects) {
     for @projects {
         my %info := get_project_metadata($_);
         if metadata_valid(%info) {
-            my %repo := %info<resources><repository>;
+            my %repo   := %info<resources><repository>;
+            my &action := %ACTION<fetch>{%repo<type>};
 
-            %FETCH_ACTION{%repo<type>}(%repo<checkout_uri>, $_);
+            &action($_, %repo<checkout_uri>);
+        }
+    }
+}
+
+sub configure_perl5_configure ($project, %conf) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $perl5 := %VM<config><perl>;
+    run($perl5, 'Configure.pl');
+
+    chdir($cwd);
+}
+
+sub action_configure (@projects) {
+    action_fetch(@projects);
+
+    for @projects {
+        my %info := get_project_metadata($_);
+        if metadata_valid(%info) {
+            my %conf   := %info<instructions><configure>;
+            my &action := %ACTION<configure>{%conf<type>};
+
+            &action($_, %conf);
         }
     }
 }
