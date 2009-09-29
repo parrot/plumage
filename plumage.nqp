@@ -165,11 +165,12 @@ sub usage_info () {
 
 Available commands:
 
-    info  <project>  Print info about a particular project
-    fetch <project>  Download source for a project
+    info      <project>  Print info about a particular project
+    fetch     <project>  Download source for a project
+    configure <project>  Configure source for project (fetches first)
 
-    version          Print program version and copyright
-    usage            Print this usage info
+    version              Print program version and copyright
+    usage                Print this usage info
 ';
 }
 
@@ -243,6 +244,7 @@ sub metadata_valid (%info) {
     return 0;
 }
 
+
 sub fetch_git ($project, $uri) {
     run('git', 'clone', $uri, $project);
 }
@@ -265,6 +267,7 @@ sub action_fetch (@projects) {
         }
     }
 }
+
 
 sub configure_perl5_configure ($project, %conf) {
     my $cwd := cwd();
