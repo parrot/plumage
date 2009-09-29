@@ -24,7 +24,7 @@ another platform - for Parrot."
             "type" : "svn"
         },
         "configure": {
-            "type" : "perl5-configure"
+            "type" : "perl5_configure"
         },
         "build"    : {
             "type" : "make"

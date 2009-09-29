@@ -25,7 +25,7 @@ from there."
             "type" : "git"
         },
         "configure": {
-            "type" : "perl5-configure",
+            "type" : "perl5_configure",
             "extra_args" : [
                 "--parrot-config=#PARROT_CONFIG#"
             ]
