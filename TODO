@@ -17,6 +17,7 @@ Metadata:
 * general
   * Easy way to reference CREDITS file in contributors key?
 * instructions
+  * 'fetch' of a repository should have 'repository' as its type
   * What about update and cleanup?
   * What about multiple instructions per key?
     * Allow value to be either hash or array of hashes?
