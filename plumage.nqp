@@ -65,6 +65,8 @@ MAIN();
 ### INIT
 ###
 
+our %BIN;
+
 sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
     load_bytecode('Glue.pir');
@@ -117,12 +119,21 @@ sub fixup_sub_actions (%actions) {
     }
 }
 
+sub find_binaries () {
+    my %conf       := %VM<config>;
+    my $parrot_bin := %conf<bindir>;
+
+    %BIN<parrot_config> := fscat($parrot_bin, 'parrot_config');
+}
+
 
 ###
 ### MAIN
 ###
 
 sub MAIN () {
+    find_binaries();
+
     my $command := parse_command_line();
 
     execute_command($command);
@@ -303,4 +314,21 @@ sub action_configure (@projects) {
             }
         }
     }
+}
+
+
+###
+### UTILS
+###
+
+
+sub replace_config_strings ($original) {
+    return subst($original, '\#<ident>\#', config_value);
+}
+
+sub config_value ($match) {
+    my $key    := $match<ident>;
+    my $config := %VM<config>{$key} || %BIN{$key} || '';
+
+    return $config;
 }
