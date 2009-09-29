@@ -42,6 +42,18 @@ my  $_COMMANDS_JSON := '
     "configure"  : {
         "action" : "action_configure",
         "args"   : "project"
+    },
+    "build"      : {
+        "action" : "action_build",
+        "args"   : "project"
+    },
+    "test"       : {
+        "action" : "action_test",
+        "args"   : "project"
+    },
+    "install"    : {
+        "action" : "action_install",
+        "args"   : "project"
     }
 }
 ';
@@ -50,7 +62,10 @@ our %COMMANDS := fixup_commands(eval($_COMMANDS_JSON, 'data_json'));
 my  $_ACTIONS_JSON := '
 {
     "fetch"     : [ "git", "svn" ],
-    "configure" : [ "perl5_configure" ]
+    "configure" : [ "perl5_configure" ],
+    "build"     : [ "make" ],
+    "test"      : [ "make" ],
+    "install"   : [ "make" ]
 }
 ';
 our %ACTION;
@@ -179,6 +194,9 @@ Available commands:
     info      <project>  Print info about a particular project
     fetch     <project>  Download source for a project
     configure <project>  Configure source for project (fetches first)
+    build     <project>  Build project from source (configures first)
+    test      <project>  Test built project (builds first)
+    install   <project>  Installs built project files (tests first)
 
     version              Print program version and copyright
     usage                Print this usage info
@@ -311,6 +329,99 @@ sub action_configure (@projects) {
             }
             else {
                 say("\nConfiguration not required for " ~ $_ ~ ".");
+            }
+        }
+    }
+}
+
+
+sub build_make ($project) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $make := %VM<config><make>;
+    run($make);
+
+    chdir($cwd);
+}
+
+sub action_build (@projects) {
+    action_configure(@projects);
+
+    for @projects {
+        my %info := get_project_metadata($_);
+        if metadata_valid(%info) {
+            my %conf := %info<instructions><build>;
+            if %conf {
+                say("\nBuilding " ~ $_ ~ ' ...');
+
+                my &action := %ACTION<build>{%conf<type>};
+                &action($_);
+            }
+            else {
+                say("\nBuild not required for " ~ $_ ~ ".");
+            }
+        }
+    }
+}
+
+
+sub test_make ($project) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $make := %VM<config><make>;
+    run($make, 'test');
+
+    chdir($cwd);
+}
+
+sub action_test (@projects) {
+    action_build(@projects);
+
+    for @projects {
+        my %info := get_project_metadata($_);
+        if metadata_valid(%info) {
+            my %conf := %info<instructions><test>;
+            if %conf {
+                say("\nTesting " ~ $_ ~ ' ...');
+
+                my &action := %ACTION<test>{%conf<type>};
+                &action($_);
+            }
+            else {
+                say("\nNo test method found for " ~ $_ ~ ".");
+            }
+        }
+    }
+}
+
+
+sub install_make ($project) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $make := %VM<config><make>;
+    run($make, 'install');
+
+    chdir($cwd);
+}
+
+sub action_install (@projects) {
+    action_test(@projects);
+
+    for @projects {
+        my %info := get_project_metadata($_);
+        if metadata_valid(%info) {
+            my %conf := %info<instructions><install>;
+            if %conf {
+                say("\nInstalling " ~ $_ ~ ' ...');
+
+                my &action := %ACTION<install>{%conf<type>};
+                &action($_);
+            }
+            else {
+                say("Don't know how to install " ~ project ~ ".");
             }
         }
     }
