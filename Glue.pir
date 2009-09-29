@@ -65,6 +65,19 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
 .end
 
 
+=item die($message)
+
+Kill program, reporting error C<$message>.
+
+=cut
+
+.sub 'die'
+    .param string message
+
+    die message
+.end
+
+
 =item @keys := keys(%hash)
 
 Return an array containing the keys of the C<%hash>.
