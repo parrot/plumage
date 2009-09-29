@@ -2,6 +2,7 @@
 ### HACKS
 ###
 
+
 # NQP bug XXXX: Fakecutables broken because 'nqp' language is not loaded.
 Q:PIR{
     $P0 = get_hll_global 'say'
@@ -24,35 +25,35 @@ our %VM;
 my  $_COMMANDS_JSON := '
 {
     "usage"      : {
-        "action" : "action_usage",
+        "action" : "command_usage",
         "args"   : "none"
     },
     "version"    : {
-        "action" : "action_version",
+        "action" : "command_version",
         "args"   : "none"
     },
     "info"       : {
-        "action" : "action_info",
+        "action" : "command_info",
         "args"   : "project"
     },
     "fetch"      : {
-        "action" : "action_fetch",
+        "action" : "command_fetch",
         "args"   : "project"
     },
     "configure"  : {
-        "action" : "action_configure",
+        "action" : "command_configure",
         "args"   : "project"
     },
     "build"      : {
-        "action" : "action_build",
+        "action" : "command_build",
         "args"   : "project"
     },
     "test"       : {
-        "action" : "action_test",
+        "action" : "command_test",
         "args"   : "project"
     },
     "install"    : {
-        "action" : "action_install",
+        "action" : "command_install",
         "args"   : "project"
     }
 }
@@ -80,6 +81,9 @@ MAIN();
 ### INIT
 ###
 
+
+our %STAGE_ACTION;
+our %STAGES;
 our %BIN;
 
 sub load_helper_libraries () {
@@ -141,13 +145,37 @@ sub find_binaries () {
     %BIN<parrot_config> := fscat($parrot_bin, 'parrot_config');
 }
 
+sub build_stages () {
+    my @stages := split(' ', 'install test build configure fetch');
+
+    for @stages {
+        my $stage       := $_;
+
+        %STAGES{$stage} := split(' ', '');
+
+        for keys(%STAGES) {
+            %STAGES{$_}.unshift($stage);
+        }
+
+        my $sub_name := 'action_' ~ $stage;
+        my $sub      := Q:PIR {
+            $P0 = find_lex '$sub_name'
+            $S0 = $P0
+            %r  = get_hll_global $S0
+        };
+        %STAGE_ACTION{$stage} := $sub;
+    }
+}
+
 
 ###
 ### MAIN
 ###
 
+
 sub MAIN () {
     find_binaries();
+    build_stages();
 
     my $command := parse_command_line();
 
@@ -166,9 +194,15 @@ sub parse_command_line () {
 
 sub execute_command ($command) {
     my $action := %COMMANDS{$command}<action>;
+    my $args   := %COMMANDS{$command}<args>;
 
     if ($action) {
-        $action(@ARGS);
+        if $args eq 'project' && !@ARGS {
+            say('Please include the name of the project you wish info for.');
+        }
+        else {
+            $action(@ARGS);
+        }
     }
     else {
         say("I don't know how to '" ~ $command ~ "'!");
@@ -181,7 +215,7 @@ sub execute_command ($command) {
 ###
 
 
-sub action_usage () {
+sub command_usage () {
     print(usage_info());
 }
 
@@ -204,7 +238,7 @@ Available commands:
 }
 
 
-sub action_version () {
+sub command_version () {
     print(version_info());
 }
 
@@ -222,7 +256,7 @@ included in the Parrot Plumage source tree.
 }
 
 
-sub action_info (@projects) {
+sub command_info (@projects) {
     unless (@projects) {
         say('Please include the name of the project you wish info for.');
     }
@@ -274,6 +308,60 @@ sub metadata_valid (%info) {
 }
 
 
+sub command_fetch (@projects) {
+    perform_actions_on_projects(%STAGES<fetch>, @projects);
+}
+
+sub command_configure (@projects) {
+    perform_actions_on_projects(%STAGES<configure>, @projects);
+}
+
+sub command_build (@projects) {
+    perform_actions_on_projects(%STAGES<build>, @projects);
+}
+
+sub command_test (@projects) {
+    perform_actions_on_projects(%STAGES<test>, @projects);
+}
+
+sub command_install (@projects) {
+    perform_actions_on_projects(%STAGES<install>, @projects);
+}
+
+
+sub perform_actions_on_projects (@actions, @projects) {
+    for @projects {
+        my %info := get_project_metadata($_);
+        if %info {
+            if metadata_valid(%info) {
+                perform_actions_on_project(@actions, $_, %info);
+            }
+        }
+        else {
+            say("I don't know anything about project '" ~ $_ ~ "'.");
+        }
+    }
+}
+
+sub perform_actions_on_project (@actions, $project, %info) {
+    for @actions {
+        my &action := %STAGE_ACTION{$_};
+
+        if &action {
+           &action($project, %info);
+        }
+        else {
+           say("I don't know how to perfom action '" ~ $_ ~ "'.");
+        }
+    }
+}
+
+
+###
+### ACTIONS
+###
+
+
 sub fetch_git ($project, $uri) {
     run('git', 'clone', $uri, $project);
 }
@@ -281,25 +369,16 @@ sub fetch_svn ($project, $uri) {
     run('svn', 'checkout', $uri, $project);
 }
 
-sub action_fetch (@projects) {
-    unless (@projects) {
-        say('Please include the name of the project you wish info for.');
+sub action_fetch ($project, %info) {
+    my %repo := %info<resources><repository>;
+    if %repo {
+        say("Fetching " ~ $project ~ ' ...');
+
+        my &action := %ACTION<fetch>{%repo<type>};
+        &action($project, %repo<checkout_uri>);
     }
-
-    for @projects {
-        my %info := get_project_metadata($_);
-        if metadata_valid(%info) {
-            my %repo := %info<resources><repository>;
-            if %repo {
-                say("Fetching " ~ $_ ~ ' ...');
-
-                my &action := %ACTION<fetch>{%repo<type>};
-                &action($_, %repo<checkout_uri>);
-            }
-            else {
-                say("Don't know how to fetch " ~ project ~ ".");
-            }
-        }
+    else {
+        say("Don't know how to fetch " ~ project ~ ".");
     }
 }
 
@@ -314,23 +393,16 @@ sub configure_perl5_configure ($project, %conf) {
     chdir($cwd);
 }
 
-sub action_configure (@projects) {
-    action_fetch(@projects);
+sub action_configure ($project, %info) {
+    my %conf := %info<instructions><configure>;
+    if %conf {
+        say("\nConfiguring " ~ $project ~ ' ...');
 
-    for @projects {
-        my %info := get_project_metadata($_);
-        if metadata_valid(%info) {
-            my %conf := %info<instructions><configure>;
-            if %conf {
-                say("\nConfiguring " ~ $_ ~ ' ...');
-
-                my &action := %ACTION<configure>{%conf<type>};
-                &action($_, %conf);
-            }
-            else {
-                say("\nConfiguration not required for " ~ $_ ~ ".");
-            }
-        }
+        my &action := %ACTION<configure>{%conf<type>};
+        &action($project, %conf);
+    }
+    else {
+        say("\nConfiguration not required for " ~ $project ~ ".");
     }
 }
 
@@ -345,23 +417,16 @@ sub build_make ($project) {
     chdir($cwd);
 }
 
-sub action_build (@projects) {
-    action_configure(@projects);
+sub action_build ($project, %info) {
+    my %conf := %info<instructions><build>;
+    if %conf {
+        say("\nBuilding " ~ $project ~ ' ...');
 
-    for @projects {
-        my %info := get_project_metadata($_);
-        if metadata_valid(%info) {
-            my %conf := %info<instructions><build>;
-            if %conf {
-                say("\nBuilding " ~ $_ ~ ' ...');
-
-                my &action := %ACTION<build>{%conf<type>};
-                &action($_);
-            }
-            else {
-                say("\nBuild not required for " ~ $_ ~ ".");
-            }
-        }
+        my &action := %ACTION<build>{%conf<type>};
+        &action($project);
+    }
+    else {
+        say("\nBuild not required for " ~ $project ~ ".");
     }
 }
 
@@ -376,23 +441,16 @@ sub test_make ($project) {
     chdir($cwd);
 }
 
-sub action_test (@projects) {
-    action_build(@projects);
+sub action_test ($project, %info) {
+    my %conf := %info<instructions><test>;
+    if %conf {
+        say("\nTesting " ~ $project ~ ' ...');
 
-    for @projects {
-        my %info := get_project_metadata($_);
-        if metadata_valid(%info) {
-            my %conf := %info<instructions><test>;
-            if %conf {
-                say("\nTesting " ~ $_ ~ ' ...');
-
-                my &action := %ACTION<test>{%conf<type>};
-                &action($_);
-            }
-            else {
-                say("\nNo test method found for " ~ $_ ~ ".");
-            }
-        }
+        my &action := %ACTION<test>{%conf<type>};
+        &action($project);
+    }
+    else {
+        say("\nNo test method found for " ~ $project ~ ".");
     }
 }
 
@@ -407,23 +465,16 @@ sub install_make ($project) {
     chdir($cwd);
 }
 
-sub action_install (@projects) {
-    action_test(@projects);
+sub action_install ($project, %info) {
+    my %conf := %info<instructions><install>;
+    if %conf {
+        say("\nInstalling " ~ $project ~ ' ...');
 
-    for @projects {
-        my %info := get_project_metadata($_);
-        if metadata_valid(%info) {
-            my %conf := %info<instructions><install>;
-            if %conf {
-                say("\nInstalling " ~ $_ ~ ' ...');
-
-                my &action := %ACTION<install>{%conf<type>};
-                &action($_);
-            }
-            else {
-                say("Don't know how to install " ~ project ~ ".");
-            }
-        }
+        my &action := %ACTION<install>{%conf<type>};
+        &action($project);
+    }
+    else {
+        say("Don't know how to install " ~ project ~ ".");
     }
 }
 
