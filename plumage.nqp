@@ -348,12 +348,21 @@ sub perform_actions_on_project (@actions, $project, %info) {
         my &action := %STAGE_ACTION{$_};
 
         if &action {
-           &action($project, %info);
+           my $result := &action($project, %info);
+           if $result {
+               say('Successful.');
+           }
+           else {
+               say("###\n### FAILED!\n###");
+               return 0;
+           }
         }
         else {
            say("I don't know how to perfom action '" ~ $_ ~ "'.");
         }
     }
+
+    return 1;
 }
 
 
@@ -370,18 +379,19 @@ sub action_fetch ($project, %info) {
         say("Fetching " ~ $project ~ ' ...');
 
         my &action := %ACTION<fetch>{%repo<type>};
-        &action($project, %repo<checkout_uri>);
+        return &action($project, %repo<checkout_uri>);
     }
     else {
         say("Don't know how to fetch " ~ project ~ ".");
+        return 0;
     }
 }
 
 sub fetch_git ($project, $uri) {
-    run('git', 'clone', $uri, $project);
+    return check_run_success(run('git', 'clone', $uri, $project));
 }
 sub fetch_svn ($project, $uri) {
-    run('svn', 'checkout', $uri, $project);
+    return check_run_success(run('svn', 'checkout', $uri, $project));
 }
 
 
@@ -393,10 +403,11 @@ sub action_configure ($project, %info) {
         say("\nConfiguring " ~ $project ~ ' ...');
 
         my &action := %ACTION<configure>{%conf<type>};
-        &action($project, %conf);
+        return &action($project, %conf);
     }
     else {
         say("\nConfiguration not required for " ~ $project ~ ".");
+        return 1;
     }
 }
 
@@ -404,10 +415,12 @@ sub configure_perl5_configure ($project, %conf) {
     my $cwd := cwd();
     chdir($project);
 
-    my $perl5 := %VM<config><perl>;
-    run($perl5, 'Configure.pl');
+    my $perl5   := %VM<config><perl>;
+    my $success := check_run_success(run($perl5, 'Configure.pl'));
 
     chdir($cwd);
+
+    return $success;
 }
 
 
@@ -419,10 +432,11 @@ sub action_build ($project, %info) {
         say("\nBuilding " ~ $project ~ ' ...');
 
         my &action := %ACTION<build>{%conf<type>};
-        &action($project);
+        return &action($project);
     }
     else {
         say("\nBuild not required for " ~ $project ~ ".");
+        return 1;
     }
 }
 
@@ -430,10 +444,12 @@ sub build_make ($project) {
     my $cwd := cwd();
     chdir($project);
 
-    my $make := %VM<config><make>;
-    run($make);
+    my $make    := %VM<config><make>;
+    my $success := check_run_success(run($make));
 
     chdir($cwd);
+
+    return $success;
 }
 
 
@@ -445,10 +461,11 @@ sub action_test ($project, %info) {
         say("\nTesting " ~ $project ~ ' ...');
 
         my &action := %ACTION<test>{%conf<type>};
-        &action($project);
+        return &action($project);
     }
     else {
         say("\nNo test method found for " ~ $project ~ ".");
+        return 1;
     }
 }
 
@@ -457,9 +474,11 @@ sub test_make ($project) {
     chdir($project);
 
     my $make := %VM<config><make>;
-    run($make, 'test');
+    my $success := check_run_success(run($make, 'test'));
 
     chdir($cwd);
+
+    return $success;
 }
 
 
@@ -471,10 +490,11 @@ sub action_install ($project, %info) {
         say("\nInstalling " ~ $project ~ ' ...');
 
         my &action := %ACTION<install>{%conf<type>};
-        &action($project);
+        return &action($project);
     }
     else {
         say("Don't know how to install " ~ project ~ ".");
+        return 0;
     }
 }
 
@@ -483,15 +503,22 @@ sub install_make ($project) {
     chdir($project);
 
     my $make := %VM<config><make>;
-    run($make, 'install');
+    my $success := check_run_success(run($make, 'install'));
 
     chdir($cwd);
+
+    return $success;
 }
 
 
 ###
 ### UTILS
 ###
+
+
+sub check_run_success ($exit_val) {
+    return $exit_val ?? 0 !! 1;
+}
 
 
 sub replace_config_strings ($original) {
