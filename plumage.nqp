@@ -101,21 +101,18 @@ sub fixup_sub_actions (%actions) {
 
         for @actions {
             my $sub_name := $stage ~ '_' ~ $_;
-
-            %ACTION{$stage}{$_} := Q:PIR {
+            my $sub      := Q:PIR {
                 $P0 = find_lex '$sub_name'
                 $S0 = $P0
-                $P1 = get_hll_global $S0
-
-                if $P1 goto have_fetch
-                $S1  = "Action sub '"
-                $S1 .= $S0
-                $S1 .= "' is missing!\n"
-                die $S1
-
-              have_fetch:
-                %r   = $P1
+                %r  = get_hll_global $S0
             };
+
+	    if $sub {
+	        %ACTION{$stage}{$_} := $sub;
+            }
+	    else {
+	        die("Action sub '" ~ $sub_name ~ "' is missing!\n");
+            }
         }
     }
 }
