@@ -32,6 +32,31 @@ the spawn status code when the process exits.
 .end
 
 
+=item $success := do_run($command, $and, $args, ...)
+
+Print out the command and arguments, then spawn the command with the given
+arguments as a new process; return 1 if the process exited successfully, or
+0 if not.
+
+=cut
+
+.sub 'do_run'
+    .param pmc command_and_args :slurpy
+
+    .local string cmd
+    cmd = join ' ', command_and_args
+    say cmd
+
+    .local int status
+    status = spawnw command_and_args
+
+    if status goto failed
+    .return (1)
+  failed:
+    .return (0)
+.end
+
+
 =item $output := qx($command, $and, $args, ...)
 
 Spawn the command with the given arguments as a read only pipe;
@@ -342,6 +367,20 @@ included in the resulting C<@pieces>.
 
     .return (pieces)
 .end
+
+
+=item @array := as_array($list, $of, $items, ...)
+
+Slurp the list of arguments into an array and return it.
+
+=cut
+
+.sub 'as_array'
+     .param pmc items :slurpy
+
+     .return (items)
+.end
+
 
 =back
 
