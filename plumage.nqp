@@ -142,7 +142,7 @@ sub find_binaries () {
     my %conf       := %VM<config>;
     my $parrot_bin := %conf<bindir>;
 
-    %BIN<parrot_config> := fscat($parrot_bin, 'parrot_config');
+    %BIN<parrot_config> := fscat(as_array($parrot_bin), 'parrot_config');
 }
 
 sub build_stages () {
@@ -388,10 +388,10 @@ sub action_fetch ($project, %info) {
 }
 
 sub fetch_git ($project, $uri) {
-    return check_run_success(run('git', 'clone', $uri, $project));
+    return do_run('git', 'clone', $uri, $project);
 }
 sub fetch_svn ($project, $uri) {
-    return check_run_success(run('svn', 'checkout', $uri, $project));
+    return do_run('svn', 'checkout', $uri, $project);
 }
 
 
@@ -416,7 +416,7 @@ sub configure_perl5_configure ($project, %conf) {
     chdir($project);
 
     my $perl5   := %VM<config><perl>;
-    my $success := check_run_success(run($perl5, 'Configure.pl'));
+    my $success := do_run($perl5, 'Configure.pl');
 
     chdir($cwd);
 
@@ -427,8 +427,8 @@ sub configure_parrot_configure ($project, %conf) {
     my $cwd := cwd();
     chdir($project);
 
-    my $parrot  := fscat(%VM<config><bindir>, 'parrot');
-    my $success := check_run_success(run($parrot, 'Configure.pir'));
+    my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot');
+    my $success := do_run($parrot, 'Configure.pir');
 
     chdir($cwd);
 
@@ -457,7 +457,7 @@ sub build_make ($project) {
     chdir($project);
 
     my $make    := %VM<config><make>;
-    my $success := check_run_success(run($make));
+    my $success := do_run($make);
 
     chdir($cwd);
 
@@ -486,7 +486,7 @@ sub test_make ($project) {
     chdir($project);
 
     my $make := %VM<config><make>;
-    my $success := check_run_success(run($make, 'test'));
+    my $success := do_run($make, 'test');
 
     chdir($cwd);
 
@@ -515,7 +515,7 @@ sub install_make ($project) {
     chdir($project);
 
     my $make := %VM<config><make>;
-    my $success := check_run_success(run($make, 'install'));
+    my $success := do_run($make, 'install');
 
     chdir($cwd);
 
@@ -526,12 +526,6 @@ sub install_make ($project) {
 ###
 ### UTILS
 ###
-
-
-sub check_run_success ($exit_val) {
-    return $exit_val ?? 0 !! 1;
-}
-
 
 sub replace_config_strings ($original) {
     return subst($original, '\#<ident>\#', config_value);
