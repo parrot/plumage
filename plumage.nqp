@@ -63,7 +63,7 @@ our %COMMANDS := fixup_commands(eval($_COMMANDS_JSON, 'data_json'));
 my  $_ACTIONS_JSON := '
 {
     "fetch"     : [ "git", "svn" ],
-    "configure" : [ "perl5_configure" ],
+    "configure" : [ "perl5_configure", "parrot_configure" ],
     "build"     : [ "make" ],
     "test"      : [ "make" ],
     "install"   : [ "make" ]
@@ -417,6 +417,18 @@ sub configure_perl5_configure ($project, %conf) {
 
     my $perl5   := %VM<config><perl>;
     my $success := check_run_success(run($perl5, 'Configure.pl'));
+
+    chdir($cwd);
+
+    return $success;
+}
+
+sub configure_parrot_configure ($project, %conf) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $parrot  := fscat(%VM<config><bindir>, 'parrot');
+    my $success := check_run_success(run($parrot, 'Configure.pir'));
 
     chdir($cwd);
 
