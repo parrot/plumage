@@ -103,6 +103,33 @@ Kill program, reporting error C<$message>.
 .end
 
 
+=item try(&code, &handler)
+
+Run C<&code>.  If there are any exceptions, catch them, and invoke
+C<&handler> with them.
+
+=cut
+
+.sub 'try'
+    .param pmc code
+    .param pmc handler :optional
+    .param int has_handler :opt_flag
+
+    push_eh do_handler
+    $P0 = code()
+    pop_eh
+    .return ($P0)
+  do_handler:
+    .local pmc ex
+    .get_results (ex)
+    eq has_handler, 0, no_handler
+    $P0 = handler(ex)
+    .return ($P0)
+  no_handler:
+    .return (0)
+.end
+
+
 =item @keys := keys(%hash)
 
 Return an array containing the keys of the C<%hash>.

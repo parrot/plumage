@@ -26,6 +26,7 @@ Downloads files.
 .include 'socket.pasm'
 
 .sub 'parse_url'
+    # half-assed url parser; should use PGE and a URI grammar
     .param string url
     .local string host, path
     $S0 = substr url, 0, 7
@@ -102,7 +103,6 @@ Downloads files.
     .param int has_filename :opt_flag
     .local string host, path
 
-    # half-assed url parser; should use PGE and a URI grammar
     (host, path) = 'parse_url'(url)
     if has_filename goto got_filename
     filename = 'get_filename'(path)
