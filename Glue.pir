@@ -103,10 +103,16 @@ Kill program, reporting error C<$message>.
 .end
 
 
-=item try(&code, &handler)
+=item try(&code [, &handler])
 
 Run C<&code>.  If there are any exceptions, catch them, and invoke
-C<&handler> with them.
+C<&handler> with the exception as its only argument.  If C<&handler>
+is absent, simply return C<0> if an exception is caught.  In other
+words, C<try()> implements the following pseudocode:
+
+    try        { $ret = &code()                        }
+    catch($ex) { $ret = &handler ?? &handler($ex) !! 0 }
+    return $ret;
 
 =cut
 
