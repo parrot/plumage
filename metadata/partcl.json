@@ -1,0 +1,56 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "partcl",
+        "abstract" : "Implementation of tcl targeting the parrot VM",
+        "authority": "unknown",
+        "version"  : "SVN",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "The Parrot Foundation",
+        "generated_by"     : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
+        "keywords"         : [""],
+        "description"      : "An implementation of Tcl 8.5.6 targeting the parrot virtual machine."
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "svn"
+        },
+        "configure": {
+            "type" : "perl5_configure"
+        },
+        "build"    : {
+            "type" : "make"
+        },
+        "test"     : {
+            "type" : "make"
+        },
+        "install"  : {
+            "type" : "make"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : "decnum-dynpmcs",
+        "requires"     : {
+            "fetch"    : ["svn"],
+            "configure": ["perl5"],
+            "build"    : ["perl5", "make"],
+            "test"     : ["perl5", "make"],
+            "install"  : ["make"],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "svn",
+             "checkout_uri": "http://partcl.googlecode.com/svn/trunk",
+             "browser_uri" : "http://code.google.com/p/partcl/source/browse",
+             "project_uri" : "http://code.google.com/p/partcl/"
+        }
+    }
+}
