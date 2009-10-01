@@ -35,7 +35,7 @@
         }
     },
     "dependency-info"  : {
-        "provides"     : "decnum-dynpmcs",
+        "provides"     : "partcl",
         "requires"     : {
             "fetch"    : ["svn"],
             "configure": ["perl5"],
