@@ -14,7 +14,7 @@
         },
         "copyright_holder" : "The Parrot Foundation",
         "generated_by"     : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
-        "keywords"         : [""],
+        "keywords"         : ["partcl", "parrot", "TCL", "HLL"],
         "description"      : "An implementation of Tcl 8.5.6 targeting the parrot virtual machine."
     },
     "instructions" : {
