@@ -85,10 +85,14 @@ MAIN();
 our %STAGE_ACTION;
 our %STAGES;
 our %BIN;
+our %OPT;
 
 sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
     load_bytecode('Glue.pir');
+
+    # Process command line options
+    load_bytecode('Getopt/Obj.pbc');
 
     # Data structure dumper for PMCs (used for debugging)
     load_bytecode('dumper.pbc');
@@ -138,6 +142,14 @@ sub fixup_sub_actions (%actions) {
     }
 }
 
+sub parse_command_line_options () {
+    my $getopts := Q:PIR{ %r = root_new ['parrot';'Getopt::Obj'] };
+
+    $getopts.push_string('ignore-fail:%');
+
+    %OPT := $getopts.get_options(@ARGS);
+}
+
 sub find_binaries () {
     my %conf       := %VM<config>;
     my $parrot_bin := %conf<bindir>;
@@ -175,6 +187,7 @@ sub build_stages () {
 
 
 sub MAIN () {
+    parse_command_line_options();
     find_binaries();
     build_stages();
 
@@ -224,7 +237,14 @@ sub usage_info () {
     return
 'Usage: ' ~ $PROGRAM_NAME ~ ' [<options>] <command> [<arguments>]
 
-Available commands:
+Options:
+
+    --ignore-fail            Ignore any failing build stages
+    --ignore-fail=<stage>    Ignore failures only in a particular stage
+                             (may be repeated to select more than one stage)
+    --ignore-fail=<stage>=0  Don\'t ignore failures in this stage
+
+Commands:
 
     info      <project>  Print info about a particular project
     fetch     <project>  Download source for a project
@@ -345,6 +365,10 @@ sub perform_actions_on_projects (@actions, @projects) {
 }
 
 sub perform_actions_on_project (@actions, $project, %info) {
+    my $has_ignore_flag := exists(%OPT, 'ignore-fail');
+    my %ignore          := %OPT<ignore-fail>;
+    my $ignore_all      := $has_ignore_flag && !%ignore;
+
     for @actions {
         my &action := %STAGE_ACTION{$_};
 
@@ -354,8 +378,13 @@ sub perform_actions_on_project (@actions, $project, %info) {
                say('Successful.');
            }
            else {
-               say("###\n### FAILED!\n###");
-               return 0;
+               if $ignore_all || %ignore && %ignore{$_} {
+                   say('FAILED, but ignoring failure at user request.');
+               }
+               else {
+                   say("###\n### FAILED!\n###");
+                   return 0;
+               }
            }
         }
         else {
