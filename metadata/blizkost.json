@@ -27,7 +27,7 @@ from there."
         "configure": {
             "type" : "perl5_configure",
             "extra_args" : [
-                "--parrot-config=#PARROT_CONFIG#"
+                "--parrot-config=#parrot_config#"
             ]
         },
         "build"    : {
