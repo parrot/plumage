@@ -415,8 +415,10 @@ sub configure_perl5_configure ($project, %conf) {
     my $cwd := cwd();
     chdir($project);
 
+    my @extra   := map(replace_config_strings, %conf<extra_args>);
+
     my $perl5   := %VM<config><perl>;
-    my $success := do_run($perl5, 'Configure.pl');
+    my $success := call_flattened(do_run, $perl5, 'Configure.pl', @extra);
 
     chdir($cwd);
 
@@ -526,6 +528,16 @@ sub install_make ($project) {
 ###
 ### UTILS
 ###
+
+sub map (&code, @originals) {
+    my @mapped;
+
+    for @originals {
+        @mapped.push(&code($_));
+    }
+
+    return @mapped;
+}
 
 sub replace_config_strings ($original) {
     return subst($original, '\#<ident>\#', config_value);
