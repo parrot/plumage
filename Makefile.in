@@ -27,7 +27,7 @@ help:
 	@echo "  help:        Print this help message"
 	@echo ""
 
-plumage: plumage.pbc
+plumage: plumage.pbc Glue.pbc
 	$(PBC_TO_EXE) plumage.pbc
 
 plumage.pbc: plumage.pir
@@ -35,6 +35,9 @@ plumage.pbc: plumage.pir
 
 plumage.pir: plumage.nqp
 	$(PARROT) $(NQP_PBC) --target=pir -o plumage.pir plumage.nqp
+
+Glue.pbc: Glue.pir
+	$(PARROT) -o Glue.pbc Glue.pir
 
 # Convenience
 realclean: clean
