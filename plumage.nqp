@@ -151,6 +151,7 @@ sub build_stages () {
     for @stages {
         my $stage       := $_;
 
+        # XXXX: Hack; is there a cleaner way to create an anon array?
         %STAGES{$stage} := split(' ', '');
 
         for keys(%STAGES) {
