@@ -162,6 +162,23 @@ Return an array containing the keys of the C<%hash>.
 .end
 
 
+=item $found = exists(%hash, $key)
+
+Determine if C<$key> exists in C<%hash>, returning a true value if so, and a
+false value if not.
+
+=cut
+
+.sub 'exists'
+    .param pmc    hash
+    .param string key
+
+    $I0 = exists hash[key]
+
+    .return($I0)
+.end
+
+
 =item $contents := slurp($filename)
 
 Read the C<$contents> of a file as a single string.
