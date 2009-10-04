@@ -15,12 +15,13 @@ Q:PIR{
 #               know about variables created at load_bytecode time.
 our $PROGRAM_NAME;
 our @ARGS;
+our %ENV;
 our %VM;
 
 # NQP doesn't support array or hash literals, so parse main structure
 # from JSON and then fix up values that can't be represented in JSON.
 #
-# XXXX: The data_json parser is very strict!  No extra commas, pedantic
+# NOTE: The data_json parser is very strict!  No extra commas, pedantic
 #       quoting, the works.  Whitespace is perhaps your only freedom.
 my  $_COMMANDS_JSON := '
 {
@@ -86,13 +87,17 @@ our %STAGE_ACTION;
 our %STAGES;
 our %BIN;
 our %OPT;
+our %CONF;
 
 sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
-    load_bytecode('Glue.pir');
+    load_bytecode('Glue.pbc');
 
     # Process command line options
     load_bytecode('Getopt/Obj.pbc');
+
+    # Parse files in JSON format
+    load_bytecode('Config/JSON.pbc');
 
     # Data structure dumper for PMCs (used for debugging)
     load_bytecode('dumper.pbc');
@@ -162,9 +167,7 @@ sub build_stages () {
 
     for @stages {
         my $stage       := $_;
-
-        # XXXX: Hack; is there a cleaner way to create an anon array?
-        %STAGES{$stage} := split(' ', '');
+        %STAGES{$stage} := as_array();
 
         for keys(%STAGES) {
             %STAGES{$_}.unshift($stage);
@@ -285,14 +288,17 @@ sub command_info (@projects) {
     for @projects {
         my $info := get_project_metadata($_);
 
-        _dumper($info, 'INFO');
+        if $info {
+            _dumper($info, 'INFO');
+        }
+        else {
+            say("I don't know anything about project '" ~ $_ ~ "'.");
+        }
     }
 }
 
 sub get_project_metadata ($project) {
-    load_bytecode('Config/JSON.pbc');
-
-    return Config::JSON::ReadConfig('metadata/' ~ $project ~ '.json');
+    return try(Config::JSON::ReadConfig, as_array('metadata/' ~ $project ~ '.json'));
 }
 
 sub metadata_valid (%info) {
