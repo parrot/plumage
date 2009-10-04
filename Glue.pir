@@ -103,34 +103,37 @@ Kill program, reporting error C<$message>.
 .end
 
 
-=item try(&code [, &handler])
+=item try(&code, @args [, &handler])
 
-Run C<&code>.  If there are any exceptions, catch them, and invoke
-C<&handler> with the exception as its only argument.  If C<&handler>
-is absent, simply return C<0> if an exception is caught.  In other
-words, C<try()> implements the following pseudocode:
+Call C<&code> with flattened C<@args>.  If there are any exceptions, catch
+them and invoke C<&handler> with the exception, C<&code>, and C<@args>.
+If C<&handler> is absent, simply return C<0> if an exception is caught.
+In other words, C<try()> implements the following pseudocode:
 
-    try        { $ret = &code()                        }
-    catch($ex) { $ret = &handler ?? &handler($ex) !! 0 }
+    try        { $ret = &code(|@args)                                }
+    catch($ex) { $ret = &handler ?? &handler($ex, &code, @args) !! 0 }
     return $ret;
 
 =cut
 
 .sub 'try'
     .param pmc code
+    .param pmc args
     .param pmc handler :optional
     .param int has_handler :opt_flag
 
     push_eh do_handler
-    $P0 = code()
+    $P0 = code(args :flat)
     pop_eh
     .return ($P0)
+
   do_handler:
     .local pmc ex
     .get_results (ex)
     eq has_handler, 0, no_handler
-    $P0 = handler(ex)
+    $P0 = handler(ex, code, args)
     .return ($P0)
+
   no_handler:
     .return (0)
 .end
