@@ -74,6 +74,11 @@ our %ACTION;
 load_helper_libraries();
 fixup_sub_actions(eval($_ACTIONS_JSON, 'data_json'));
 
+my $_DEFAULT_CONF_JSON := '
+{
+}
+';
+
 # NQP does not automatically call MAIN()
 MAIN();
 
@@ -155,6 +160,46 @@ sub parse_command_line_options () {
     %OPT := $getopts.get_options(@ARGS);
 }
 
+sub read_config_files () {
+    # Find config files for this system and user (ignored if missing).
+    my $etc      := %VM<conf><sysconfdir>;
+    my $home     := %ENV<HOME>;
+    my $base     := 'plumage.json';
+    my $sysconf  := fscat(as_array($etc,  'parrot', 'plumage'), $base);
+    my $userconf := fscat(as_array($home, 'parrot', 'plumage'), $base);
+    my @configs  := as_array($sysconf, $userconf);
+
+    # If another config specified via command line option, add it.  Because
+    # this was manually set by the user, it is a fatal error if missing.
+    my $optconf  := %OPT<config-file>;
+    if $optconf {
+        if try(stat, as_array($optconf)) {
+            @configs.push($optconf);
+        }
+        else {
+            die("Could not find config file '" ~ $optconf ~ "'.\n");
+        }
+    }
+
+    # Merge together default, system, user, and option configs
+    my %default := eval($_DEFAULT_CONF_JSON, 'data_json');
+    merge_tree_structures(%CONF, %default);
+
+    for @configs {
+        if try(stat, as_array($_)) {
+            my %conf := try(Config::JSON::ReadConfig, as_array($_));
+            merge_tree_structures(%CONF, %conf);
+        }
+    }
+
+    _dumper(%CONF, 'CONF');
+}
+
+sub merge_tree_structures ($dest, $src) {
+    # XXXX: Stub
+    $dest := $src;
+}
+
 sub find_binaries () {
     my %conf       := %VM<config>;
     my $parrot_bin := %conf<bindir>;
@@ -191,6 +236,7 @@ sub build_stages () {
 
 sub MAIN () {
     parse_command_line_options();
+    read_config_files();
     find_binaries();
     build_stages();
 
