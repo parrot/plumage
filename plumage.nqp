@@ -76,6 +76,9 @@ fixup_sub_actions(eval($_ACTIONS_JSON, 'data_json'));
 
 my $_DEFAULT_CONF_JSON := '
 {
+    "parrot_user_root"   : "#HOME#/.parrot",
+    "plumage_user_root"  : "#parrot_user_root#/plumage",
+    "plumage_build_root" : "#plumage_user_root#/build"
 }
 ';
 
@@ -155,6 +158,7 @@ sub fixup_sub_actions (%actions) {
 sub parse_command_line_options () {
     my $getopts := Q:PIR{ %r = root_new ['parrot';'Getopt::Obj'] };
 
+    $getopts.push_string('config-file=s');
     $getopts.push_string('ignore-fail:%');
 
     %OPT := $getopts.get_options(@ARGS);
@@ -183,21 +187,38 @@ sub read_config_files () {
 
     # Merge together default, system, user, and option configs
     my %default := eval($_DEFAULT_CONF_JSON, 'data_json');
-    merge_tree_structures(%CONF, %default);
+    %CONF := merge_tree_structures(%CONF, %default);
 
     for @configs {
         if try(stat, as_array($_)) {
             my %conf := try(Config::JSON::ReadConfig, as_array($_));
-            merge_tree_structures(%CONF, %conf);
+            if %conf {
+                %CONF := merge_tree_structures(%CONF, %conf);
+            }
+            else {
+                say("Could not parse JSON file '" ~ $_ ~ "'.");
+            }
         }
     }
 
     _dumper(%CONF, 'CONF');
 }
 
-sub merge_tree_structures ($dest, $src) {
-    # XXXX: Stub
-    $dest := $src;
+sub merge_tree_structures ($dst, $src) {
+    for keys($src) {
+        my $d := $dst{$_};
+        my $s := $src{$_};
+
+        if  $d && does($d, 'hash')
+        &&  $s && does($s, 'hash') {
+            $dst{$_} := merge_tree_structures($d, $s);
+        }
+        else {
+            $dst{$_} := $s;
+        }
+    }
+
+    return $dst;
 }
 
 sub find_binaries () {
@@ -287,6 +308,8 @@ sub usage_info () {
 'Usage: ' ~ $PROGRAM_NAME ~ ' [<options>] <command> [<arguments>]
 
 Options:
+
+    --config-file=<path>     Read additional config file
 
     --ignore-fail            Ignore any failing build stages
     --ignore-fail=<stage>    Ignore failures only in a particular stage
@@ -403,11 +426,17 @@ sub command_install (@projects) {
 
 
 sub perform_actions_on_projects (@actions, @projects) {
+    my $cwd        := cwd();
+    my $build_root := replace_config_strings(%CONF<plumage_build_root>);
+    mkpath($build_root);
+
     for @projects {
         my %info := get_project_metadata($_);
         if %info {
             if metadata_valid(%info) {
+                chdir($build_root);
                 perform_actions_on_project(@actions, $_, %info);
+                chdir($cwd);
             }
         }
         else {
@@ -622,12 +651,37 @@ sub map (&code, @originals) {
 }
 
 sub replace_config_strings ($original) {
-    return subst($original, '\#<ident>\#', config_value);
+    my $new := $original;
+
+    repeat {
+        $original := $new;
+        $new      := subst($original, '\#<ident>\#', config_value);
+    }
+    while $new ne $original;
+
+    return $new;
 }
 
 sub config_value ($match) {
     my $key    := $match<ident>;
-    my $config := %VM<config>{$key} || %BIN{$key} || '';
+    my $config := %CONF{$key}
+               || %VM<config>{$key}
+               || %BIN{$key}
+               || %ENV{$key}
+               || '';
 
     return $config;
+}
+
+sub mkpath ($path) {
+    my @path := split('/', $path);
+    my $cur  := '';
+
+    for @path {
+        $cur := fscat(as_array($cur, $_));
+
+        unless try(stat, as_array($cur)) {
+            mkdir($cur);
+        }
+    }
 }
