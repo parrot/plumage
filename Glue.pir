@@ -110,8 +110,8 @@ them and invoke C<&handler> with the exception, C<&code>, and C<@args>.
 If C<&handler> is absent, simply return C<0> if an exception is caught.
 In other words, C<try()> implements the following pseudocode:
 
-    try        { $ret = &code(|@args)                                }
-    catch($ex) { $ret = &handler ?? &handler($ex, &code, @args) !! 0 }
+    try        { $ret := &code(|@args)                                }
+    catch($ex) { $ret := &handler ?? &handler($ex, &code, @args) !! 0 }
     return $ret;
 
 =cut
@@ -165,7 +165,7 @@ Return an array containing the keys of the C<%hash>.
 .end
 
 
-=item $found = exists(%hash, $key)
+=item $found := exists(%hash, $key)
 
 Determine if C<$key> exists in C<%hash>, returning a true value if so, and a
 false value if not.
@@ -177,6 +177,23 @@ false value if not.
     .param string key
 
     $I0 = exists hash[key]
+
+    .return($I0)
+.end
+
+
+=item $does_role := does($object, $role)
+
+Determine if C<$object> does the C<$role>, returning a true value if so, and a
+false value if not.
+
+=cut
+
+.sub 'does'
+    .param pmc    object
+    .param string role
+
+    $I0 = does object, role
 
     .return($I0)
 .end
