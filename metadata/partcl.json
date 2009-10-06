@@ -5,24 +5,27 @@
     },
     "general"      : {
         "name"     : "partcl",
-        "abstract" : "Implementation of tcl targeting the parrot VM",
+        "abstract" : "Tcl for Parrot",
         "authority": "unknown",
-        "version"  : "SVN",
+        "version"  : "HEAD",
         "license"  : {
             "type" : "Artistic License 2.0",
             "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
         },
         "copyright_holder" : "The Parrot Foundation",
         "generated_by"     : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
-        "keywords"         : ["partcl", "parrot", "TCL", "HLL"],
-        "description"      : "An implementation of Tcl 8.5.6 targeting the parrot virtual machine."
+        "keywords"         : ["partcl", "Tcl", "HLL"],
+        "description"      : "An implementation of Tcl 8.5.6 targeting Parrot."
     },
     "instructions" : {
         "fetch"    : {
-            "type" : "svn"
+            "type" : "repository"
         },
         "configure": {
-            "type" : "perl5_configure"
+            "type" : "perl5_configure",
+            "extra_args" : [
+                "--parrot-config=#parrot_config#"
+            ]
         },
         "build"    : {
             "type" : "make"
@@ -35,7 +38,7 @@
         }
     },
     "dependency-info"  : {
-        "provides"     : "partcl",
+        "provides"     : ["partcl", "tcl"],
         "requires"     : {
             "fetch"    : ["svn"],
             "configure": ["perl5"],

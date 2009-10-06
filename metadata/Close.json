@@ -21,7 +21,7 @@ another platform - for Parrot."
     },
     "instructions" : {
         "fetch"    : {
-            "type" : "svn"
+            "type" : "repository"
         },
         "configure": {
             "type" : "perl5_configure"
@@ -37,7 +37,7 @@ another platform - for Parrot."
         }
     },
     "dependency-info"  : {
-        "provides"     : "Close",
+        "provides"     : ["close"],
         "requires"     : {
             "fetch"    : ["svn"],
             "configure": ["perl5"],

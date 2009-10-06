@@ -7,7 +7,7 @@
         "name"     : "Blizkost",
         "abstract" : "Embed Perl 5 in Parrot, exposed as a standard HLL",
         "authority": "http://github.com/jnthn",
-        "version"  : "3867c2597cbea0907bd6060d344be677695099e4",
+        "version"  : "HEAD",
         "license"  : {
             "type" : "unknown",
             "uri"  : ""
@@ -22,7 +22,7 @@ from there."
     },
     "instructions" : {
         "fetch"    : {
-            "type" : "git"
+            "type" : "repository"
         },
         "configure": {
             "type" : "perl5_configure",
@@ -41,7 +41,7 @@ from there."
         }
     },
     "dependency-info"  : {
-        "provides"     : "blizkost",
+        "provides"     : ["blizkost"],
         "requires"     : {
             "fetch"    : ["git"],
             "configure": ["perl5"],

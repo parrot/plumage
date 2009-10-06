@@ -7,7 +7,7 @@
         "name"     : "decnum-dynpmcs",
         "abstract" : "Set of decimal arithmetic PMCs for the Parrot VM",
         "authority": "unknown",
-        "version"  : "SVN",
+        "version"  : "HEAD",
         "license"  : {
             "type" : "MIT",
             "uri"  : "http://www.opensource.org/licenses/mit-license.php"
@@ -15,11 +15,11 @@
         "copyright_holder" : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
         "generated_by"     : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
         "keywords"         : ["pmc", "decnumber", "dynpmc", "decimal"],
-        "description"      : "decNumber-powered BigNum and BigInt dynpmcs for the Parrot Virtual Machine"
+        "description"      : "decNumber-powered BigNum and BigInt dynpmcs for Parrot"
     },
     "instructions" : {
         "fetch"    : {
-            "type" : "svn"
+            "type" : "repository"
         },
         "configure": {
             "type" : "parrot_configure"
@@ -35,10 +35,10 @@
         }
     },
     "dependency-info"  : {
-        "provides"     : "decnum-dynpmcs",
+        "provides"     : ["decnum-dynpmcs"],
         "requires"     : {
             "fetch"    : ["svn"],
-            "configure": ["parrot"],
+            "configure": [],
             "build"    : ["perl5", "make"],
             "test"     : ["perl5", "make"],
             "install"  : ["make"],
