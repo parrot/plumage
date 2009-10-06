@@ -31,6 +31,12 @@ Metadata:
 
 Plumage:
 --------
+* Functionality:
+  * update instead of just fetch
+    * or at least a fix for git fetch when repo already exists
+  * sudo for install
+  * System and local installs
+  * Anything proto can do
 * Spec:
   * Add Stakeholders section
   * Add Usage Scenarios section
