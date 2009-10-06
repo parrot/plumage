@@ -201,7 +201,7 @@ sub read_config_files () {
         }
     }
 
-    _dumper(%CONF, 'CONF');
+    # _dumper(%CONF, 'CONF');
 }
 
 sub merge_tree_structures ($dst, $src) {
@@ -367,7 +367,20 @@ sub command_info (@projects) {
 }
 
 sub get_project_metadata ($project) {
-    return try(Config::JSON::ReadConfig, as_array('metadata/' ~ $project ~ '.json'));
+    my $json_file := fscat(as_array('metadata'), $project ~ '.json');
+    unless try(stat, as_array($json_file)) {
+        say("I don't know anything about project '" ~ $project ~ "'.");
+	return 0;
+    }
+
+    return try(Config::JSON::ReadConfig, as_array($json_file),
+               show_metadata_parse_error);
+}
+
+sub show_metadata_parse_error ($exception, &code, @args) {
+    say("Failed to parse metadata file '" ~ @args[0] ~ "': " ~ $exception);
+
+    return 0;
 }
 
 sub metadata_valid (%info) {
@@ -432,15 +445,10 @@ sub perform_actions_on_projects (@actions, @projects) {
 
     for @projects {
         my %info := get_project_metadata($_);
-        if %info {
-            if metadata_valid(%info) {
-                chdir($build_root);
-                perform_actions_on_project(@actions, $_, %info);
-                chdir($cwd);
-            }
-        }
-        else {
-            say("I don't know anything about project '" ~ $_ ~ "'.");
+        if %info && metadata_valid(%info) {
+            chdir($build_root);
+            perform_actions_on_project(@actions, $_, %info);
+            chdir($cwd);
         }
     }
 }
@@ -456,14 +464,14 @@ sub perform_actions_on_project (@actions, $project, %info) {
         if &action {
            my $result := &action($project, %info);
            if $result {
-               say('Successful.');
+               say("Successful.\n");
            }
            else {
                if $ignore_all || %ignore && %ignore{$_} {
-                   say('FAILED, but ignoring failure at user request.');
+                   say("FAILED, but ignoring failure at user request.\n");
                }
                else {
-                   say("###\n### FAILED!\n###");
+                   say("###\n### FAILED!\n###\n");
                    return 0;
                }
            }
@@ -485,6 +493,12 @@ sub perform_actions_on_project (@actions, $project, %info) {
 # FETCH
 
 sub action_fetch ($project, %info) {
+    my %repo := %info<instructions><fetch>;
+    unless %repo<type> eq 'repository' {
+        say("Don't know how to fetch " ~ $project ~ '.');
+        return 0;
+    }
+
     my %repo := %info<resources><repository>;
     if %repo {
         say("Fetching " ~ $project ~ ' ...');
@@ -493,7 +507,7 @@ sub action_fetch ($project, %info) {
         return &action($project, %repo<checkout_uri>);
     }
     else {
-        say("Don't know how to fetch " ~ project ~ ".");
+        say("Don't know how to fetch " ~ $project ~ '.');
         return 0;
     }
 }
