@@ -1,0 +1,59 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "Rakudo",
+        "abstract" : "Perl 6 on Parrot",
+        "authority": "git://github.com/rakudo",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "The Perl Foundation",
+        "generated_by"     : "Geoffrey Broadwell <geoff@broadwell.org>",
+        "keywords"         : ["Rakudo", "Perl", "Perl 6", "HLL"],
+        "description"      : "Rakudo is one of the most advanced Perl 6 compilers."
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "configure": {
+            "type" : "perl5_configure",
+            "extra_args" : [
+                "--parrot-config=#parrot_config#"
+            ]
+        },
+        "build"    : {
+            "type" : "make"
+        },
+        "test"     : {
+            "type" : "make"
+        },
+        "install"  : {
+            "type" : "make"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["rakudo", "perl6"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "configure": ["perl5"],
+            "build"    : ["perl5", "make"],
+            "test"     : ["perl5", "make"],
+            "install"  : ["make"],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/rakudo/rakudo.git",
+             "browser_uri" : "http://github.com/rakudo/rakudo",
+             "project_uri" : "http://github.com/rakudo/rakudo"
+        }
+    }
+}
