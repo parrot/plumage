@@ -2,6 +2,7 @@
 *~
 
 # Generated files
+Makefile
 *.c
 *.o
 *.pbc
