@@ -130,6 +130,7 @@ In other words, C<try()> implements the following pseudocode:
   do_handler:
     .local pmc ex
     .get_results (ex)
+    pop_eh
     eq has_handler, 0, no_handler
     $P0 = handler(ex, code, args)
     .return ($P0)
