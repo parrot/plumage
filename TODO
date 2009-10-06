@@ -16,12 +16,17 @@ Metadata:
 ---------
 * general
   * Easy way to reference CREDITS file in contributors key?
+  * Repo fetches from tip have version 'HEAD'
 * instructions
   * 'fetch' of a repository should have 'repository' as its type
-  * types must have underscores, not hyphens
+  * 'type's must have underscores, not hyphens
+  * Special case of configure type for accepting --parrot-config option?
   * What about update and cleanup?
   * What about multiple instructions per key?
     * Allow value to be either hash or array of hashes?
+* dependency-info
+  * 'provides' is always an array
+  * HLLs provide their project name and their language name
 
 
 Plumage:
