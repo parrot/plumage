@@ -30,20 +30,21 @@ help:
 plumage: plumage.pbc Glue.pbc
 	$(PBC_TO_EXE) plumage.pbc
 
-plumage.pbc: plumage.pir
-	$(PARROT) -o plumage.pbc plumage.pir
+plumage.pbc: pir/plumage.pir
+	$(PARROT) -o plumage.pbc pir/plumage.pir
 
-plumage.pir: plumage.nqp
-	$(PARROT) $(NQP_PBC) --target=pir -o plumage.pir plumage.nqp
+pir/plumage.pir: plumage.nqp
+	$(PARROT) $(NQP_PBC) --target=pir -o pir/plumage.pir plumage.nqp
 
-Glue.pbc: Glue.pir
-	$(PARROT) -o Glue.pbc Glue.pir
+Glue.pbc: pir/Glue.pir
+	$(PARROT) -o Glue.pbc pir/Glue.pir
+
 
 # Convenience
 realclean: clean
 
 clean:
-	$(RM_F) "*~" "*.pbc" "*$(O)" "*.c" plumage.pir plumage$(EXE) Makefile
+	$(RM_F) "*~" "*.pbc" "*$(O)" "*.c" pir/plumage.pir plumage$(EXE) Makefile
 
 # Local variables:
 #   mode: makefile

@@ -1,5 +1,6 @@
 # Editor backup files
 *~
+*.sw?
 
 # Generated files
 Makefile

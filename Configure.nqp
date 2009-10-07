@@ -14,7 +14,7 @@ MAIN();
 
 sub MAIN () {
     # Load Parrot config and glue functions
-    load_bytecode('Glue.pir');
+    load_bytecode('pir/Glue.pir');
 
     # Slurp in the unconfigured Makefile text
     my $unconfigured := slurp(@ARGS[0] || 'Makefile.in');
