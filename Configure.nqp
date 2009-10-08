@@ -14,10 +14,10 @@ MAIN();
 
 sub MAIN () {
     # Load Parrot config and glue functions
-    load_bytecode('pir/Glue.pir');
+    load_bytecode('src/lib/Glue.pir');
 
     # Slurp in the unconfigured Makefile text
-    my $unconfigured := slurp(@ARGS[0] || 'Makefile.in');
+    my $unconfigured := slurp(@ARGS[0] || 'src/Makefile.in');
 
     # Replace all of the @foo@ markers
     my $replaced := subst($unconfigured, '\@<ident>\@', replacement);

@@ -27,24 +27,24 @@ help:
 	@echo "  help:        Print this help message"
 	@echo ""
 
-plumage: plumage.pbc Glue.pbc
-	$(PBC_TO_EXE) plumage.pbc
+plumage: src/plumage.pbc src/lib/Glue.pbc
+	$(PBC_TO_EXE) src/plumage.pbc
 
-plumage.pbc: pir/plumage.pir
-	$(PARROT) -o plumage.pbc pir/plumage.pir
+src/plumage.pbc: src/lib/plumage.pir
+	$(PARROT) -o src/plumage.pbc src/lib/plumage.pir
 
-pir/plumage.pir: plumage.nqp
-	$(PARROT) $(NQP_PBC) --target=pir -o pir/plumage.pir plumage.nqp
+src/lib/plumage.pir: src/plumage.nqp
+	$(PARROT) $(NQP_PBC) --target=pir -o src/lib/plumage.pir src/plumage.nqp
 
-Glue.pbc: pir/Glue.pir
-	$(PARROT) -o Glue.pbc pir/Glue.pir
+src/lib/Glue.pbc: src/lib/Glue.pir
+	$(PARROT) -o src/lib/Glue.pbc src/lib/Glue.pir
 
 
 # Convenience
 realclean: clean
 
 clean:
-	$(RM_F) "*~" "*.pbc" "*$(O)" "*.c" pir/plumage.pir plumage$(EXE) Makefile
+	$(RM_F) "*~" "src/lib/*.pbc" "src/*.pbc" "*$(O)" "src/*.c" src/lib/plumage.pir plumage$(EXE) Makefile
 
 # Local variables:
 #   mode: makefile

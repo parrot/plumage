@@ -99,7 +99,7 @@ our %CONF;
 
 sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
-    load_bytecode('Glue.pbc');
+    load_bytecode('src/lib/Glue.pbc');
 
     # Process command line options
     load_bytecode('Getopt/Obj.pbc');

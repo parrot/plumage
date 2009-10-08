@@ -9,7 +9,7 @@
 
 
 # First, load the "glue builtins" borrowed from Rakudo.
-load_bytecode('pir/Glue.pir');
+load_bytecode('src/lib/Glue.pir');
 say("Glue loaded.\n");
 
 # Inline PIR
