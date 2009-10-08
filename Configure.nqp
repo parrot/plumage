@@ -31,8 +31,11 @@ sub MAIN () {
     spew(@ARGS[1] || 'Makefile', $replaced);
 
     # Give the user a hint of next action
+    say("Hello, I'm Configure. My job is to poke and prod your system to figure out how to build Plumage.\n");
+
     say("Configure completed for platform '" ~ $OS ~ "'.");
-    say("You probably want to run '" ~ %VM<config><make> ~ "' next.");
+    say("You can now type '" ~ %VM<config><make> ~ "' to build Plumage.\n");
+    say("Happy Hacking,\n\tThe Plumage Team");
 }
 
 sub replacement ($match) {
