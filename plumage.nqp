@@ -370,7 +370,7 @@ sub get_project_metadata ($project) {
     my $json_file := fscat(as_array('metadata'), $project ~ '.json');
     unless try(stat, as_array($json_file)) {
         say("I don't know anything about project '" ~ $project ~ "'.");
-	return 0;
+        return 0;
     }
 
     return try(Config::JSON::ReadConfig, as_array($json_file),
@@ -513,10 +513,47 @@ sub action_fetch ($project, %info) {
 }
 
 sub fetch_git ($project, $uri) {
-    return do_run('git', 'clone', $uri, $project);
+    if try(stat, as_array($project)) {
+        if try(stat, as_array(fscat(as_array($project, '.git')))) {
+            my $cwd := cwd();
+            chdir($project);
+
+            my $success := do_run('git', 'pull');
+
+            chdir($cwd);
+
+            return $success;
+        }
+        else {
+            return report_fetch_collision('Git', $project);
+        }
+    }
+    else {
+        return do_run('git', 'clone', $uri, $project);
+    }
 }
+
 sub fetch_svn ($project, $uri) {
-    return do_run('svn', 'checkout', $uri, $project);
+    if  try(stat, as_array($project))
+    && !try(stat, as_array(fscat(as_array($project, '.svn')))) {
+        return report_fetch_collision('Subversion', $project);
+    }
+    else {
+        return do_run('svn', 'checkout', $uri, $project);
+    }
+}
+
+sub report_fetch_collision ($type, $project) {
+    my $build_root  := replace_config_strings(%CONF<plumage_build_root>);
+    my $project_dir := fscat(as_array($build_root, $project));
+
+    say("\n"
+        ~ $project ~ ' is a ' ~ $type ~ " project, but the fetch directory:\n"
+        ~ "\n    " ~ $project_dir ~ "\n\n"
+        ~ "already exists and is not the right type.\n"
+        ~ 'Please remove or rename it, then rerun ' ~ $PROGRAM_NAME ~ ".\n");
+
+    return 0;
 }
 
 
