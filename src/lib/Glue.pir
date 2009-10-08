@@ -252,6 +252,37 @@ C<subst()>.
 .end
 
 
+=item @matches := all_matches($regex, $text)
+
+Find all matches (C<:g> style, not C<:exhaustive>) for C<$regex> in the
+C<$text>.  The C<$regex> must be a regex object returned by C<rx()>.
+
+=cut
+
+.sub 'all_matches'
+    .param pmc    regex
+    .param string text
+
+    # Find all matches in the original string
+    .local pmc matches, match
+    matches = root_new ['parrot';'ResizablePMCArray']
+    match   = regex(text)
+    unless match goto done_matching
+
+  match_loop:
+    push matches, match
+
+    $I0   = match.'to'()
+    match = regex(match, 'continue' => $I0)
+
+    unless match goto done_matching
+    goto match_loop
+  done_matching:
+
+    .return(matches)
+.end
+
+
 =item $edited := subst($original, $regex, $replacement)
 
 Substitute all matches of the C<$regex> in the C<$original> string with the
@@ -270,26 +301,15 @@ for that match.
     .param pmc    replacement
 
     # Find all matches in the original string
-    .local pmc matches, match
-    matches = root_new ['parrot';'ResizablePMCArray']
-    match   = regex(original)
-    unless match goto done_matching
-
-  match_loop:
-    push matches, match
-
-    $I0 = match.'to'()
-    match = regex(match, 'continue' => $I0)
-
-    unless match goto done_matching
-    goto match_loop
-  done_matching:
+    .local pmc matches
+    matches = all_matches(regex, original)
 
     # Do the substitutions on a clone of the original string
     .local string edited
     edited = clone original
 
     # Now replace all the matched substrings
+    .local pmc match
     .local int offset
     offset = 0
   replace_loop:

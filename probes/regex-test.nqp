@@ -6,8 +6,11 @@
 #   $ parrot_nqp regex-test.nqp
 
 
-# Load Glue module, which includes the regex compiler function rx()
+# Load Glue module, which includes the regex helper functions
 load_bytecode('src/lib/Glue.pir');
+
+# Load data structure dumper
+load_bytecode('dumper.pbc');
 
 # Wheee, probe testing ...
 my $regex_source    := 'b+c';
@@ -22,3 +25,6 @@ say($match_object.to());
 $match_object := $regex_object($match_object, :continue($match_object.to()));
 
 say($match_object);
+
+# Let's look at the entire match structure now
+_dumper(all_matches($regex_object, $string_to_match), 'ALL');
