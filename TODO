@@ -31,6 +31,9 @@ Metadata:
 
 Plumage:
 --------
+* Hosting:
+  * allison looking into parrot.org
+  * moritz gave access to a Debian Lenny box
 * Functionality:
   * update instead of just fetch
     * or at least a fix for git fetch when repo already exists
