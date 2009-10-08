@@ -6,7 +6,7 @@
     "general"      : {
         "name"     : "partcl",
         "abstract" : "Tcl for Parrot",
-        "authority": "unknown",
+        "authority": "git://github.com/partcl",
         "version"  : "HEAD",
         "license"  : {
             "type" : "Artistic License 2.0",
@@ -40,7 +40,7 @@
     "dependency-info"  : {
         "provides"     : ["partcl", "tcl"],
         "requires"     : {
-            "fetch"    : ["svn"],
+            "fetch"    : ["git"],
             "configure": ["perl5"],
             "build"    : ["perl5", "make"],
             "test"     : ["perl5", "make"],
@@ -50,10 +50,10 @@
     },
     "resources"            : {
         "repository"       : {
-             "type"        : "svn",
-             "checkout_uri": "http://partcl.googlecode.com/svn/trunk",
-             "browser_uri" : "http://code.google.com/p/partcl/source/browse",
-             "project_uri" : "http://code.google.com/p/partcl/"
+             "type"        : "git",
+             "checkout_uri": "git://github.com/partcl/partcl.git",
+             "browser_uri" : "http://github.com/partcl/partcl",
+             "project_uri" : "http://github.com/partcl/partcl"
         }
     }
 }
