@@ -23,11 +23,11 @@ sub MAIN () {
     my $unconfigured := slurp(@ARGS[0] || 'src/Makefile.in');
 
     # Replace all of the @foo@ markers
-    my $replaced := subst($unconfigured, '\@<ident>\@', replacement);
+    my $replaced := subst($unconfigured, rx('\@<ident>\@'), replacement);
 
     # Fix paths on Windows
     if ($OS eq 'MSWin32') {
-        $replaced := subst($replaced, '/', '\\');
+        $replaced := subst($replaced, rx('/'), '\\');
     }
 
     # Spew out the final makefile

@@ -233,11 +233,30 @@ Write the string C<$contents> to a file.
 .end
 
 
+=item $regex_object := rx($regex_source)
+
+Compile C<$regex_source> (a string representing the source code form of a
+Perl 6 Regex) into a C<$regex_object>, suitable for using in C<match()> and
+C<subst()>.
+
+=cut
+
+.sub 'rx'
+    .param string source
+
+    .local pmc p6regex, object
+    p6regex = compreg 'PGE::Perl6Regex'
+    object  = p6regex(source)
+
+    .return(object)
+.end
+
+
 =item $edited := subst($original, $regex, $replacement)
 
 Substitute all matches of the C<$regex> in the C<$original> string with the
-C<$replacement>, and return the edited string.  The C<$regex> must be a simple
-string to be compiled using the C<PGE::Perl6Regex> language.
+C<$replacement>, and return the edited string.  The C<$regex> must be a regex
+object returned by the C<rx()> function.
 
 The C<$replacement> may be either a simple string or a sub that will be called
 with each match object in turn, and must return the proper replacement string
@@ -247,25 +266,20 @@ for that match.
 
 .sub 'subst'
     .param string original
-    .param string regex
+    .param pmc    regex
     .param pmc    replacement
-
-    # Compile the string regex into a regex object
-    .local pmc p6regex, matcher
-    p6regex = compreg 'PGE::Perl6Regex'
-    matcher = p6regex(regex)
 
     # Find all matches in the original string
     .local pmc matches, match
     matches = root_new ['parrot';'ResizablePMCArray']
-    match   = matcher(original)
+    match   = regex(original)
     unless match goto done_matching
 
   match_loop:
     push matches, match
 
     $I0 = match.'to'()
-    match = matcher(match, 'continue' => $I0)
+    match = regex(match, 'continue' => $I0)
 
     unless match goto done_matching
     goto match_loop
