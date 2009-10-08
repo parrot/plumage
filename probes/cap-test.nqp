@@ -3,9 +3,7 @@
 ###
 
 # TO USE:
-#   * Make sure parrot and parrot_config are in your path, then:
-#   $ export  NQP_PBC=$(parrot_config libdir)$(parrot_config versiondir)/languages/nqp/nqp.pbc
-#   $ parrot $NQP_PBC cap-test.nqp
+#   $ parrot_nqp cap-test.nqp
 
 
 # First, load the "glue builtins" borrowed from Rakudo.

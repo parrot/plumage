@@ -3,9 +3,8 @@
 ###
 
 # TO USE:
-#   * Make sure parrot and parrot_config are in your path, then:
-#   $ export  NQP_PBC=$(parrot_config libdir)$(parrot_config versiondir)/languages/nqp/nqp.pbc
-#   $ parrot $NQP_PBC json-test.nqp
+#   $ parrot_nqp json-test.nqp
+
 
 # First, load the Parrot data structure dumper module
 load_bytecode('dumper.pbc');
