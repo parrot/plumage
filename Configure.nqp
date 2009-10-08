@@ -13,6 +13,9 @@ our $OS;
 MAIN();
 
 sub MAIN () {
+    # Wave to the friendly users
+    say("Hello, I'm Configure. My job is to poke and prod\nyour system to figure out how to build Plumage.\n");
+
     # Load Parrot config and glue functions
     load_bytecode('src/lib/Glue.pir');
 
@@ -31,8 +34,6 @@ sub MAIN () {
     spew(@ARGS[1] || 'Makefile', $replaced);
 
     # Give the user a hint of next action
-    say("Hello, I'm Configure. My job is to poke and prod your system to figure out how to build Plumage.\n");
-
     say("Configure completed for platform '" ~ $OS ~ "'.");
     say("You can now type '" ~ %VM<config><make> ~ "' to build Plumage.\n");
     say("Happy Hacking,\n\tThe Plumage Team");
