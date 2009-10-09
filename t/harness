@@ -41,19 +41,16 @@ sub MAIN () {
 
         for $output {
             my $line := $_;
-            say("line= " ~ $line );
+            #say("line= " ~ $line );
             #say("line length=" ~ length($line) );
             if( $line ) {
                 $curr_test++;
                 my $line_parts := split('ok ',$line);
-                say("linepart0=" ~ $line_parts[0]);
-                say("linepart1=" ~ $line_parts[1]);
-                say("curr_test=" ~ $curr_test );
-                if ($line_parts[0] eq 'not') {
-                    say("failed test " ~ $curr_test);
+                if ($line_parts[0] eq 'not ') {
+                    #say("failed test " ~ $curr_test);
                     $failed++;
                 } elsif ($line_parts[1] == $curr_test) {
-                    say("passed test " ~ $curr_test);
+                    #say("passed test " ~ $curr_test);
                     $passed++;
                 }
             }
