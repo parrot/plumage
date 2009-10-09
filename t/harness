@@ -1,0 +1,60 @@
+#! parrot_nqp
+
+our @ARGS;
+MAIN();
+
+# TAP grammar in ABNF
+# http://testanything.org/wiki/index.php/TAP_at_IETF:_Draft_Standard#Grammar
+
+# TODO:
+# verbose mode
+
+sub MAIN () {
+    load_bytecode('src/lib/Glue.pbc');
+    for @ARGS {
+        my $filename := $_;
+
+        print($filename ~ '...');
+
+        my $file        := slurp($_);
+        my $test_output := qx('parrot_nqp', $filename);
+        my $output      := split("\n",$test_output);
+        my @plan_parts  := split('..',$output[0]);
+        my $num_tests   := @plan_parts[1];
+        my $curr_test   := 0;
+        my $passed      := 0;
+        my $failed      := 0;
+
+        $output.shift;  # we don't need the plan anymore
+
+        for $output {
+            my $line := $_;
+            if ( $line ) {
+                $curr_test++;
+                my $line_parts := split('ok ',$line);
+                if ($line_parts[0] eq 'not ') {
+                    #say("failed test " ~ $curr_test);
+                    $failed++;
+                } elsif ($line_parts[1] == $curr_test) {
+                    #say("passed test " ~ $curr_test);
+                    $passed++;
+                }
+            }
+        }
+        if ($failed) {
+            say('failed');
+        } else {
+            say('passed');
+        }
+        if( $num_tests != $curr_test ) {
+            say("Planned to run " ~ $num_tests ~ " tests but ran " ~ $curr_test ~ " tests");
+            say("FAILED");
+        } else {
+            if ($failed) {
+                say("FAILED " ~ $failed ~ "/" ~ $curr_test ~ " tests");
+            } else {
+                say("PASSED " ~ $curr_test ~ " tests");
+            }
+        }
+    }
+}

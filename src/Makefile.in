@@ -14,6 +14,7 @@ PARROT_LIB  = @libdir@@versiondir@
 
 PARROT      = $(PARROT_BIN)/parrot
 PBC_TO_EXE  = $(PARROT_BIN)/pbc_to_exe
+PARROT_NQP  = $(PARROT_BIN)/parrot_nqp
 NQP_PBC     = $(PARROT_LIB)/languages/nqp/nqp.pbc
 
 # The default target
@@ -52,6 +53,9 @@ realclean: clean
 clean:
 	$(RM_F) "*~" "src/lib/*.pbc" "src/*.pbc" "src/*$(O)" "src/*.c" \
 	        src/plumage.pir src/plumage$(EXE) plumage$(EXE) Makefile
+
+test:
+	$(PARROT_NQP) t/harness t/*.t
 
 # Local variables:
 #   mode: makefile

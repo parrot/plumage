@@ -251,7 +251,6 @@ C<subst()>.
     .return(object)
 .end
 
-
 =item @matches := all_matches($regex, $text)
 
 Find all matches (C<:g> style, not C<:exhaustive>) for C<$regex> in the
