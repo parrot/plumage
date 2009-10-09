@@ -1,3 +1,4 @@
+#! parrot_nqp
 
 our @ARGS;
 MAIN();
@@ -5,43 +6,30 @@ MAIN();
 # TAP grammar in ABNF
 # http://testanything.org/wiki/index.php/TAP_at_IETF:_Draft_Standard#Grammar
 
+# TODO:
+# verbose mode
+
 sub MAIN () {
     load_bytecode('src/lib/Glue.pir');
     for @ARGS {
-        my $file := slurp($_);
         my $filename := $_;
+
         print($filename ~ '...');
-        my $test_output := Q:PIR {
-            .local string cmd
-            .local pmc pio
-            $P0 = find_lex '$filename'
-            $S0 = $P0
-            cmd = 'parrot_nqp ' . $S0
-            pio = open cmd, 'rp'
-            unless pio goto err_qx
-            pio.'encoding'('utf8')
-            $P0 = pio.'readall'()
-            pio.'close'()
-            %r = $P0
 
-          err_qx:
-            unless pio goto done
-            $S1 = 'Error running parrot_nqp on ' . $S0
-            say $S1
-          done:
-        };
-        my $output    := split("\n",$test_output);
-        my @nums      := split('..',$output[0]);
-        my $num_tests := @nums[1];
-        my $curr_test := 0;
-        my $passed    := 0;
-        my $failed    := 0;
+        my $file        := slurp($_);
+        my $test_output := qx('parrot_nqp', $filename);
+        my $output      := split("\n",$test_output);
+        my @plan_parts  := split('..',$output[0]);
+        my $num_tests   := @plan_parts[1];
+        my $curr_test   := 0;
+        my $passed      := 0;
+        my $failed      := 0;
 
-        $output.shift;
+        $output.shift;  # we don't need the plan anymore
 
         for $output {
             my $line := $_;
-            if( $line ) {
+            if ( $line ) {
                 $curr_test++;
                 my $line_parts := split('ok ',$line);
                 if ($line_parts[0] eq 'not ') {
