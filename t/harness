@@ -10,7 +10,7 @@ MAIN();
 # verbose mode
 
 sub MAIN () {
-    load_bytecode('src/lib/Glue.pir');
+    load_bytecode('src/lib/Glue.pbc');
     for @ARGS {
         my $filename := $_;
 
