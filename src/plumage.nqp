@@ -706,7 +706,7 @@ sub replace_config_strings ($original) {
 
     repeat {
         $original := $new;
-        $new      := subst($original, '\#<ident>\#', config_value);
+        $new      := subst($original, rx('\#<ident>\#'), config_value);
     }
     while $new ne $original;
 
