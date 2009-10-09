@@ -2,12 +2,15 @@
 our @ARGS;
 MAIN();
 
+# TAP grammar in ABNF
+# http://testanything.org/wiki/index.php/TAP_at_IETF:_Draft_Standard#Grammar
+
 sub MAIN () {
     load_bytecode('src/lib/Glue.pir');
-    say("I am the test harness, bow before me.");
     for @ARGS {
         my $file := slurp($_);
         my $filename := $_;
+        print($filename ~ '...');
         my $test_output := Q:PIR {
             .local string cmd
             .local pmc pio
@@ -26,31 +29,49 @@ sub MAIN () {
             say 'bad shit'
           done:
         };
-        my @output    := split("\n",$test_output);
-        my @nums      := split('..',@output[0]);
+        my $output    := split("\n",$test_output);
+        my @nums      := split('..',$output[0]);
         my $num_tests := @nums[1];
-        my $curr_test := 1;
+        my $curr_test := 0;
         my $passed    := 0;
         my $failed    := 0;
-        for @output {
-            my $line := $_;
-            say("looking at line: '" ~ $line ~ "'" );
-            my @line_parts := split('ok ',$line);
+        #print("test_output=" ~ $test_output );
 
-            if (@line_parts[0] == $curr_test) {
-                say("passed test " ~ $curr_test);
+        $output.shift;
+
+        for $output {
+            my $line := $_;
+            say("line= " ~ $line );
+            #say("line length=" ~ length($line) );
+            if( $line ) {
                 $curr_test++;
-                $passed++;
-            } elsif (@line_parts[0] == 'not') {
-                say("failed test " ~ $curr_test);
-                $curr_test++;
-                $failed++;
+                my $line_parts := split('ok ',$line);
+                say("linepart0=" ~ $line_parts[0]);
+                say("linepart1=" ~ $line_parts[1]);
+                say("curr_test=" ~ $curr_test );
+                if ($line_parts[0] eq 'not') {
+                    say("failed test " ~ $curr_test);
+                    $failed++;
+                } elsif ($line_parts[1] == $curr_test) {
+                    say("passed test " ~ $curr_test);
+                    $passed++;
+                }
             }
         }
         if ($failed) {
-            say("FAILED " ~ $failed ~ " tests out of " ~ $curr_test);
-        } elsif( $num_tests != $curr_test ) {
+            say('failed');
+        } else {
+            say('passed');
+        }
+        if( $num_tests != $curr_test ) {
             say("Planned to run " ~ $num_tests ~ " tests but ran " ~ $curr_test ~ " tests");
+            say("FAILED");
+        } else {
+            if ($failed) {
+                say("FAILED " ~ $failed ~ "/" ~ $curr_test ~ " tests");
+            } else {
+                say("PASSED " ~ $curr_test ~ " tests");
+            }
         }
     }
 }

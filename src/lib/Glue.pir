@@ -251,6 +251,17 @@ C<subst()>.
     .return(object)
 .end
 
+=item $length := length($string)
+
+Returns the length of a string
+
+=cut
+
+.sub length
+    .param string str
+    $I0 = length str
+    .return($I0)
+.end
 
 =item @matches := all_matches($regex, $text)
 
