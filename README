@@ -25,12 +25,9 @@ Parrot's NQP interpreter:
   $ parrot_nqp Configure.nqp
   $ make
 
-If your parrot does not have a parrot_nqp binary, then you can achieve
-the same result in a somewhat more longwinded fashion:
-
-  $ export NQP_PBC=$(parrot_config libdir)$(parrot_config versiondir)/languages/nqp/nqp.pbc
-  $ parrot $NQP_PBC Configure.nqp
-  $ make
+If your Parrot does not have a parrot_nqp binary, this is a strong indication
+that your Parrot is too old, and you will need to upgrade it before building
+Parrot Plumage.
 
 
 CONTRIBUTING
