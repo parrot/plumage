@@ -15,7 +15,6 @@ PARROT_LIB  = @libdir@@versiondir@
 PARROT      = $(PARROT_BIN)/parrot
 PBC_TO_EXE  = $(PARROT_BIN)/pbc_to_exe
 PARROT_NQP  = $(PARROT_BIN)/parrot_nqp
-NQP_PBC     = $(PARROT_LIB)/languages/nqp/nqp.pbc
 
 # The default target
 all: plumage
@@ -41,7 +40,7 @@ src/plumage.pbc: src/plumage.pir
 	$(PARROT) -o src/plumage.pbc src/plumage.pir
 
 src/plumage.pir: src/plumage.nqp
-	$(PARROT) $(NQP_PBC) --target=pir -o src/plumage.pir src/plumage.nqp
+	$(PARROT_NQP) --target=pir -o src/plumage.pir src/plumage.nqp
 
 src/lib/Glue.pbc: src/lib/Glue.pir
 	$(PARROT) -o src/lib/Glue.pbc src/lib/Glue.pir
