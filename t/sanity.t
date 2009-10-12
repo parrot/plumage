@@ -3,7 +3,7 @@ our @ARGS;
 MAIN();
 
 sub MAIN () {
-    load_bytecode('src/lib/Glue.pir');
+    load_bytecode('src/lib/Glue.pbc');
     my $status    := run('plumage');
     my $num_tests := 2;
     say("1.." ~ $num_tests);
