@@ -3,7 +3,7 @@ our @ARGS;
 MAIN();
 
 sub MAIN () {
-    my $num_tests := 6;
+    my $num_tests := 8;
     load_bytecode('src/lib/Glue.pbc');
     Q:PIR{
         .local pmc c
@@ -16,6 +16,7 @@ sub MAIN () {
     test_invalid();
     test_version();
     test_plumage_invalid();
+    test_plumage_usage();
 }
 
 sub test_invalid() {
@@ -31,6 +32,11 @@ sub test_version() {
     like($output,':s Parrot Plumage');
     like($output,':s Parrot Foundation');
     like($output,':s Artistic License');
+}
+sub test_plumage_usage() {
+    my $output := qx('./plumage','usage');
+    like($output,':s Print program version and copyright');
+    like($output,':s Print info about a particular project');
 }
 
 sub test_plumage_invalid() {
