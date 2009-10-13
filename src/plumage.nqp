@@ -290,6 +290,7 @@ sub execute_command ($command) {
     }
     else {
         say("I don't know how to '" ~ $command ~ "'!");
+        Q:PIR{ exit 1 };
     }
 }
 

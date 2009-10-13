@@ -17,8 +17,9 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
 =item $status_code := run($command, $and, $args, ...)
 
-Spawn the command with the given arguments as a new process; return
-the spawn status code when the process exits.
+Spawn the command with the given arguments as a new process; returns
+the status code of the spawned process, which is equal the the result
+of the waitpid system call, right bitshifted by 8.
 
 =cut
 
@@ -26,7 +27,11 @@ the spawn status code when the process exits.
     .param pmc command_and_args :slurpy
     .local int status
 
+    # returns the result of waitpid
     status = spawnw command_and_args
+
+    # return code is waitpid >> 8
+    shr status, status, 8
 
     .return (status)
 .end

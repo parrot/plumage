@@ -27,17 +27,17 @@ sub MAIN () {
 
         $output.shift;  # we don't need the plan anymore
 
+        # TODO: allow comments
         for $output {
             my $line := $_;
             if ( $line ) {
-                $curr_test++;
                 my $line_parts := split('ok ',$line);
                 if ($line_parts[0] eq 'not ') {
-                    #say("failed test " ~ $curr_test);
                     $failed++;
-                } elsif ($line_parts[1] == $curr_test) {
-                    #say("passed test " ~ $curr_test);
+                    $curr_test++;
+                } elsif ($line_parts[1] == ($curr_test+1)) {
                     $passed++;
+                    $curr_test++;
                 }
             }
         }
