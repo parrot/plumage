@@ -3,7 +3,7 @@ our @ARGS;
 MAIN();
 
 sub MAIN () {
-    my $num_tests := 8;
+    my $num_tests := 10;
     load_bytecode('src/lib/Glue.pbc');
     Q:PIR{
         .local pmc c
@@ -17,6 +17,13 @@ sub MAIN () {
     test_version();
     test_plumage_invalid();
     test_plumage_usage();
+    test_plumage_info();
+}
+
+sub test_plumage_info() {
+    my $output := qx('./plumage','info','rakudo');
+    like($output,':s Perl 6 on Parrot');
+    like($output,'dependency\-info');
 }
 
 sub test_invalid() {
