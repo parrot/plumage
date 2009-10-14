@@ -11,6 +11,9 @@ MAIN();
 
 sub MAIN () {
     load_bytecode('src/lib/Glue.pbc');
+    my $total_passed:= 0;
+    my $total_failed:= 0;
+
     for @ARGS {
         my $filename := $_;
 
@@ -42,19 +45,21 @@ sub MAIN () {
             }
         }
         if ($failed) {
-            say('failed');
+            say('failed ' ~ $failed ~ '/' ~ $num_tests ~ ' tests');
         } else {
-            say('passed');
+            say('passed ' ~ $curr_test ~ ' tests');
         }
+        $total_passed := $total_passed + $passed;
+        $total_failed := $total_failed + $failed;
+
         if( $num_tests != $curr_test ) {
             say("Planned to run " ~ $num_tests ~ " tests but ran " ~ $curr_test ~ " tests");
             say("FAILED");
-        } else {
-            if ($failed) {
-                say("FAILED " ~ $failed ~ "/" ~ $curr_test ~ " tests");
-            } else {
-                say("PASSED " ~ $curr_test ~ " tests");
-            }
         }
+    }
+    if ($total_failed) {
+        say("FAILED " ~ $total_failed ~ '/' ~ ($total_passed+$total_failed));
+    } else {
+        say("PASSED " ~ $total_passed ~ ' tests');
     }
 }
