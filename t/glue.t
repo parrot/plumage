@@ -4,7 +4,7 @@ our @ARGS;
 MAIN();
 
 sub MAIN () {
-    my $num_tests := 4;
+    my $num_tests := 7;
     load_bytecode('src/lib/Glue.pbc');
     Q:PIR{
         .local pmc c
@@ -15,7 +15,19 @@ sub MAIN () {
     plan($num_tests);
     test_exists();
     test_subst();
+    test_join();
+    test_split();
 }
+sub test_join() {
+    is('a,b,c,d,e,f', join(',',('a','b','c','d','e','f')));
+}
+
+sub test_split() {
+    my @stuff := split('/', '1/5');
+    is(@stuff[0],1);
+    is(@stuff[1],5);
+}
+
 sub test_subst() {
     my $string := 'chewbacca';
     my $subst  := subst($string,rx('a'),'x');
