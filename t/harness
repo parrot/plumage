@@ -13,9 +13,12 @@ sub MAIN () {
     load_bytecode('src/lib/Glue.pbc');
     my $total_passed:= 0;
     my $total_failed:= 0;
+    my $total_files := 0;
+    my $failed_files:= 0;
 
     for @ARGS {
         my $filename := $_;
+        $total_files++;
 
         print($filename ~ '...');
 
@@ -50,7 +53,8 @@ sub MAIN () {
         if ($failed) {
             say('failed ' ~ $failed ~ '/' ~ $num_tests ~ ' tests');
         } elsif( @plan_parts[0] != 1 || $num_tests < 0) {
-            say('INVALID PLAN');
+            say('INVALID PLAN: ' ~ join('',@plan_parts));
+            $failed_files++;
         } else {
             say('passed ' ~ $curr_test ~ ' tests');
         }
@@ -64,7 +68,9 @@ sub MAIN () {
     }
     if ($total_failed) {
         say("FAILED " ~ $total_failed ~ '/' ~ ($total_passed+$total_failed));
+    } elsif ($failed_files) {
+        say("FAILED " ~ $failed_files ~ " files, PASSED " ~ $total_passed ~ ' tests');
     } else {
-        say("PASSED " ~ $total_passed ~ ' tests');
+        say("PASSED " ~ $total_passed ~ ' tests in ' ~ $total_files ~ ' files');
     }
 }
