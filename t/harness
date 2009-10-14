@@ -34,7 +34,6 @@ sub MAIN () {
 
         $output.shift;  # we don't need the plan anymore
 
-        # TODO: allow comments
         for $output {
             my $line := $_;
             if ( $line ) {
