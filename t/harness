@@ -22,7 +22,10 @@ sub MAIN () {
         my $file        := slurp($_);
         my $test_output := qx('parrot_nqp', $filename);
         my $output      := split("\n",$test_output);
+
+        # TODO: warn if no/invalid plan
         my @plan_parts  := split('..',$output[0]);
+
         my $num_tests   := @plan_parts[1];
         my $curr_test   := 0;
         my $passed      := 0;
@@ -35,10 +38,12 @@ sub MAIN () {
             my $line := $_;
             if ( $line ) {
                 my $line_parts := split('ok ',$line);
+                my $test_number:= $line_parts[1];
+
                 if ($line_parts[0] eq 'not ') {
                     $failed++;
                     $curr_test++;
-                } elsif ($line_parts[1] == ($curr_test+1)) {
+                } elsif ($test_number == ($curr_test+1)) {
                     $passed++;
                     $curr_test++;
                 }

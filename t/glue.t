@@ -4,7 +4,7 @@ our @ARGS;
 MAIN();
 
 sub MAIN () {
-    my $num_tests := 2;
+    my $num_tests := 4;
     load_bytecode('src/lib/Glue.pbc');
     Q:PIR{
         .local pmc c
@@ -14,6 +14,13 @@ sub MAIN () {
     };
     plan($num_tests);
     test_exists();
+    test_subst();
+}
+sub test_subst() {
+    my $string := 'chewbacca';
+    my $subst  := subst($string,rx('a'),'x');
+    is($subst,'chewbxccx');
+    is($string,'chewbacca'); # does it on a clone
 }
 
 sub test_exists() {
