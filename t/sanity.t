@@ -28,19 +28,19 @@ sub MAIN () {
 }
 sub test_plumage_no_args() {
     my $output := qx('./plumage');
-    like($output,':s Print program version and copyright');
-    like($output,':s Print info about a particular project');
+    like($output,':s Print program version and copyright','no args give usage');
+    like($output,':s Print info about a particular project','no args give usage');
 }
 
 sub test_plumage_fetch_no_args() {
     my $output := qx('./plumage','fetch');
-    like($output,':s Please include the name of the project you wish info for');
+    like($output,':s Please include the name of the project you wish info for', 'plumage fetch no args');
 }
 
 sub test_plumage_info() {
     my $output := qx('./plumage','info','rakudo');
-    like($output,':s Perl 6 on Parrot');
-    like($output,'dependency\-info');
+    like($output,':s Perl 6 on Parrot', 'info rakudo');
+    like($output,'dependency\-info', 'info rakudo');
 }
 
 sub test_plumage_configure_invalid() {
@@ -70,17 +70,17 @@ sub test_plumage_test_invalid() {
 
 sub test_invalid() {
     my $status := run('invalidjunkdoesnotexist');
-    ok($status == 255); #,'invalidjunk returns false');
+    ok($status == 255,'run()ing invalidjunk returns false');
 }
 
 sub test_version() {
     my $status := run('./plumage','version');
-    ok(!$status); # ,'plumage version returns true');
+    ok(!$status,'plumage version returns true');
 
     my $output := qx('./plumage','version');
-    like($output,':s Parrot Plumage');
-    like($output,':s Parrot Foundation');
-    like($output,':s Artistic License');
+    like($output,':s Parrot Plumage', 'plumage version knows its name');
+    like($output,':s Parrot Foundation','version mentions Parrot Foundation');
+    like($output,':s Artistic License','version mentions Artistic License');
 }
 sub test_plumage_usage() {
     my $output := qx('./plumage','usage');
@@ -90,5 +90,5 @@ sub test_plumage_usage() {
 
 sub test_plumage_invalid() {
     my $status := run('./plumage','asdfversion');
-    ok($status == 1) #,'plumage returns false for invalid stuff');
+    ok($status == 1,'plumage returns false for invalid stuff');
 }

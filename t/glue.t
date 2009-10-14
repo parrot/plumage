@@ -19,27 +19,27 @@ sub MAIN () {
     test_split();
 }
 sub test_join() {
-    is('a,b,c,d,e,f', join(',',('a','b','c','d','e','f')));
+    is('a,b,c,d,e,f', join(',',('a','b','c','d','e','f')), 'join works');
 }
 
 sub test_split() {
     my @stuff := split('/', '1/5');
-    is(@stuff[0],1);
-    is(@stuff[1],5);
+    is(@stuff[0],1,'split works');
+    is(@stuff[1],5,'split works');
 }
 
 sub test_subst() {
     my $string := 'chewbacca';
     my $subst  := subst($string,rx('a'),'x');
-    is($subst,'chewbxccx');
-    is($string,'chewbacca'); # does it on a clone
+    is($subst,'chewbxccx','substr works');
+    is($string,'chewbacca','subst works on a clone');
 }
 
 sub test_exists() {
     my %opt;
     %opt<foobar> := 42;
     my $exists := exists(%opt, 'foobar');
-    ok($exists);
+    ok($exists, 'exists works for existing keys');
     $exists := exists(%opt, 'zanzibar');
-    nok($exists);
+    nok($exists, 'exists works for non-existent keys');
 }
