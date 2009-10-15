@@ -5,6 +5,20 @@ Take one and run with it.  Please.
 
 
 --------
+Test using local mock project repositories
+
+Use 'git init' and 'svnadmin create' to build local repositories when
+setting up Plumage's own test suite, so that our tests don't require
+network access to work.
+
+--------
+Support file:/// URI scheme in Plumage::Downloader
+
+Exactly what it says.  We'll want this especially in Plumage's test suite,
+to enable network-free testing.  But our end users will want this too, for
+private projects or local forks.
+
+--------
 Gracefully handle authenticated Subversion submodules
 
 Most of the time when fetching from a source repository the top level project
@@ -55,3 +69,6 @@ Two possible ways to do this:
    (For convenience in implementation, the writable structure may be special
    in some way, such as always starting empty.)
 
+We already have a very simplified subset of this functionality (see
+merge_tree_structures() in plumage.nqp), but I suspect we'll want the full
+version before long.
