@@ -17,6 +17,7 @@ our $PROGRAM_NAME;
 our @ARGS;
 our %ENV;
 our %VM;
+our $OS;
 
 # NQP doesn't support array or hash literals, so parse main structure
 # from JSON and then fix up values that can't be represented in JSON.
@@ -178,7 +179,7 @@ sub read_config_files () {
     # this was manually set by the user, it is a fatal error if missing.
     my $optconf  := %OPT<config-file>;
     if $optconf {
-        if try(stat, as_array($optconf)) {
+        if path_exists($optconf) {
             @configs.push($optconf);
         }
         else {
@@ -191,7 +192,7 @@ sub read_config_files () {
     %CONF := merge_tree_structures(%CONF, %default);
 
     for @configs {
-        if try(stat, as_array($_)) {
+        if path_exists($_) {
             my %conf := try(Config::JSON::ReadConfig, as_array($_));
             if %conf {
                 %CONF := merge_tree_structures(%CONF, %conf);
@@ -362,16 +363,13 @@ sub command_info (@projects) {
         if $info {
             _dumper($info, 'INFO');
         }
-        else {
-            say("I don't know anything about project '" ~ $_ ~ "'.");
-        }
     }
 }
 
 sub get_project_metadata ($project) {
     my $json_file := fscat(as_array(%CONF<plumage_metadata_dir>),
                            $project ~ '.json');
-    unless try(stat, as_array($json_file)) {
+    unless path_exists($json_file) {
         say("I don't know anything about project '" ~ $project ~ "'.");
         return 0;
     }
@@ -516,8 +514,8 @@ sub action_fetch ($project, %info) {
 }
 
 sub fetch_git ($project, $uri) {
-    if try(stat, as_array($project)) {
-        if try(stat, as_array(fscat(as_array($project, '.git')))) {
+    if path_exists($project) {
+        if path_exists(fscat(as_array($project, '.git'))) {
             my $cwd := cwd();
             chdir($project);
 
@@ -537,8 +535,8 @@ sub fetch_git ($project, $uri) {
 }
 
 sub fetch_svn ($project, $uri) {
-    if  try(stat, as_array($project))
-    && !try(stat, as_array(fscat(as_array($project, '.svn')))) {
+    if  path_exists($project)
+    && !path_exists(fscat(as_array($project, '.svn'))) {
         return report_fetch_collision('Subversion', $project);
     }
     else {
@@ -734,7 +732,7 @@ sub mkpath ($path) {
     for @path {
         $cur := fscat(as_array($cur, $_));
 
-        unless try(stat, as_array($cur)) {
+        unless path_exists($cur) {
             mkdir($cur);
         }
     }
