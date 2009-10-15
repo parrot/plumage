@@ -35,11 +35,12 @@ Plumage:
   * allison looking into parrot.org
   * moritz gave access to a Debian Lenny box
 * Functionality:
-  * update instead of just fetch
-    * or at least a fix for git fetch when repo already exists
   * sudo for install
   * System and local installs
   * Anything proto can do
+  * Platform hints
+    * config items not provided by parrot, like PATH separator
+    * binary renames
 * Spec:
   * Add Stakeholders section
   * Add Usage Scenarios section
@@ -52,10 +53,9 @@ Plumage:
     * Generate .pc files if module install type does not automatically do so
     * Hmmm, seems to be some fail here WRT standardizing lib names ...
 * Test Suite
-    * Figure out how to mock svn/git repos so that build/fetch/test/configure steps
-    can be tested
-    * Check exit code of each test file
-
+  * Figure out how to mock svn/git repos so that build/fetch/test/configure
+    steps can be tested
+  * Check exit code of each test file
 * Misc suggestions
   * Avoid asking questions (after first setup?) if at all possible
   * rake madness (from Cardinal):
@@ -79,6 +79,7 @@ Parrot:
 * Fixes needed:
   * More secure pipe spawn
     * current insecure version does 'sh', '-c', 'command and args'
+  * Pipe spawn with exit code also
 * Config values needed:
   * PATH separator
 * Finish JSON -> data_json conversion
