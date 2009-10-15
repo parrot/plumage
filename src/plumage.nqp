@@ -76,9 +76,10 @@ fixup_sub_actions(eval($_ACTIONS_JSON, 'data_json'));
 
 my $_DEFAULT_CONF_JSON := '
 {
-    "parrot_user_root"   : "#HOME#/.parrot",
-    "plumage_user_root"  : "#parrot_user_root#/plumage",
-    "plumage_build_root" : "#plumage_user_root#/build"
+    "parrot_user_root"     : "#HOME#/.parrot",
+    "plumage_user_root"    : "#parrot_user_root#/plumage",
+    "plumage_build_root"   : "#plumage_user_root#/build",
+    "plumage_metadata_dir" : "metadata"
 }
 ';
 
@@ -368,7 +369,8 @@ sub command_info (@projects) {
 }
 
 sub get_project_metadata ($project) {
-    my $json_file := fscat(as_array('metadata'), $project ~ '.json');
+    my $json_file := fscat(as_array(%CONF<plumage_metadata_dir>),
+                           $project ~ '.json');
     unless try(stat, as_array($json_file)) {
         say("I don't know anything about project '" ~ $project ~ "'.");
         return 0;
