@@ -414,6 +414,27 @@ Returns a 13-item list of information about the given C<$path>, as in Perl 5.
     .return (stat_list)
 .end
 
+=item $found := path_exists($path);
+
+Return a true value if the C<$path> exists on the filesystem, or a false
+value if not.
+
+=cut
+
+.sub 'path_exists'
+    .param string path
+
+    push_eh stat_failed
+    .local pmc stat_list
+    stat_list = 'stat'(path)
+    pop_eh
+    .return (1)
+
+  stat_failed:
+    pop_eh
+    .return (0)
+.end
+
 =item $path := fscat(@path_parts [, $filename])
 
 Join C<@path_parts> and C<$filename> strings together with the appropriate
