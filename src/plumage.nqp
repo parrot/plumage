@@ -737,3 +737,17 @@ sub mkpath ($path) {
         }
     }
 }
+
+sub find_program ($binary) {
+    my $path_sep := $OS eq 'MSWin32' ?? ';' !! ':';
+    my @paths    := split($path_sep, %ENV<PATH>);
+
+    for @paths {
+        my $path := fscat(as_array($_), $binary ~ %VM<exe>);
+        if path_exists($path) {
+            return $path;
+        }
+    }
+
+    return '';
+}
