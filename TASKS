@@ -5,6 +5,55 @@ Take one and run with it.  Please.
 
 
 --------
+Filter dependency list against local system
+
+Given a set of dependencies, some of which might be satisfied via locally
+installed binaries/libraries/packages, determine which are still unresolved.
+
+This will require some new subsystems (we can do these one at a time, slowly
+handling more cases correctly, instead of trying to finish them all at once):
+
+* Keep track of which Plumage projects are currently installed, and all of
+  their related version information, and search against that info.
+
+* Implement a function that searches a path for binaries (like 'which').
+  Bonus points for determining "brand" and version as well.
+
+* Use %VM<config> to find local binary names for the basic build tools
+  and check that they are installed using the above function.
+
+* Implement a function that searches for system libraries and can
+  determine what "brand"/version the library represents.
+
+* Given a system package name, use apt/yum/etc. to determine if the
+  system package is installed and of the right version.  (This is actually
+  several tasks, of course: one for each platform/packaging system.)
+
+* Design and implement some way to map agreed-upon virtual dependency names
+  to system package names on various platforms.
+
+--------
+Handle unresolved dependencies properly
+
+Determine which unresolved dependencies can be handled by Plumage installing
+additional projects on its own, and do so.  For the remainder, help the user
+figure out what to install to fulfill the missing dependencies.
+
+--------
+Test using local mock project repositories
+
+Use 'git init' and 'svnadmin create' to build local repositories when
+setting up Plumage's own test suite, so that our tests don't require
+network access to work.
+
+--------
+Support file:/// URI scheme in Plumage::Downloader
+
+Exactly what it says.  We'll want this especially in Plumage's test suite,
+to enable network-free testing.  But our end users will want this too, for
+private projects or local forks.
+
+--------
 Gracefully handle authenticated Subversion submodules
 
 Most of the time when fetching from a source repository the top level project
@@ -55,3 +104,6 @@ Two possible ways to do this:
    (For convenience in implementation, the writable structure may be special
    in some way, such as always starting empty.)
 
+We already have a very simplified subset of this functionality (see
+merge_tree_structures() in plumage.nqp), but I suspect we'll want the full
+version before long.
