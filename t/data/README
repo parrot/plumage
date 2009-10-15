@@ -1,0 +1,5 @@
+This directory contains data for the test suite, such as
+mock source code repositories, so that the Plumage test
+suite can run without a network connection.
+
+So far there is mock-git.tar.gz, which is a minimal mock git repo.
