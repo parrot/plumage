@@ -103,6 +103,9 @@ sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
     load_bytecode('src/lib/Glue.pbc');
 
+    # utility functions written in nqp
+    load_bytecode('src/lib/Util.pbc');
+
     # Process command line options
     load_bytecode('Getopt/Obj.pbc');
 
@@ -688,66 +691,3 @@ sub install_make ($project) {
 }
 
 
-###
-### UTILS
-###
-
-sub map (&code, @originals) {
-    my @mapped;
-
-    for @originals {
-        @mapped.push(&code($_));
-    }
-
-    return @mapped;
-}
-
-sub replace_config_strings ($original) {
-    my $new := $original;
-
-    repeat {
-        $original := $new;
-        $new      := subst($original, rx('\#<ident>\#'), config_value);
-    }
-    while $new ne $original;
-
-    return $new;
-}
-
-sub config_value ($match) {
-    my $key    := $match<ident>;
-    my $config := %CONF{$key}
-               || %VM<config>{$key}
-               || %BIN{$key}
-               || %ENV{$key}
-               || '';
-
-    return $config;
-}
-
-sub mkpath ($path) {
-    my @path := split('/', $path);
-    my $cur  := '';
-
-    for @path {
-        $cur := fscat(as_array($cur, $_));
-
-        unless path_exists($cur) {
-            mkdir($cur);
-        }
-    }
-}
-
-sub find_program ($binary) {
-    my $path_sep := $OS eq 'MSWin32' ?? ';' !! ':';
-    my @paths    := split($path_sep, %ENV<PATH>);
-
-    for @paths {
-        my $path := fscat(as_array($_), $binary ~ %VM<exe>);
-        if path_exists($path) {
-            return $path;
-        }
-    }
-
-    return '';
-}

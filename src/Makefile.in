@@ -33,10 +33,10 @@ plumage$(EXE): src/plumage$(EXE)
 	$(CP) src/plumage$(EXE) plumage$(EXE)
 	$(CHMOD) 0755 plumage$(EXE)
 
-src/plumage$(EXE): src/plumage.pbc src/lib/Glue.pbc
+src/plumage$(EXE): src/plumage.pbc src/lib/Util.pbc
 	$(PBC_TO_EXE) src/plumage.pbc
 
-src/plumage.pbc: src/plumage.pir
+src/plumage.pbc: src/plumage.pir src/lib/Util.pbc
 	$(PARROT) -o src/plumage.pbc src/plumage.pir
 
 src/plumage.pir: src/plumage.nqp
@@ -45,6 +45,11 @@ src/plumage.pir: src/plumage.nqp
 src/lib/Glue.pbc: src/lib/Glue.pir
 	$(PARROT) -o src/lib/Glue.pbc src/lib/Glue.pir
 
+src/lib/Util.pbc: src/lib/Util.pir
+	$(PARROT) -o src/lib/Util.pbc src/lib/Util.pir
+
+src/lib/Util.pir: src/lib/Util.nqp
+	$(PARROT_NQP) --target=pir -o src/lib/Util.pir src/lib/Util.nqp
 
 # Convenience
 realclean: clean
