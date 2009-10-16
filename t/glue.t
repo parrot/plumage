@@ -4,7 +4,7 @@ our @ARGS;
 MAIN();
 
 sub MAIN () {
-    my $num_tests := 7;
+    my $num_tests := 9;
     load_bytecode('src/lib/Glue.pbc');
     Q:PIR{
         .local pmc c
@@ -17,7 +17,13 @@ sub MAIN () {
     test_subst();
     test_join();
     test_split();
+    test_path_exists();
 }
+sub test_path_exists() {
+    ok(path_exists('.'),'path_exists finds .');
+    nok(path_exists('DOESNOTEXIST'),'path_exists returns false for nonexistent files');
+}
+
 sub test_join() {
     is('a,b,c,d,e,f', join(',',('a','b','c','d','e','f')), 'join works');
 }
