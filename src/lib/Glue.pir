@@ -2,6 +2,59 @@
 
 Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
+
+=head1 SYNOPSIS
+
+    # External programs
+    $status_code := run(   $command, $and, $args, ...);
+    $success     := do_run($command, $and, $args, ...);
+    $output      := qx(    $command, $and, $args, ...);
+
+    # Exceptions
+    die($message);
+    try(&code, @args [, &handler]);
+
+    # Hash basics
+    @keys  := keys(%hash);
+    $found := exists(%hash, $key);
+
+    # OO and types
+    $does_role := does($object, $role);
+
+    # I/O
+    $contents := slurp($filename);
+    spew($filename, $contents);
+
+    # Regular expressions
+    $regex_object := rx($regex_source);
+    @matches := all_matches($regex, $text);
+    $edited := subst($original, $regex, $replacement);
+
+    # Filesystems and paths
+    chdir($path);
+    $path  := cwd();
+    mkdir($path [, $mode]);
+    @info  := stat($path);
+    $found := path_exists($path);
+    $path  := fscat(@path_parts [, $filename]);
+
+    # String basics
+    $joined := join($delimiter, @strings);
+    @pieces := split($delimiter, $original);
+
+    # Context
+    @array  := as_array($list, $of, $items, ...);
+    $result := call_flattened(&code, $mixed, @args, $list, ...);
+
+    # Global variables;
+    our $PROGRAM_NAME;
+    our @ARGS;
+    our %ENV;
+    our %VM;
+    our $OS;
+    our $OSVER;
+
+    
 =cut
 
 .namespace []
@@ -11,7 +64,9 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 .include 'iglobals.pasm'
 
 
-=head1 Functions
+=head1 DESCRIPTION
+
+=head2 Functions
 
 =over 4
 
@@ -108,7 +163,7 @@ Kill program, reporting error C<$message>.
 .end
 
 
-=item try(&code, @args [, &handler])
+=item $ret := try(&code, @args [, &handler])
 
 Call C<&code> with flattened C<@args>.  If there are any exceptions, catch
 them and invoke C<&handler> with the exception, C<&code>, and C<@args>.
@@ -556,7 +611,7 @@ it with C<as_array()> first, like so:
 =back
 
 
-=head1 Global Variables
+=head2 Global Variables
 
 =over 4
 
