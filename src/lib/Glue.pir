@@ -5,6 +5,9 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
 =head1 SYNOPSIS
 
+    # Load this library
+    load_bytecode('src/lib/Glue.pbc');
+
     # External programs
     $status_code := run(   $command, $and, $args, ...);
     $success     := do_run($command, $and, $args, ...);
