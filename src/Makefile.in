@@ -33,7 +33,7 @@ plumage$(EXE): src/plumage$(EXE)
 	$(CP) src/plumage$(EXE) plumage$(EXE)
 	$(CHMOD) 0755 plumage$(EXE)
 
-src/plumage$(EXE): src/plumage.pbc src/lib/Util.pbc
+src/plumage$(EXE): src/plumage.pbc src/lib/Util.pbc src/lib/Glue.pbc
 	$(PBC_TO_EXE) src/plumage.pbc
 
 src/plumage.pbc: src/plumage.pir src/lib/Util.pbc
@@ -56,7 +56,8 @@ realclean: clean
 
 clean:
 	$(RM_F) "*~" "src/lib/*.pbc" "src/*.pbc" "src/*$(O)" "src/*.c" \
-	        src/plumage.pir src/plumage$(EXE) plumage$(EXE) Makefile
+	        src/lib/Util.pir src/plumage.pir src/plumage$(EXE) \
+	        plumage$(EXE) Makefile
 
 test:
 	$(PARROT_NQP) t/harness t/*.t
