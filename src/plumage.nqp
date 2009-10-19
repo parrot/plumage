@@ -34,6 +34,10 @@ my  $_COMMANDS_JSON := '
         "action" : "command_version",
         "args"   : "none"
     },
+    "projects"   : {
+        "action" : "command_projects",
+        "args"   : "none"
+    },
     "info"       : {
         "action" : "command_info",
         "args"   : "project"
@@ -335,6 +339,7 @@ Options:
 
 Commands:
 
+    projects             List all known projects
     info      <project>  Print info about a particular project
     showdeps  <project>  Show dependency resolution for a project
 
@@ -368,6 +373,32 @@ included in the Parrot Plumage source tree.
 }
 
 
+sub command_projects () {
+    my @projects := get_project_list();
+
+    say("\nKnown projects:\n");
+
+    for @projects {
+        my $desc := '';
+
+        my %info := get_project_metadata($_, 0);
+        if %info && metadata_valid(%info) {
+            my %general := %info<general>;
+            if %general {
+                my $abstract := %general<abstract>;
+                if $abstract {
+                    $desc := ' - ' ~ $abstract;
+                }
+            }
+        }
+
+        say('    ' ~ $_ ~ $desc);
+    }
+
+    say('');
+}
+
+
 sub command_info (@projects) {
     unless (@projects) {
         say('Please include the name of the project you wish info for.');
@@ -380,6 +411,7 @@ sub command_info (@projects) {
         }
     }
 }
+
 
 sub command_showdeps (@projects) {
     unless (@projects) {
