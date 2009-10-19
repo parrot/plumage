@@ -38,6 +38,10 @@ my  $_COMMANDS_JSON := '
         "action" : "command_info",
         "args"   : "project"
     },
+    "showdeps"   : {
+        "action" : "command_showdeps",
+        "args"   : "project"
+    },
     "fetch"      : {
         "action" : "command_fetch",
         "args"   : "project"
@@ -232,6 +236,12 @@ sub find_binaries () {
     my $parrot_bin := %conf<bindir>;
 
     %BIN<parrot_config> := fscat(as_array($parrot_bin), 'parrot_config');
+
+    %BIN<perl5> := %conf<perl>;
+    %BIN<make>  := %conf<make>;
+
+    %BIN<svn>   := find_program('svn');
+    %BIN<git>   := find_program('git');
 }
 
 sub build_stages () {
@@ -326,6 +336,8 @@ Options:
 Commands:
 
     info      <project>  Print info about a particular project
+    showdeps  <project>  Show dependency resolution for a project
+
     fetch     <project>  Download source for a project
     configure <project>  Configure source for project (fetches first)
     build     <project>  Build project from source (configures first)
@@ -362,19 +374,39 @@ sub command_info (@projects) {
     }
 
     for @projects {
-        my $info := get_project_metadata($_);
-
-        if $info {
-            _dumper($info, 'INFO');
+        my %info := get_project_metadata($_, 0);
+        if %info {
+            _dumper(%info, 'INFO');
         }
     }
 }
 
-sub get_project_metadata ($project) {
+sub command_showdeps (@projects) {
+    unless (@projects) {
+        say('Please include the name of the project to show dependencies for.');
+    }
+
+    my $unknown_project := 0;
+    for @projects {
+        my %info := get_project_metadata($_, 0);
+
+        unless %info {
+            $unknown_project := 1;
+        }
+    }
+
+    unless $unknown_project {
+        show_dependencies(@projects);
+    }
+}
+
+sub get_project_metadata ($project, $ignore_missing) {
     my $json_file := fscat(as_array(%CONF<plumage_metadata_dir>),
                            $project ~ '.json');
     unless path_exists($json_file) {
-        say("I don't know anything about project '" ~ $project ~ "'.");
+        unless $ignore_missing {
+            say("I don't know anything about project '" ~ $project ~ "'.");
+        }
         return 0;
     }
 
@@ -442,6 +474,110 @@ sub command_install (@projects) {
     perform_actions_on_projects(%STAGES<install>, @projects);
 }
 
+sub show_dependencies (@projects) {
+    my %resolutions := resolve_dependencies(@projects);
+
+    say("\nDEPENDENCY ANALYSIS\n");
+
+    my $have_bin     := join(' ', %resolutions<have_bin>);
+    say("Resolved by system binaries: " ~ $have_bin);
+
+    my $have_project := join(' ', %resolutions<have_project>);
+    say("Resolved by Parrot projects: " ~ $have_project);
+
+    my $need_bin     := join(' ', %resolutions<need_bin>);
+    say("Missing system binaries:     " ~ $need_bin);
+
+    my $need_project := join(' ', %resolutions<need_project>);
+    say("Missing Parrot projects:     " ~ $need_project);
+
+    if $need_bin {
+        say("\nPlease use your system's package manager to install\n" ~
+            "the missing system binaries, then restart Plumage.");
+    }
+
+    if $need_project {
+        say("\nPlumage will install missing Parrot projects automatically.");
+    }
+
+    if $need_bin || $need_project {
+        return 0;
+    }
+    else {
+        say("\nAll dependencies resolved.");
+        return 1;
+    }
+}
+
+sub resolve_dependencies (@projects) {
+    my @all_deps := all_dependencies(@projects);
+
+    my @have_bin;
+    my @need_bin;
+    my @have_project;
+    my @need_project;
+
+    for @all_deps {
+        if %BIN{$_} || find_program($_) {
+            @have_bin.push($_);
+        }
+        elsif exists(%BIN, $_) {
+            @need_bin.push($_);
+        }
+        else {
+            @need_project.push($_);
+        }
+    }
+
+    my %resolutions;
+
+    %resolutions<have_bin>     := @have_bin;
+    %resolutions<need_bin>     := @need_bin;
+    %resolutions<have_project> := @have_project;
+    %resolutions<need_project> := @need_project;
+
+    return %resolutions;
+}
+
+sub all_dependencies (@projects) {
+    my @dep_stack;
+    my @deps;
+    my %seen;
+
+    for @projects {
+        @dep_stack.push($_);
+        %seen{$_} := 1;
+    }
+
+    while @dep_stack {
+        my $project := @dep_stack.shift();
+        my %info    := get_project_metadata($project, 1);
+
+        if %info && metadata_valid(%info) {
+            my %info_deps := %info<dependency-info>;
+            if %info_deps {
+                my %requires := %info_deps<requires>;
+                if %requires {
+                    for keys(%requires) {
+                        my @step_requires := %requires{$_};
+                        if @step_requires {
+                            for @step_requires {
+                                unless %seen{$_} {
+                                    @dep_stack.push($_);
+                                    @deps.push($_);
+                                    %seen{$_} := 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return @deps;
+}
+
 
 sub perform_actions_on_projects (@actions, @projects) {
     my $cwd        := cwd();
@@ -449,7 +585,7 @@ sub perform_actions_on_projects (@actions, @projects) {
     mkpath($build_root);
 
     for @projects {
-        my %info := get_project_metadata($_);
+        my %info := get_project_metadata($_, 0);
         if %info && metadata_valid(%info) {
             chdir($build_root);
             perform_actions_on_project(@actions, $_, %info);
