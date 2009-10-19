@@ -14,9 +14,10 @@ Util.nqp - Utility functions for NQP and Plumage
     # Duct tape
     $binary_path := find_program($program);
     mkpath($directory_path);
+    $writable := test_dir_writable($directory_path);
 
     # Plumage-specific
-    $replaced := replace_config_strings($original)l
+    $replaced := replace_config_strings($original);
 
 
 =head1 DESCRIPTION
@@ -134,7 +135,39 @@ sub mkpath ($path) {
 }
 
 
-=back
+=item $writable := test_dir_writable($directory_path)
+
+Sadly there is no portable, guaranteed way to check if a directory is writable
+(with create permission, on platforms that separate it) except to actually try
+to create a file within it.  This function does just that, and then unlinks the
+file afterwards.
+
+This function should only be considered helpful from a usability sense, allowing
+the program to detect a likely failure case early, before wasting the user's
+time.  In no circumstance should it be considered a security function; only
+checking for errors on every real operation can avoid security holes due to
+race conditions between test and action.
+
+=cut
+
+sub test_dir_writable($dir) {
+    my $test_file := fscat(as_array($dir), 'WrItAbLe.UtL');
+
+    if path_exists($test_file) {
+        die("Test file '" ~ $test_file
+	     ~ "'\nthat should never exist already does.");
+    }
+
+    try(spew, as_array($test_file, "test_dir_writable() test file.\n"));
+
+    if path_exists($test_file) {
+        unlink($test_file);
+	return 1;
+    }
+    else {
+        return 0;
+    }
+}
 
 
 =head2 Plumage Specific Functions
