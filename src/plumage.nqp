@@ -80,7 +80,8 @@ my $_DEFAULT_CONF_JSON := '
     "parrot_user_root"     : "#HOME#/.parrot",
     "plumage_user_root"    : "#parrot_user_root#/plumage",
     "plumage_build_root"   : "#plumage_user_root#/build",
-    "plumage_metadata_dir" : "metadata"
+    "plumage_metadata_dir" : "metadata",
+    "root_command"         : "sudo"
 }
 ';
 
@@ -682,12 +683,19 @@ sub install_make ($project) {
     my $cwd := cwd();
     chdir($project);
 
-    my $make := %VM<config><make>;
-    my $success := do_run($make, 'install');
+    my $make     := %VM<config><make>;
+    my $bin_dir  := %VM<config><bin_dir>;
+    my $root_cmd := %CONF<root_command>;
+    my $success;
+
+    if !test_dir_writable($bin_dir) && $root_cmd {
+        $success := do_run($root_cmd, $make, 'install');
+    }
+    else {
+        $success := do_run($make, 'install');
+    }
 
     chdir($cwd);
 
     return $success;
 }
-
-
