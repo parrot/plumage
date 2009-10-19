@@ -400,6 +400,21 @@ sub command_showdeps (@projects) {
     }
 }
 
+sub get_project_list () {
+    my @files := readdir(%CONF<plumage_metadata_dir>);
+    my $regex := rx('\.json$');
+    my @projects;
+
+    for @files {
+        if $regex($_) {
+            my $project := subst($_, $regex, '');
+            @projects.push($project);
+        }
+    }
+
+    return @projects;
+}
+
 sub get_project_metadata ($project, $ignore_missing) {
     my $json_file := fscat(as_array(%CONF<plumage_metadata_dir>),
                            $project ~ '.json');
@@ -477,7 +492,7 @@ sub command_install (@projects) {
 sub show_dependencies (@projects) {
     my %resolutions := resolve_dependencies(@projects);
 
-    say("\nDEPENDENCY ANALYSIS\n");
+    say('');
 
     my $have_bin     := join(' ', %resolutions<have_bin>);
     say("Resolved by system binaries: " ~ $have_bin);
@@ -491,31 +506,46 @@ sub show_dependencies (@projects) {
     my $need_project := join(' ', %resolutions<need_project>);
     say("Missing Parrot projects:     " ~ $need_project);
 
-    if $need_bin {
-        say("\nPlease use your system's package manager to install\n" ~
-            "the missing system binaries, then restart Plumage.");
-    }
+    my $need_unknown := join(' ', %resolutions<need_unknown>);
+    say("Missing and unrecognized:    " ~ $need_unknown);
 
-    if $need_project {
-        say("\nPlumage will install missing Parrot projects automatically.");
-    }
+    if $need_unknown {
+        # XXXX: Don't forget to fix this when metadata is retrieved from server
 
-    if $need_bin || $need_project {
+        say("\nI don't recognize some of these dependencies.  First, update and\n"
+            ~ "rebuild Plumage to get the latest metadata.  Next, please check\n"
+            ~ "that there are no typos in the project dependency information.\n");
+        return 0;
+    }
+    elsif $need_bin {
+        say("\nPlease use your system's package manager to install\n"
+            ~ "the missing system binaries, then restart Plumage.\n");
+        return 0;
+    }
+    elsif $need_project {
+        say("\nPlumage will install missing Parrot projects automatically.\n");
         return 0;
     }
     else {
-        say("\nAll dependencies resolved.");
+        say("\nAll dependencies resolved.\n");
         return 1;
     }
 }
 
 sub resolve_dependencies (@projects) {
-    my @all_deps := all_dependencies(@projects);
+    my @all_deps       := all_dependencies(@projects);
+    my @known_projects := get_project_list();
+
+    my %is_project;
+    for @known_projects {
+        %is_project{$_} := 1;
+    }
 
     my @have_bin;
     my @need_bin;
     my @have_project;
     my @need_project;
+    my @need_unknown;
 
     for @all_deps {
         if %BIN{$_} || find_program($_) {
@@ -524,8 +554,11 @@ sub resolve_dependencies (@projects) {
         elsif exists(%BIN, $_) {
             @need_bin.push($_);
         }
-        else {
+        elsif %is_project{$_} {
             @need_project.push($_);
+        }
+        else {
+            @need_unknown.push($_);
         }
     }
 
@@ -535,6 +568,7 @@ sub resolve_dependencies (@projects) {
     %resolutions<need_bin>     := @need_bin;
     %resolutions<have_project> := @have_project;
     %resolutions<need_project> := @need_project;
+    %resolutions<need_unknown> := @need_unknown;
 
     return %resolutions;
 }
