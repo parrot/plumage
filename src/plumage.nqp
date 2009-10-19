@@ -89,6 +89,7 @@ my $_DEFAULT_CONF_JSON := '
     "plumage_user_root"    : "#parrot_user_root#/plumage",
     "plumage_build_root"   : "#plumage_user_root#/build",
     "plumage_metadata_dir" : "metadata",
+    "installed_list_file"  : "#plumage_user_root#/installed_projects.list",
     "root_command"         : "sudo"
 }
 ';
@@ -433,7 +434,7 @@ sub command_showdeps (@projects) {
 }
 
 sub get_project_list () {
-    my @files := readdir(%CONF<plumage_metadata_dir>);
+    my @files := readdir(replace_config_strings(%CONF<plumage_metadata_dir>));
     my $regex := rx('\.json$');
     my @projects;
 
@@ -448,8 +449,9 @@ sub get_project_list () {
 }
 
 sub get_project_metadata ($project, $ignore_missing) {
-    my $json_file := fscat(as_array(%CONF<plumage_metadata_dir>),
-                           $project ~ '.json');
+    my $meta_dir  := replace_config_strings(%CONF<plumage_metadata_dir>);
+    my $json_file := fscat(as_array($meta_dir), $project ~ '.json');
+
     unless path_exists($json_file) {
         unless $ignore_missing {
             say("I don't know anything about project '" ~ $project ~ "'.");
@@ -564,14 +566,35 @@ sub show_dependencies (@projects) {
     }
 }
 
+sub mark_projects_installed (@projects) {
+    my $lines := join("\n", @projects) ~ "\n";
+    my $file  := replace_config_strings(%CONF<installed_list_file>);
+
+    append($file, $lines);
+}
+
+sub get_installed_projects () {
+    my $inst_file := replace_config_strings(%CONF<installed_list_file>);
+    my $contents  := try(slurp, as_array($inst_file));
+
+    my @projects;
+    if $contents {
+        for split("\n", $contents) {
+            if $_ {
+                @projects.push($_);
+            }
+        }
+    }
+
+    return @projects;
+}
+
 sub resolve_dependencies (@projects) {
     my @all_deps       := all_dependencies(@projects);
     my @known_projects := get_project_list();
-
-    my %is_project;
-    for @known_projects {
-        %is_project{$_} := 1;
-    }
+    my @installed      := get_installed_projects();
+    my %is_project     := set_from_array(@known_projects);
+    my %is_installed   := set_from_array(@installed);
 
     my @have_bin;
     my @need_bin;
@@ -585,6 +608,9 @@ sub resolve_dependencies (@projects) {
         }
         elsif exists(%BIN, $_) {
             @need_bin.push($_);
+        }
+        elsif %is_installed{$_} {
+            @have_project.push($_);
         }
         elsif %is_project{$_} {
             @need_project.push($_);
@@ -872,8 +898,14 @@ sub action_install ($project, %info) {
     if %conf {
         say("\nInstalling " ~ $project ~ ' ...');
 
-        my &action := %ACTION<install>{%conf<type>};
-        return &action($project);
+        my &action  := %ACTION<install>{%conf<type>};
+        my $success := &action($project);
+
+        if $success {
+            mark_projects_installed(as_array($project));
+        }
+
+        return $success;
     }
     else {
         say("Don't know how to install " ~ project ~ ".");
@@ -887,7 +919,7 @@ sub install_make ($project) {
 
     my $make     := %VM<config><make>;
     my $bin_dir  := %VM<config><bin_dir>;
-    my $root_cmd := %CONF<root_command>;
+    my $root_cmd := replace_config_strings(%CONF<root_command>);
     my $success;
 
     if !test_dir_writable($bin_dir) && $root_cmd {
