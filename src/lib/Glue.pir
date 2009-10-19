@@ -455,6 +455,20 @@ is modified by the user's current C<umask> as usual.
     os.'mkdir'(path, mode)
 .end
 
+=item unlink($path)
+
+Unlink (delete) a file or empty directory named C<$path> in the filesystem.
+
+=cut
+
+.sub 'unlink'
+    .param string path
+
+    .local pmc os
+    os = root_new [ 'parrot' ; 'OS' ]
+    os.'rm'(path)
+.end
+
 =item @info := stat($path)
 
 Returns a 13-item list of information about the given C<$path>, as in Perl 5.
