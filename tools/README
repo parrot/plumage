@@ -1,0 +1,26 @@
+EATING OUR OWN DOG FOOD
+-----------------------
+
+Unlike the Parrot Plumage client itself (which resides in the src/ directory),
+programs in this directory are not for end-user consumption.  Rather they will
+be used for metadata maintenance on the server and by developers of Plumage.
+
+Because these are not end-user programs, the requirement that they be written
+entirely in NQP and PIR can be relaxed: they are free to use any language that
+can be installed by Plumage.  In practice, we expect that most will be written
+for the most recent Rakudo from git as a matter of convenience and familiarity
+by the core Plumage team.
+
+If there is no way to perform a needed task using Parrot, please do these three
+things:
+
+1. Open a ticket for Parrot or the HLL requesting the needed functionality.
+
+2. In the mean time, use Perl 5 (preferably via Blizkost) to provide just the
+   single piece of missing functionality and do everything else in a Parrot-
+   hosted language.
+
+3. As soon as the ticket in step 1 is resolved, convert the code from step 2
+   to use the new Parrot functionality instead.
+
+Mmmmm, tasty, tasty dog food!
