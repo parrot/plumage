@@ -11,6 +11,9 @@ Util.nqp - Utility functions for NQP and Plumage
     # Basics
     @mapped := map(&code, @originals);
 
+    # General
+    %set := set_from_array(@array);
+
     # Duct tape
     $binary_path := find_program($program);
     mkpath($directory_path);
@@ -69,6 +72,33 @@ sub map (&code, @originals) {
     }
 
     return @mapped;
+}
+
+
+=head2 General Utilities
+
+While these would not exist in the Perl 6 setting, they are still generally
+useful for NQP programs because NQP syntax is considerably more wordy than
+Perl 6.  DRY thus applies.
+
+=over 4
+
+=item %set := set_from_array(@array)
+
+Converts an array into a set by using the array elements as hash keys and
+setting their corresponding value to 1, thus allowing cheap set membership
+checks.
+
+=cut
+
+sub set_from_array (@array) {
+    my %set;
+
+    for @array {
+        %set{$_} := 1;
+    }
+
+    return %set;
 }
 
 

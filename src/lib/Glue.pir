@@ -26,7 +26,8 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
     # I/O
     $contents := slurp($filename);
-    spew($filename, $contents);
+    spew(  $filename, $contents);
+    append($filename, $contents);
 
     # Regular expressions
     $regex_object := rx($regex_source);
@@ -293,6 +294,22 @@ Write the string C<$contents> to a file.
     .param string contents
 
     $P0 = open filename, 'w'
+    $P0.'print'(contents)
+    close $P0
+.end
+
+
+=item append($filename, $contents)
+
+Append the string C<$contents> to a file.
+
+=cut
+
+.sub 'append'
+    .param string filename
+    .param string contents
+
+    $P0 = open filename, 'a'
     $P0.'print'(contents)
     close $P0
 .end
