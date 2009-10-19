@@ -504,23 +504,47 @@ sub metadata_valid (%info) {
 
 
 sub command_fetch (@projects) {
+    install_required_projects(@projects);
+
     perform_actions_on_projects(%STAGES<fetch>, @projects);
 }
 
 sub command_configure (@projects) {
+    install_required_projects(@projects);
+
     perform_actions_on_projects(%STAGES<configure>, @projects);
 }
 
 sub command_build (@projects) {
+    install_required_projects(@projects);
+
     perform_actions_on_projects(%STAGES<build>, @projects);
 }
 
 sub command_test (@projects) {
+    install_required_projects(@projects);
+
     perform_actions_on_projects(%STAGES<test>, @projects);
 }
 
 sub command_install (@projects) {
+    install_required_projects(@projects);
+
     perform_actions_on_projects(%STAGES<install>, @projects);
+}
+
+
+sub install_required_projects (@projects) {
+    my %resolutions   := resolve_dependencies(@projects);
+    my @need_projects := %resolutions<need_project>;
+
+    if (@need_projects) {
+        my $need_projects := join(', ', @need_projects);
+        say("\nInstalling other projects to satisfy dependencies:\n"
+            ~ '    ' ~ $need_projects ~ "\n");
+
+        perform_actions_on_projects(%STAGES<install>, @need_projects);
+    }
 }
 
 sub show_dependencies (@projects) {
@@ -637,12 +661,12 @@ sub all_dependencies (@projects) {
     my %seen;
 
     for @projects {
-        @dep_stack.push($_);
+        @dep_stack.unshift($_);
         %seen{$_} := 1;
     }
 
     while @dep_stack {
-        my $project := @dep_stack.shift();
+        my $project := @dep_stack.pop();
         my %info    := get_project_metadata($project, 1);
 
         if %info && metadata_valid(%info) {
@@ -656,7 +680,7 @@ sub all_dependencies (@projects) {
                             for @step_requires {
                                 unless %seen{$_} {
                                     @dep_stack.push($_);
-                                    @deps.push($_);
+                                    @deps.unshift($_);
                                     %seen{$_} := 1;
                                 }
                             }
