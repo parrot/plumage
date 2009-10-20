@@ -1,0 +1,59 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "matrixy",
+        "abstract" : "M Language Compiler for Parrot",
+        "authority": "http://github.com/Whiteknight.",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Blair Sutton and Andrew Whitworth",
+        "generated_by"     : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
+        "keywords"         : ["matrixy", "m", "HLL", "octave", "MATLAB"],
+        "description"      : "M Language Compiler for the Parrot Virtual Machine."
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "configure": {
+            "type" : "perl5_configure",
+            "extra_args" : [
+                "--parrot-config=#parrot_config#"
+            ]
+        },
+        "build"    : {
+            "type" : "make"
+        },
+        "test"     : {
+            "type" : "make"
+        },
+        "install"  : {
+            "type" : "make"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["matrixy", "m"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "configure": ["perl5"],
+            "build"    : ["perl5", "make"],
+            "test"     : ["perl5", "make"],
+            "install"  : ["make"],
+            "runtime"  : ["parrot-linear-algebra"]
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/Whiteknight/matrixy.git",
+             "browser_uri" : "http://github.com/Whiteknight/matrixy",
+             "project_uri" : "http://github.com/Whiteknight/matrixy"
+        }
+    }
+}
