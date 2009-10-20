@@ -27,6 +27,8 @@ Metadata:
 * dependency-info
   * 'provides' is always an array
   * HLLs provide their project name and their language name
+* resources
+  * feed_type and feed_uri for hosting that provides Atom/RSS commit feeds
 
 
 Plumage:
@@ -35,7 +37,6 @@ Plumage:
   * allison looking into parrot.org
   * moritz gave access to a Debian Lenny box
 * Functionality:
-  * sudo for install
   * System and local installs
   * Anything proto can do
   * Platform hints
