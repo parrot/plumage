@@ -37,11 +37,36 @@ Plumage:
   * allison looking into parrot.org
   * moritz gave access to a Debian Lenny box
 * Functionality:
+  * Help
+    * Real manpage
+    * help command
+    * --help, -h, -? options
   * System and local installs
-  * Anything proto can do
+    * Where should local installs go by default?
+    * How to make parrot aware of local install path?
   * Platform hints
     * config items not provided by parrot, like PATH separator
     * binary renames
+  * Anything proto can do
+    * Meaningful exit codes
+    * Quiet modes: Log, Silent, Verbose
+      * If progress bars, use N * Width / (N + Width) to determine length
+      * Interaction with sudo?
+      * Other prompts?
+    * Create new project helper
+    * 'update' command
+    * 'uninstall' or 'remove' command
+    * 'fetch' able to do owner-clone for git repos
+      * User able to specify list of authorities they have commitbits for?
+    * 'configure' able to run any of:
+      * Makefile.PL
+      * Configure.pl
+      * Configure.p6
+      * Configure
+    * 'test' action using (recursive) 'prove' directly
+    * 'all' pseudo-project
+      * 'install all' is probably scaling out of reasonable range now
+      * But 'update all' is reasonable
 * Spec:
   * Add Stakeholders section
   * Add Usage Scenarios section
