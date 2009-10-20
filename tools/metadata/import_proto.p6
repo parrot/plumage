@@ -17,22 +17,26 @@ sub MAIN ($proto_dir) {
 }
 
 sub make_meta_file ($project, $home, $owner) {
-    my ($type, $checkout_uri, $browser_uri, $project_uri);
+    my ($type, $authority, $checkout_uri, $browser_uri, $project_uri);
+
     given $home {
         when 'github' {
             $type         := 'git';
+            $authority    := "github.com/$owner";
             $checkout_uri := "git://github.com/$owner/$project.git";
             $browser_uri  := "http://github.com/$owner/$project/tree/master";
             $project_uri  := "http://github.com/$owner/$project";
         }
         when 'gitorious' {
             $type         := 'git';
+            $authority    := "gitorious.org/$project";
             $checkout_uri := "git://gitorious.org/$project/$project.git";
             $browser_uri  := "http://gitorious.org/$project/$project/trees/master";
             $project_uri  := "http://gitorious.org/$project/$project";
         }
         when 'googlecode' {
             $type         := 'svn';
+            $authority    := "googlecode.com/$project";
             $checkout_uri := "http://$project.googlecode.com/svn/trunk";
             $browser_uri  := "http://code.google.com/p/$project/source/browse/";
             $project_uri  := "http://code.google.com/p/$project/";
@@ -50,7 +54,7 @@ sub make_meta_file ($project, $home, $owner) {
     "general"      : {
         "name"     : "' ~ $project ~ '",
         "abstract" : "",
-        "authority": "' ~ $home ~ ':' ~ $owner ~ '",
+        "authority": "' ~ $authority ~ '",
         "version"  : "HEAD",
         "license"  : {
             "type" : "UNKNOWN",
