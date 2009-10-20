@@ -504,33 +504,28 @@ sub metadata_valid (%info) {
 
 
 sub command_fetch (@projects) {
-    install_required_projects(@projects);
-
-    perform_actions_on_projects(%STAGES<fetch>, @projects);
+       install_required_projects(@projects)
+    && perform_actions_on_projects(%STAGES<fetch>, @projects);
 }
 
 sub command_configure (@projects) {
-    install_required_projects(@projects);
-
-    perform_actions_on_projects(%STAGES<configure>, @projects);
+       install_required_projects(@projects)
+    && perform_actions_on_projects(%STAGES<configure>, @projects);
 }
 
 sub command_build (@projects) {
-    install_required_projects(@projects);
-
-    perform_actions_on_projects(%STAGES<build>, @projects);
+       install_required_projects(@projects)
+    && perform_actions_on_projects(%STAGES<build>, @projects);
 }
 
 sub command_test (@projects) {
-    install_required_projects(@projects);
-
-    perform_actions_on_projects(%STAGES<test>, @projects);
+       install_required_projects(@projects)
+    && perform_actions_on_projects(%STAGES<test>, @projects);
 }
 
 sub command_install (@projects) {
-    install_required_projects(@projects);
-
-    perform_actions_on_projects(%STAGES<install>, @projects);
+       install_required_projects(@projects)
+    && perform_actions_on_projects(%STAGES<install>, @projects);
 }
 
 
@@ -543,8 +538,10 @@ sub install_required_projects (@projects) {
         say("\nInstalling other projects to satisfy dependencies:\n"
             ~ '    ' ~ $need_projects ~ "\n");
 
-        perform_actions_on_projects(%STAGES<install>, @need_projects);
+        return perform_actions_on_projects(%STAGES<install>, @need_projects);
     }
+
+    return 1;
 }
 
 sub show_dependencies (@projects) {
@@ -704,10 +701,16 @@ sub perform_actions_on_projects (@actions, @projects) {
         my %info := get_project_metadata($_, 0);
         if %info && metadata_valid(%info) {
             chdir($build_root);
-            perform_actions_on_project(@actions, $_, %info);
+            my $success := perform_actions_on_project(@actions, $_, %info);
             chdir($cwd);
+
+            unless $success {
+                return 0;
+            }
         }
     }
+
+    return 1;
 }
 
 sub perform_actions_on_project (@actions, $project, %info) {
