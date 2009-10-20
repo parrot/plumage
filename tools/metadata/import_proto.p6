@@ -17,6 +17,12 @@ sub MAIN ($proto_dir) {
 }
 
 sub make_meta_file ($project, $home, $owner) {
+    my %info := guess_meta_info($project, $home, $owner);
+
+    return json_from_meta_info(%info);
+}
+
+sub guess_meta_info ($project, $home, $owner) {
     my ($type, $authority, $checkout_uri, $browser_uri, $project_uri);
 
     given $home {
@@ -46,21 +52,34 @@ sub make_meta_file ($project, $home, $owner) {
         }
     }
 
-    my $json = '{
+    return {
+        project      => $project,
+        home         => $home,
+        owner        => $owner,
+        type         => $type,
+        authority    => $authority,
+        checkout_uri => $checkout_uri,
+        browser_uri  => $browser_uri,
+        project_uri  => $project_uri,
+    };
+}
+
+sub json_from_meta_info (%info) {
+    return '{
     "meta-spec"    : {
         "version"  : 1,
         "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
     },
     "general"      : {
-        "name"     : "' ~ $project ~ '",
+        "name"     : "' ~ %info<project> ~ '",
         "abstract" : "",
-        "authority": "' ~ $authority ~ '",
+        "authority": "' ~ %info<authority> ~ '",
         "version"  : "HEAD",
         "license"  : {
             "type" : "UNKNOWN",
             "uri"  : "UNKNOWN",
         },
-        "copyright_holder" : "' ~ $owner ~ '",
+        "copyright_holder" : "' ~ %info<owner> ~ '",
         "generated_by"     : "import_proto.p6",
         "keywords"         : [],
         "description"      : ""
@@ -83,9 +102,9 @@ sub make_meta_file ($project, $home, $owner) {
         }
     },
     "dependency-info"  : {
-        "provides"     : ["' ~ $project ~ '"],
+        "provides"     : ["' ~ %info<project> ~ '"],
         "requires"     : {
-            "fetch"    : ["' ~ $type ~ '"],
+            "fetch"    : ["' ~ %info<type> ~ '"],
             "configure": ["perl5"],
             "build"    : ["perl5", "make"],
             "test"     : ["make"],
@@ -95,14 +114,12 @@ sub make_meta_file ($project, $home, $owner) {
     },
     "resources"            : {
         "repository"       : {
-             "type"        : "' ~ $type ~ '",
-             "checkout_uri": "' ~ $checkout_uri ~ '",
-             "browser_uri" : "' ~ $browser_uri ~ '",
-             "project_uri" : "' ~ $project_uri ~ '"
+             "type"        : "' ~ %info<type> ~ '",
+             "checkout_uri": "' ~ %info<checkout_uri> ~ '",
+             "browser_uri" : "' ~ %info<browser_uri> ~ '",
+             "project_uri" : "' ~ %info<project_uri> ~ '"
         }
     }
 }
 ';
-
-    return $json;
 }
