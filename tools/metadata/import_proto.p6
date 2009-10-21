@@ -12,56 +12,49 @@ sub MAIN ($proto_dir) {
     for %projects.kv -> $project, %info {
         next unless %info<home> && %info<owner>;
 
-        my $json := make_meta_file($project, %info<home>, %info<owner>);
+        %info<project> = $project;
+
+        my $json := make_meta_file(%info);
     }
 }
 
-sub make_meta_file ($project, $home, $owner) {
-    my %info := guess_meta_info($project, $home, $owner);
+sub make_meta_file (%info is rw) {
+    guess_repo_info(%info);
 
     return json_from_meta_info(%info);
 }
 
-sub guess_meta_info ($project, $home, $owner) {
-    my ($type, $authority, $checkout_uri, $browser_uri, $project_uri);
+sub guess_repo_info (%info is rw) {
+    my $project = %info<project>;
+    my $owner   = %info<owner>;
+    my $home    = %info<home>;
 
     given $home {
         when 'github' {
-            $type         := 'git';
-            $authority    := "github.com/$owner";
-            $checkout_uri := "git://github.com/$owner/$project.git";
-            $browser_uri  := "http://github.com/$owner/$project/tree/master";
-            $project_uri  := "http://github.com/$owner/$project";
+            %info<type>         = 'git';
+            %info<authority>    = "github.com/$owner";
+            %info<checkout_uri> = "git://github.com/$owner/$project.git";
+            %info<browser_uri>  = "http://github.com/$owner/$project/tree/master";
+            %info<project_uri>  = "http://github.com/$owner/$project";
         }
         when 'gitorious' {
-            $type         := 'git';
-            $authority    := "gitorious.org/$project";
-            $checkout_uri := "git://gitorious.org/$project/$project.git";
-            $browser_uri  := "http://gitorious.org/$project/$project/trees/master";
-            $project_uri  := "http://gitorious.org/$project/$project";
+            %info<type>         = 'git';
+            %info<authority>    = "gitorious.org/$project";
+            %info<checkout_uri> = "git://gitorious.org/$project/$project.git";
+            %info<browser_uri>  = "http://gitorious.org/$project/$project/trees/master";
+            %info<project_uri>  = "http://gitorious.org/$project/$project";
         }
         when 'googlecode' {
-            $type         := 'svn';
-            $authority    := "googlecode.com/$project";
-            $checkout_uri := "http://$project.googlecode.com/svn/trunk";
-            $browser_uri  := "http://code.google.com/p/$project/source/browse/";
-            $project_uri  := "http://code.google.com/p/$project/";
+            %info<type>         = 'svn';
+            %info<authority>    = "googlecode.com/$project";
+            %info<checkout_uri> = "http://$project.googlecode.com/svn/trunk";
+            %info<browser_uri>  = "http://code.google.com/p/$project/source/browse/";
+            %info<project_uri>  = "http://code.google.com/p/$project/";
         }
         default {
             die "Unknown home '$home' for project '$project'.\n";
         }
     }
-
-    return {
-        project      => $project,
-        home         => $home,
-        owner        => $owner,
-        type         => $type,
-        authority    => $authority,
-        checkout_uri => $checkout_uri,
-        browser_uri  => $browser_uri,
-        project_uri  => $project_uri,
-    };
 }
 
 sub json_from_meta_info (%info) {
