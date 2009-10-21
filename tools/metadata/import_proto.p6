@@ -15,13 +15,13 @@ sub MAIN ($proto_dir) {
         # Apparently dead (or misconfigured) projects
         next if $project ~~ /^epoxy/;
 
-	next unless $project eq 'druid';
+        # next unless $project eq 'druid';
 
         %info<project> = $project;
 
         my $json := make_meta_file(%info);
 
-	say $json;
+        # say $json;
     }
 }
 
