@@ -22,7 +22,7 @@
             "type" : "repository"
         },
         "configure": {
-            "type" : "perl5_configure",
+            "type" : "nqp_configure",
             "extra_args" : [
                 "--parrot-config=#parrot_config#"
             ]
