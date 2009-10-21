@@ -61,7 +61,7 @@ sub guess_repo_info (%info is rw) {
     }
 }
 
-sub checkout_repo (%info) {
+sub checkout_repo (%info is rw) {
     my $project  = %info<project>;
     my $temp_dir = 'import_temp';
     my $cwd      = $*CWD;
@@ -80,14 +80,106 @@ sub checkout_repo (%info) {
 
     die "Could not checkout $project at {%info<checkout_uri>}" unless $project ~~ :e;
 
+    say "Cloned $project";
+
     chdir($project);
 
-    say "Cloned $project";
+    if 'LICENSE' ~~ :e {
+        my $md5sum = (qx`md5sum LICENSE`).subst(/ \s+ .* $ /, {''});
+
+        if $md5sum ~~ 'b4a94da2a1f918b217ef5156634fc9e0'
+                    | '18740546821e33d23e8809da70d4a79a' {
+            %info<license>       = {};
+            %info<license><type> = 'artistic2';
+            %info<license><uri>  = 'http://www.perlfoundation.org/artistic_license_2_0';
+        }
+    }
+    unless %info<license><type> {
+        %info<license><type> = 'UNKNOWN';
+        %info<license><uri>  = 'UNKNOWN';
+    }
+
+    if 'lib' ~~ :e {
+        %*ENV<PERL6LIB> = "$*CWD/lib";
+    }
+
+    if    'Makefile.PL'  ~~ :e {
+        %info<configure_requires> = ('perl5');
+        %info<configure> = 'perl5_makefile';
+        run('perl Makefile.PL');
+    }
+    elsif 'Configure.pl' ~~ :e {
+        %info<configure_requires> = ('perl6');
+        %info<configure> = 'perl6_configure';
+        run('perl6 Configure.pl');
+    }
+    elsif 'Configure'    ~~ :e {
+        %info<configure_requires> = ('perl6');
+        %info<configure> = 'perl6_configure';
+        run('perl6 Configure');
+    }
+    else {
+        %info<configure_requires> = ();
+    }
+
+    if 'Makefile' ~~ :e {
+        %info<build_requires>   = ('make');
+        %info<test_requires>    = ('make');
+        %info<install_requires> = ('make');
+
+        %info<build>   = 'make';
+        %info<test>    = 'make';
+        %info<install> = 'make';
+    }
+    else {
+        %info<build_requires>   = ();
+        %info<test_requires>    = ();
+        %info<install_requires> = ();
+    }
 
     chdir($cwd);
 }
 
 sub json_from_meta_info (%info) {
+    %info<test_requires>.push('rakudo');
+
+    my $configure_requires = %info<configure_requires>.map({"\"$_\""}).join(', ');
+    my $build_requires     = %info<build_requires>.map({"\"$_\""}).join(', ');
+    my $test_requires      = %info<test_requires>.map({"\"$_\""}).join(', ');
+    my $install_requires   = %info<install_requires>.map({"\"$_\""}).join(', ');
+
+    my $configure = '';
+    if %info<configure> {
+        $configure = '
+        "configure": {
+            "type" : "' ~ %info<configure> ~ '"
+        },';
+    }
+
+    my $build = '';
+    if %info<build> {
+        $build = '
+        "build": {
+            "type" : "' ~ %info<build> ~ '"
+        },';
+    }
+
+    my $test = '';
+    if %info<test> {
+        $test = '
+        "test": {
+            "type" : "' ~ %info<test> ~ '"
+        },';
+    }
+
+    my $install = '';
+    if %info<install> {
+        $install = '
+        "install": {
+            "type" : "' ~ %info<install> ~ '"
+        }';
+    }
+
     return '{
     "meta-spec"    : {
         "version"  : 1,
@@ -99,8 +191,8 @@ sub json_from_meta_info (%info) {
         "authority": "' ~ %info<authority> ~ '",
         "version"  : "HEAD",
         "license"  : {
-            "type" : "UNKNOWN",
-            "uri"  : "UNKNOWN",
+            "type" : "' ~ %info<license><type> ~ '",
+            "uri"  : "' ~ %info<license><uri>  ~ '",
         },
         "copyright_holder" : "' ~ %info<owner> ~ '",
         "generated_by"     : "import_proto.p6",
@@ -110,29 +202,17 @@ sub json_from_meta_info (%info) {
     "instructions" : {
         "fetch"    : {
             "type" : "repository"
-        },
-        "configure": {
-            "type" : "perl5_configure"
-        },
-        "build"    : {
-            "type" : "make"
-        },
-        "test"     : {
-            "type" : "make"
-        },
-        "install"  : {
-            "type" : "make"
-        }
+        },' ~ $configure ~ $build ~ $test ~ $install ~'
     },
     "dependency-info"  : {
         "provides"     : ["' ~ %info<project> ~ '"],
         "requires"     : {
             "fetch"    : ["' ~ %info<type> ~ '"],
-            "configure": ["perl5"],
-            "build"    : ["perl5", "make"],
-            "test"     : ["make"],
-            "install"  : ["make"],
-            "runtime"  : []
+            "configure": [' ~ $configure_requires ~ '],
+            "build"    : [' ~ $build_requires ~ '],
+            "test"     : [' ~ $test_requires ~ '],
+            "install"  : [' ~ $install_requires ~ '],
+            "runtime"  : ["rakudo"]
         }
     },
     "resources"            : {
