@@ -12,6 +12,9 @@ sub MAIN ($proto_dir) {
     for %projects.kv -> $project, %info {
         next unless %info<home> && %info<owner>;
 
+        # Apparently dead (or misconfigured) projects
+        next if $project ~~ /^epoxy/;
+
         %info<project> = $project;
 
         my $json := make_meta_file(%info);
@@ -20,6 +23,7 @@ sub MAIN ($proto_dir) {
 
 sub make_meta_file (%info is rw) {
     guess_repo_info(%info);
+    checkout_repo(%info);
 
     return json_from_meta_info(%info);
 }
@@ -39,10 +43,10 @@ sub guess_repo_info (%info is rw) {
         }
         when 'gitorious' {
             %info<type>         = 'git';
-            %info<authority>    = "gitorious.org/$project";
-            %info<checkout_uri> = "git://gitorious.org/$project/$project.git";
-            %info<browser_uri>  = "http://gitorious.org/$project/$project/trees/master";
-            %info<project_uri>  = "http://gitorious.org/$project/$project";
+            %info<authority>    = "gitorious.org/~$owner";
+            %info<checkout_uri> = "git://gitorious.org/$project/mainline.git";
+            %info<browser_uri>  = "http://gitorious.org/$project/mainline/trees/master";
+            %info<project_uri>  = "http://gitorious.org/$project";
         }
         when 'googlecode' {
             %info<type>         = 'svn';
@@ -55,6 +59,32 @@ sub guess_repo_info (%info is rw) {
             die "Unknown home '$home' for project '$project'.\n";
         }
     }
+}
+
+sub checkout_repo (%info) {
+    my $project  = %info<project>;
+    my $temp_dir = 'import_temp';
+    my $cwd      = $*CWD;
+
+    mkdir($temp_dir);
+    chdir($temp_dir);
+
+    given %info<type> {
+        when 'git' {
+            run("git clone    {%info<checkout_uri>} $project");
+        }
+        when 'svn' {
+            run("svn checkout {%info<checkout_uri>} $project");
+        }
+    }
+
+    die "Could not checkout $project at {%info<checkout_uri>}" unless $project ~~ :e;
+
+    chdir($project);
+
+    say "Cloned $project";
+
+    chdir($cwd);
 }
 
 sub json_from_meta_info (%info) {
