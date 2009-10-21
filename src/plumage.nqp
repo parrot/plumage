@@ -73,7 +73,7 @@ our %COMMANDS := fixup_commands(eval($_COMMANDS_JSON, 'data_json'));
 my  $_ACTIONS_JSON := '
 {
     "fetch"     : [ "git", "svn" ],
-    "configure" : [ "perl5_configure", "parrot_configure" ],
+    "configure" : [ "perl5_configure", "parrot_configure", "nqp_configure" ],
     "build"     : [ "make" ],
     "test"      : [ "make" ],
     "install"   : [ "make" ]
@@ -853,6 +853,18 @@ sub configure_parrot_configure ($project, %conf) {
 
     my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot');
     my $success := do_run($parrot, 'Configure.pir');
+
+    chdir($cwd);
+
+    return $success;
+}
+
+sub configure_nqp_configure ($project, %conf) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot_nqp');
+    my $success := do_run($parrot, 'Configure.nqp');
 
     chdir($cwd);
 
