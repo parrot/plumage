@@ -15,9 +15,13 @@ sub MAIN ($proto_dir) {
         # Apparently dead (or misconfigured) projects
         next if $project ~~ /^epoxy/;
 
+	next unless $project eq 'druid';
+
         %info<project> = $project;
 
         my $json := make_meta_file(%info);
+
+	say $json;
     }
 }
 
@@ -104,37 +108,37 @@ sub checkout_repo (%info is rw) {
     }
 
     if    'Makefile.PL'  ~~ :e {
-        %info<configure_requires> = ('perl5');
+        %info<configure_requires> = ['perl5'];
         %info<configure> = 'perl5_makefile';
         run('perl Makefile.PL');
     }
     elsif 'Configure.pl' ~~ :e {
-        %info<configure_requires> = ('perl6');
+        %info<configure_requires> = ['perl6'];
         %info<configure> = 'perl6_configure';
         run('perl6 Configure.pl');
     }
     elsif 'Configure'    ~~ :e {
-        %info<configure_requires> = ('perl6');
+        %info<configure_requires> = ['perl6'];
         %info<configure> = 'perl6_configure';
         run('perl6 Configure');
     }
     else {
-        %info<configure_requires> = ();
+        %info<configure_requires> = [];
     }
 
     if 'Makefile' ~~ :e {
-        %info<build_requires>   = ('make');
-        %info<test_requires>    = ('make');
-        %info<install_requires> = ('make');
+        %info<build_requires>   = ['make'];
+        %info<test_requires>    = ['make'];
+        %info<install_requires> = ['make'];
 
         %info<build>   = 'make';
         %info<test>    = 'make';
         %info<install> = 'make';
     }
     else {
-        %info<build_requires>   = ();
-        %info<test_requires>    = ();
-        %info<install_requires> = ();
+        %info<build_requires>   = [];
+        %info<test_requires>    = [];
+        %info<install_requires> = [];
     }
 
     chdir($cwd);
