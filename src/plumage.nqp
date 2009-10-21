@@ -863,8 +863,8 @@ sub configure_nqp_configure ($project, %conf) {
     my $cwd := cwd();
     chdir($project);
 
-    my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot_nqp');
-    my $success := do_run($parrot, 'Configure.nqp');
+    my $parrot_nqp := fscat(as_array(%VM<config><bindir>), 'parrot_nqp');
+    my $success    := do_run($parrot_nqp, 'Configure.nqp');
 
     chdir($cwd);
 
