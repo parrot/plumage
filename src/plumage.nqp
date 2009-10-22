@@ -72,7 +72,7 @@ our %COMMANDS := fixup_commands(eval($_COMMANDS_JSON, 'data_json'));
 
 my  $_ACTIONS_JSON := '
 {
-    "fetch"     : [ "git", "svn" ],
+    "fetch"     : [ "repository", "git", "svn" ],
     "configure" : [ "perl5_configure", "parrot_configure", "nqp_configure" ],
     "build"     : [ "make" ],
     "test"      : [ "make" ],
@@ -470,6 +470,11 @@ sub show_metadata_parse_error ($exception, &code, @args) {
 }
 
 sub metadata_valid (%info) {
+    return metadata_spec_known(%info)
+        && metadata_instruction_types_known(%info);
+}
+
+sub metadata_spec_known (%info) {
     my %spec          := %info<meta-spec>;
     my $known_uri     := 'https://trac.parrot.org/parrot/wiki/ModuleEcosystem';
     my $known_version := 1;
@@ -500,6 +505,33 @@ sub metadata_valid (%info) {
     }
 
     return 0;
+}
+
+sub metadata_instruction_types_known (%info) {
+    my %inst   := %info<instructions>;
+    my @stages := keys(%inst);
+
+    unless %inst && @stages {
+        say("This project has no instructions.");
+        return 0;
+    }
+
+    for @stages {
+        my $type   := %inst{$_}<type>;
+        my $action := %ACTION{$_}{$type};
+
+        unless $action {
+            my @types := keys(%ACTION{$_});
+            my $types := join(', ', @types);
+
+            say("I don't understand " ~ $_ ~ " type '" ~ $type ~ "'.\n"
+                ~ "I only understand these types: " ~ $types);
+
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 
@@ -753,12 +785,18 @@ sub perform_actions_on_project (@actions, $project, %info) {
 # FETCH
 
 sub action_fetch ($project, %info) {
-    my %repo := %info<instructions><fetch>;
-    unless %repo<type> eq 'repository' {
+    my %fetch := %info<instructions><fetch>;
+    if %fetch {
+        my &action := %ACTION<fetch>{%fetch<type>};
+        return &action($project, %info);
+    }
+    else {
         say("Don't know how to fetch " ~ $project ~ '.');
         return 0;
     }
+}
 
+sub fetch_repository ($project, %info) {
     my %repo := %info<resources><repository>;
     if %repo {
         say("Fetching " ~ $project ~ ' ...');
@@ -767,7 +805,7 @@ sub action_fetch ($project, %info) {
         return &action($project, %repo<checkout_uri>);
     }
     else {
-        say("Don't know how to fetch " ~ $project ~ '.');
+        say("Trying to fetch from a repository, but no repository info for " ~ $project ~ '.');
         return 0;
     }
 }
