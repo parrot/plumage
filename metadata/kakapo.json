@@ -1,0 +1,63 @@
+{
+    "meta-spec" : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general" : {
+        "name"     : "Kakapo",
+        "abstract" : "Run-time library of tests and utility code for NQP",
+        "authority": "http://gitorious.org/austin",
+        "version"  : "HEAD",
+        "license" : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Austin Hastings",
+        "generated_by"     : "Austin Hastings <Austin_Hastings@yahoo.com>",
+        "keywords"         : [
+	"library",
+	"nqp",
+	"parrot",
+	"runtime",
+	"testing",
+	"utility"
+	],
+        "description"      : "Utility library for NQP programs on the Parrot VM."
+    },
+    "instructions" : {
+        "fetch" : {
+            "type" : "repository"
+        },
+        "configure": {
+            "type" : "perl5_configure"
+        },
+        "build" : {
+            "type" : "make"
+        },
+        "test" : {
+            "type" : "make"
+        },
+        "install" : {
+            "type" : "make"
+        }
+    },
+    "dependency-info" : {
+        "provides"     : [ "kakapo", "kakapo_base", "kakapo_test" ],
+        "requires" : {
+            "fetch"    : ["git"],
+            "configure": ["perl5"],
+            "build"    : ["perl5", "make"],
+            "test"     : ["perl5", "make"],
+            "install"  : ["make"],
+            "runtime"  : [ ]
+        }
+    },
+    "resources" : {
+        "repository" : {
+             "type"        : "git",
+             "checkout_uri": "git://gitorious.org/kakapo/kakapo.git",
+             "browser_uri" : "http://gitorious.org/kakapo",
+             "project_uri" : "http://gitorious.org/kakapo"
+        }
+    }
+}
