@@ -113,7 +113,7 @@ sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
     load_bytecode('src/lib/Glue.pbc');
 
-    # utility functions written in nqp
+    # Utility functions written in NQP
     load_bytecode('src/lib/Util.pbc');
 
     # Process command line options
@@ -124,6 +124,9 @@ sub load_helper_libraries () {
 
     # Data structure dumper for PMCs (used for debugging)
     load_bytecode('dumper.pbc');
+
+    # Plumage metadata functions
+    load_bytecode('src/lib/Metadata.pbc');
 }
 
 sub fixup_commands ($commands) {
@@ -431,107 +434,6 @@ sub command_showdeps (@projects) {
     unless $unknown_project {
         show_dependencies(@projects);
     }
-}
-
-sub get_project_list () {
-    my @files := readdir(replace_config_strings(%CONF<plumage_metadata_dir>));
-    my $regex := rx('\.json$');
-    my @projects;
-
-    for @files {
-        if $regex($_) {
-            my $project := subst($_, $regex, '');
-            @projects.push($project);
-        }
-    }
-
-    return @projects;
-}
-
-sub get_project_metadata ($project, $ignore_missing) {
-    my $meta_dir  := replace_config_strings(%CONF<plumage_metadata_dir>);
-    my $json_file := fscat(as_array($meta_dir), $project ~ '.json');
-
-    unless path_exists($json_file) {
-        unless $ignore_missing {
-            say("I don't know anything about project '" ~ $project ~ "'.");
-        }
-        return 0;
-    }
-
-    return try(Config::JSON::ReadConfig, as_array($json_file),
-               show_metadata_parse_error);
-}
-
-sub show_metadata_parse_error ($exception, &code, @args) {
-    say("Failed to parse metadata file '" ~ @args[0] ~ "': " ~ $exception);
-
-    return 0;
-}
-
-sub metadata_valid (%info) {
-    return metadata_spec_known(%info)
-        && metadata_instruction_types_known(%info);
-}
-
-sub metadata_spec_known (%info) {
-    my %spec          := %info<meta-spec>;
-    my $known_uri     := 'https://trac.parrot.org/parrot/wiki/ModuleEcosystem';
-    my $known_version := 1;
-
-    unless %spec && %spec<uri> {
-        say("I don't understand this project's metadata at all.");
-        return 0;
-    }
-
-    unless %spec<uri> eq $known_uri {
-        say("This project's metadata specifies unknown metadata spec URI '"
-            ~ %spec<uri> ~ "'.");
-        return 0;
-    }
-
-    if    %spec<version> == $known_version {
-        return 1;
-    }
-    elsif %spec<version>  > $known_version {
-        say("This project's metadata is too new to parse; it is version "
-            ~ %spec<version> ~ " and I only understand version "
-            ~ $known_version ~ ".");
-    }
-    else {
-        say("This project's metadata is too old to parse; it is version "
-            ~ %spec<version> ~ " and I only understand version "
-            ~ $known_version ~ ".");
-    }
-
-    return 0;
-}
-
-sub metadata_instruction_types_known (%info) {
-    my %inst   := %info<instructions>;
-    my @stages := keys(%inst);
-
-    unless %inst && @stages {
-        say("This project has no instructions.");
-        return 0;
-    }
-
-    for @stages {
-        my $type   := %inst{$_}<type>;
-        my $action := %ACTION{$_}{$type};
-
-        unless $action {
-            my @types := keys(%ACTION{$_});
-            my $types := join(', ', @types);
-
-            say("I don't understand " ~ $_ ~ " type '" ~ $type ~ "'.\n"
-                ~ "I only understand these types: " ~ $types);
-
-            return 0;
-        }
-    }
-
-    return 1;
 }
 
 
