@@ -17,12 +17,16 @@ PBC_TO_EXE  = $(PARROT_BIN)/pbc_to_exe
 PARROT_NQP  = $(PARROT_BIN)/parrot_nqp
 
 # The default target
-all: plumage
+all: plumage$(EXE)
 
 # Always run the FORCEd targets, without checking the filesystem
 .PHONY: FORCE
 
 FORCE:
+
+# Rebuild the Makefile if needed
+Makefile: src/Makefile.in Configure.nqp
+	$(PARROT_NQP) Configure.nqp
 
 # List all user-visible targets
 help: FORCE
@@ -40,7 +44,7 @@ plumage$(EXE): src/plumage$(EXE)
 	$(CP) src/plumage$(EXE) plumage$(EXE)
 	$(CHMOD) 0755 plumage$(EXE)
 
-src/plumage$(EXE): src/plumage.pbc src/lib/Metadata.pbc src/lib/Util.pbc src/lib/Glue.pbc
+src/plumage$(EXE): Makefile src/plumage.pbc src/lib/Metadata.pbc src/lib/Util.pbc src/lib/Glue.pbc
 	$(PBC_TO_EXE) src/plumage.pbc
 
 .SUFFIXES: .nqp .pir .pbc
