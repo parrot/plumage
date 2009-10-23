@@ -8,6 +8,11 @@ Metadata.nqp - Metadata-handling functions for Plumage
     # Load this library
     load_bytecode('src/lib/Metadata.pbc');
 
+    # Functions
+    @projects := get_project_list()
+    %info     := get_project_metadata($project, $ignore_missing)
+    $is_valid := metadata_valid(%info)
+
 
 =head1 DESCRIPTION
 
@@ -15,6 +20,18 @@ Metadata.nqp - Metadata-handling functions for Plumage
 
 our %CONF;
 our %ACTION;
+
+=head2 Functions
+
+=over 4
+
+=item @projects := get_project_list()
+
+Return a list of project names currently known to Plumage, regardless of
+whether they are currently installed or not.  Each name is suitable for passing
+to C<get_project_metadata()> to obtain more details.
+
+=cut
 
 sub get_project_list () {
     my @files := readdir(replace_config_strings(%CONF<plumage_metadata_dir>));
@@ -30,6 +47,15 @@ sub get_project_list () {
 
     return @projects;
 }
+
+
+=item %info := get_project_metadata($project, $ignore_missing)
+
+Return metadata for the project named C<$project>.  Returns a false value if no
+such project is known, and also outputs an error message unless
+C<$ignore_missing> is true.
+
+=cut
 
 sub get_project_metadata ($project, $ignore_missing) {
     my $meta_dir  := replace_config_strings(%CONF<plumage_metadata_dir>);
@@ -51,6 +77,16 @@ sub show_metadata_parse_error ($exception, &code, @args) {
 
     return 0;
 }
+
+
+=item $is_valid := metadata_valid(%info)
+
+Check that the metadata returned by C<get_project_metadata()> is understood and
+seems otherwise valid.  Returns a true value if all tests pass, or a false value
+if not.  Also outputs error messages and hints to the user for any problems
+found.
+
+=cut
 
 sub metadata_valid (%info) {
     return metadata_spec_known(%info)
@@ -117,3 +153,7 @@ sub metadata_instruction_types_known (%info) {
     return 1;
 }
 
+
+=back
+
+=cut
