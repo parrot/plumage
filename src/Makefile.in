@@ -19,11 +19,13 @@ PARROT_NQP  = $(PARROT_BIN)/parrot_nqp
 # The default target
 all: plumage
 
-# Always run these, without checking the filesystem
-.PHONY: help clean test
+# Always run the FORCEd targets, without checking the filesystem
+.PHONY: FORCE
+
+FORCE:
 
 # List all user-visible targets
-help:
+help: FORCE
 	@echo ""
 	@echo "The following targets are available:"
 	@echo ""
@@ -52,12 +54,12 @@ src/plumage$(EXE): src/plumage.pbc src/lib/Metadata.pbc src/lib/Util.pbc src/lib
 # Convenience
 realclean: clean
 
-clean:
+clean: FORCE
 	$(RM_F) "*~" "src/lib/*.pbc" "src/*.pbc" "src/*$(O)" "src/*.c" \
 	        src/lib/Util.pir src/lib/Metadata.pir src/plumage.pir \
 	        src/plumage$(EXE) plumage$(EXE) Makefile
 
-test:
+test: FORCE
 	$(PARROT_NQP) t/harness t/*.t
 
 # Local variables:
