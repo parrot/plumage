@@ -19,16 +19,21 @@ PARROT_NQP  = $(PARROT_BIN)/parrot_nqp
 # The default target
 all: plumage
 
-# List all user-visible targest
+# Always run these, without checking the filesystem
+.PHONY: help clean test
+
+# List all user-visible targets
 help:
 	@echo ""
 	@echo "The following targets are available:"
 	@echo ""
 	@echo "  all:         Generate plumage executable (default target)"
 	@echo "  clean:       Clean generated files"
+	@echo "  test:        Test plumage and its libraries"
 	@echo "  help:        Print this help message"
 	@echo ""
 
+# The main build sequence
 plumage$(EXE): src/plumage$(EXE)
 	$(CP) src/plumage$(EXE) plumage$(EXE)
 	$(CHMOD) 0755 plumage$(EXE)
@@ -36,26 +41,13 @@ plumage$(EXE): src/plumage$(EXE)
 src/plumage$(EXE): src/plumage.pbc src/lib/Metadata.pbc src/lib/Util.pbc src/lib/Glue.pbc
 	$(PBC_TO_EXE) src/plumage.pbc
 
-src/plumage.pbc: src/plumage.pir
-	$(PARROT) -o src/plumage.pbc src/plumage.pir
+.SUFFIXES: .nqp .pir .pbc
 
-src/plumage.pir: src/plumage.nqp
-	$(PARROT_NQP) --target=pir -o src/plumage.pir src/plumage.nqp
+.pir.pbc:
+	$(PARROT) -o $@ $<
 
-src/lib/Glue.pbc: src/lib/Glue.pir
-	$(PARROT) -o src/lib/Glue.pbc src/lib/Glue.pir
-
-src/lib/Util.pbc: src/lib/Util.pir
-	$(PARROT) -o src/lib/Util.pbc src/lib/Util.pir
-
-src/lib/Util.pir: src/lib/Util.nqp
-	$(PARROT_NQP) --target=pir -o src/lib/Util.pir src/lib/Util.nqp
-
-src/lib/Metadata.pbc: src/lib/Metadata.pir
-	$(PARROT) -o src/lib/Metadata.pbc src/lib/Metadata.pir
-
-src/lib/Metadata.pir: src/lib/Metadata.nqp
-	$(PARROT_NQP) --target=pir -o src/lib/Metadata.pir src/lib/Metadata.nqp
+.nqp.pir:
+	$(PARROT_NQP) --target=pir -o $@ $<
 
 # Convenience
 realclean: clean
