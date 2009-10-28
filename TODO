@@ -9,17 +9,45 @@ Study:
 * proto changes afoot
 * Haskell Cabal
 * Ruby Rake
-* ExtUtils::Liblist
+* Possibly useful modules
+  * ExtUtils::Liblist
+  * Devel::CheckLib
+  * Devel::CheckOS (relatively standard list of OS names?)
+  * Software::License (standard list of FOSS licenses, with templated text)
+* Debian & Fedora version numbering specs
+* Debian & Fedora dependency/relationship specs
+  * http://www.debian.org/doc/debian-policy/ch-relationships.html
+* HLL version numbering specs
+  * At least JS, Perl 5, Perl 6, PHP, Python, Ruby, Tcl
 
 
 Metadata:
 ---------
+* Define recognized version number strings, and how to compare them
+  * Including wildcards, subsets, and ranges
+  * Define mappings from native edge cases to canonical?
+* Platform dependent:
+  * Instructions?
+  * Dependencies?
+  * CPAN meta spec trying to avoid this (or at least delay to spec 3.0)
+* Collect all phase-specific metadata into one deeper tree?
+  * CPAN metadata spec likely to go this route
 * general
   * Easy way to reference CREDITS file in contributors key?
   * Repo fetches from tip have version 'HEAD'
+  * List of known licenses
+    * Specials: Open_Source, Restrictive, Unrestricted, Unknown
+    * Multiple licenses allowed -- but *NO* details about what this means
+    * See lines 179-231 of
+      http://github.com/dagolden/cpan-meta-spec/blob/17-license/META-spec.pod
+  * Copyrights
+    * http://dep.debian.net/deps/dep5/
 * instructions
   * 'fetch' of a repository should have 'repository' as its type
   * 'type's must have underscores, not hyphens
+  * 'patch' phase
+  * Types of 'test'?  basic, spec, extra, author, ...?
+  * Phase(s) for release (to CPAN, as RPM, ...)?
   * Special case of configure type for accepting --parrot-config option?
   * What about update and cleanup?
   * What about multiple instructions per key?
@@ -27,8 +55,12 @@ Metadata:
 * dependency-info
   * 'provides' is always an array
   * HLLs provide their project name and their language name
+  * 'development_requires'?
 * resources
   * feed_type and feed_uri for hosting that provides Atom/RSS commit feeds
+  * branch
+  * commit/rev spec
+  * multiple possible repos?
 
 
 Plumage:
@@ -37,6 +69,8 @@ Plumage:
   * allison looking into parrot.org
   * moritz gave access to a Debian Lenny box
 * Functionality:
+  * Magic local directory project name ('.')
+  * Read meta from repo after fetch/patch/configure
   * Help
     * Real manpage
     * help command
@@ -47,6 +81,8 @@ Plumage:
   * Platform hints
     * config items not provided by parrot, like PATH separator
     * binary renames
+  * Official metadata spec validator tool (module?), with test suite
+  * Use Plumage's Configure.nqp and test harness for project config/test
   * Anything proto can do
     * Meaningful exit codes
     * Quiet modes: Log, Silent, Verbose
@@ -54,8 +90,10 @@ Plumage:
       * Interaction with sudo?
       * Other prompts?
     * Create new project helper
+    * 'showstate' command (show build and install status)
     * 'update' command
     * 'uninstall' or 'remove' command
+    * 'wipeout' or 'purge' command -- uninstall and uncache
     * 'fetch' able to do owner-clone for git repos
       * User able to specify list of authorities they have commitbits for?
     * 'configure' able to run any of:
@@ -83,7 +121,10 @@ Plumage:
     steps can be tested
   * Check exit code of each test file
 * Misc suggestions
+  * Merge Plumage .pbc's all together into executable using pbc_merge
   * Avoid asking questions (after first setup?) if at all possible
+  * Recommendations ("optional dependencies") should not abort top-level
+    install if they fail to install
   * rake madness (from Cardinal):
     * rake clobber
     * git pull
