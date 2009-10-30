@@ -1,0 +1,56 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "markdown",
+        "abstract" : "Markdown on Parrot",
+        "authority": "http://github.com/fperrad",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Parrot Foundation",
+        "generated_by"     : "Francois Perrad <francois.perrad@gadz.org>",
+        "keywords"         : ["markdown"],
+        "description"      : "This is the port of the Markdown, a lightweight markup language, on the Parrot VM."
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "configure": {
+            "type" : "perl5_configure"
+        },
+        "build"    : {
+            "type" : "make"
+        },
+        "test"     : {
+            "type" : "make"
+        },
+        "install"  : {
+            "type" : "make"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["markdown"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "configure": ["perl5"],
+            "build"    : ["perl5", "make"],
+            "test"     : ["perl5", "make"],
+            "install"  : ["perl5", "make"],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/fperrad/markdown.git",
+             "browser_uri" : "http://github.com/fperrad/markdown",
+             "project_uri" : "http://github.com/fperrad/markdown"
+        }
+    }
+}
