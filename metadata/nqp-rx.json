@@ -1,0 +1,59 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "NQP-rx",
+        "abstract" : "Not Quite Perl 6",
+        "authority": "git://github.com/perl6",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Patrick R. Michaud",
+        "generated_by"     : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
+        "keywords"         : ["Not Quite Perl", "NQP", "Perl 6", "HLL", "Not Quite"],
+        "description"      : "."
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "configure": {
+            "type" : "perl5_configure",
+            "extra_args" : [
+                "--parrot-config=#parrot_config#"
+            ]
+        },
+        "build"    : {
+            "type" : "make"
+        },
+        "test"     : {
+            "type" : "make"
+        },
+        "install"  : {
+            "type" : "make"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["NQP"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "configure": ["perl5"],
+            "build"    : ["perl5", "make"],
+            "test"     : ["perl5", "make"],
+            "install"  : ["make"],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/perl6/nqp-rx.git",
+             "browser_uri" : "http://github.com/perl6/nqp-rx",
+             "project_uri" : "http://github.com/perl6/nqp-rx"
+        }
+    }
+}
