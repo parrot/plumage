@@ -27,8 +27,8 @@ sub MAIN () {
 
     # Fix paths on Windows
     if ($OS eq 'MSWin32') {
-        $replaced := subst($replaced, rx('\/'),   '\\');
-        $replaced := subst($replaced, rx('\\\*'), '\\\\*');
+        $replaced := subst($replaced, rx('\/'),     '\\'   );
+        $replaced := subst($replaced, rx('\\\\\*'), '\\\\*');
     }
 
     # Spew out the final makefile
