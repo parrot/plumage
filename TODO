@@ -23,6 +23,12 @@ Study:
 
 Metadata:
 ---------
+* Separate spec in terms of data structures v. serialization format?
+* Formalize experimental metadata 'namespace'
+  * Ignored by validators (except still syntactically valid JSON)
+  * Ignored by clients that don't recognize them
+  * Guaranteed never to class with future official metadata
+  * Keys beginning with x- or X-
 * Define recognized version number strings, and how to compare them
   * Including wildcards, subsets, and ranges
   * Define mappings from native edge cases to canonical?
@@ -41,7 +47,10 @@ Metadata:
     * See lines 179-231 of
       http://github.com/dagolden/cpan-meta-spec/blob/17-license/META-spec.pod
   * Copyrights
+    * May be multiple copyright holders
     * http://dep.debian.net/deps/dep5/
+  * Status
+    * Stable/testing/unstable?
 * instructions
   * 'fetch' of a repository should have 'repository' as its type
   * 'type's must have underscores, not hyphens
@@ -61,6 +70,16 @@ Metadata:
   * branch
   * commit/rev spec
   * multiple possible repos?
+  * bug_tracker
+    * type
+    * home page uri
+    * submit uri
+    * submit email
+  * contacts
+    * general
+    * legal
+    * security
+    * array-valued?
 
 
 Plumage:
@@ -71,6 +90,7 @@ Plumage:
 * Functionality:
   * Magic local directory project name ('.')
   * Read meta from repo after fetch/patch/configure
+  * Cache copy of final meta at install time for later query
   * Help
     * Real manpage
     * help command
@@ -78,6 +98,7 @@ Plumage:
   * System and local installs
     * Where should local installs go by default?
     * How to make parrot aware of local install path?
+  * Arch-specific and non-specific install dirs?
   * Platform hints
     * config items not provided by parrot, like PATH separator
     * binary renames
