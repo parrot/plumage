@@ -109,7 +109,7 @@ sub set_from_array (@array) {
 
 These functions provide convenient ways to interact with the file system,
 other processes, and similar operating system constructs.
- 
+
 =over 4
 
 =item $binary_path := find_program($program)
@@ -132,11 +132,18 @@ following way:
 sub find_program ($program) {
     my $path_sep := $OS eq 'MSWin32' ?? ';' !! ':';
     my @paths    := split($path_sep, %ENV<PATH>);
+    my @exts     := split($path_sep, %ENV<PATHEXT>);
+
+    @exts.unshift('');
 
     for @paths {
-        my $path := fscat(as_array($_), $program ~ %VM<exe>);
-        if path_exists($path) {
-            return $path;
+        my $path := fscat(as_array($_), $program);
+
+        for @exts {
+            my $pathext := $path ~ $_;
+            if path_exists($pathext) {
+                return $pathext;
+            }
         }
     }
 
@@ -185,14 +192,14 @@ sub test_dir_writable($dir) {
 
     if path_exists($test_file) {
         die("Test file '" ~ $test_file
-	     ~ "'\nthat should never exist already does.");
+             ~ "'\nthat should never exist already does.");
     }
 
     try(spew, as_array($test_file, "test_dir_writable() test file.\n"));
 
     if path_exists($test_file) {
         unlink($test_file);
-	return 1;
+        return 1;
     }
     else {
         return 0;
