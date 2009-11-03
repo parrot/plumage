@@ -53,6 +53,7 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     $result := call_flattened(&code, $mixed, @args, $list, ...);
 
     # Global variables;
+    our $EXECUTABLE_NAME;
     our $PROGRAM_NAME;
     our @ARGS;
     our %ENV;
@@ -677,6 +678,10 @@ it with C<as_array()> first, like so:
 
 =over 4
 
+=item $EXECUTABLE_NAME
+
+Full path of interpreter executable
+
 =item $PROGRAM_NAME
 
 Name of running program (argv[0] in C)
@@ -721,6 +726,10 @@ Operating system version
     $P2 = box $S0
     set_hll_global '$PROGRAM_NAME', $P2
     set_hll_global '@ARGS', $P1
+
+    $S0 = interpinfo .INTERPINFO_EXECUTABLE_FULLNAME
+    $P0 = box $S0
+    set_hll_global '$EXECUTABLE_NAME', $P0
 
     $P0 = root_new ['parrot';'Env']
     set_hll_global '%ENV', $P0

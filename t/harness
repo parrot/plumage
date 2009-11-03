@@ -1,7 +1,7 @@
 #! nqp
 
+our $EXECUTABLE_NAME;
 our @ARGS;
-our $PROGRAM_NAME;
 MAIN();
 
 # TAP grammar in ABNF
@@ -24,7 +24,7 @@ sub MAIN () {
         print($filename ~ '...');
 
         my $file        := slurp($_);
-        my $test_output := qx($PROGRAM_NAME, $filename);
+        my $test_output := qx($EXECUTABLE_NAME, $filename);
         my $output      := split("\n",$test_output);
         my @plan_parts  := split('..',$output[0]);
 

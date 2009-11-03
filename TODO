@@ -84,6 +84,8 @@ Metadata:
 
 Plumage:
 --------
+* Bootstrap:
+  * Switch to Configure.pir, no NQP needed
 * Hosting:
   * allison looking into parrot.org
   * moritz gave access to a Debian Lenny box
