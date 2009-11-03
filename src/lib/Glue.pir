@@ -1,6 +1,4 @@
 
-=begin
-
 =head1 NAME
 
 Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
@@ -62,7 +60,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     our $OS;
     our $OSVER;
 
-=end
 
 .namespace []
 
@@ -70,7 +67,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 .include 'sysinfo.pasm'
 .include 'iglobals.pasm'
 
-=begin
 
 =head1 DESCRIPTION
 
@@ -84,7 +80,6 @@ Spawn the command with the given arguments as a new process; returns
 the status code of the spawned process, which is equal the the result
 of the waitpid system call, right bitshifted by 8.
 
-=end
 
 .sub 'run'
     .param pmc command_and_args :slurpy
@@ -99,7 +94,6 @@ of the waitpid system call, right bitshifted by 8.
     .return (status)
 .end
 
-=begin
 
 =item $success := do_run($command, $and, $args, ...)
 
@@ -107,7 +101,6 @@ Print out the command and arguments, then spawn the command with the given
 arguments as a new process; return 1 if the process exited successfully, or
 0 if not.
 
-=end
 
 .sub 'do_run'
     .param pmc command_and_args :slurpy
@@ -125,7 +118,6 @@ arguments as a new process; return 1 if the process exited successfully, or
     .return (0)
 .end
 
-=begin
 
 =item $output := qx($command, $and, $args, ...)
 
@@ -134,7 +126,6 @@ return the output of the command as a single string.
 
 B<WARNING>: Parrot currently implements this B<INSECURELY>!
 
-=end
 
 .sub 'qx'
     .param pmc command_and_args :slurpy
@@ -159,13 +150,11 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
     die $S0
 .end
 
-=begin
 
 =item die($message)
 
 Kill program, reporting error C<$message>.
 
-=end
 
 .sub 'die'
     .param string message
@@ -173,7 +162,6 @@ Kill program, reporting error C<$message>.
     die message
 .end
 
-=begin
 
 =item $ret := try(&code, @args [, &handler])
 
@@ -186,7 +174,6 @@ In other words, C<try()> implements the following pseudocode:
     catch($ex) { $ret := &handler ?? &handler($ex, &code, @args) !! 0 }
     return $ret;
 
-=end
 
 .sub 'try'
     .param pmc code
@@ -211,13 +198,11 @@ In other words, C<try()> implements the following pseudocode:
     .return (0)
 .end
 
-=begin
 
 =item @keys := keys(%hash)
 
 Return an array containing the keys of the C<%hash>.
 
-=end
 
 .sub 'keys'
     .param pmc hash
@@ -238,14 +223,12 @@ Return an array containing the keys of the C<%hash>.
     .return(key_list)
 .end
 
-=begin
 
 =item $found := exists(%hash, $key)
 
 Determine if C<$key> exists in C<%hash>, returning a true value if so, and a
 false value if not.
 
-=end
 
 .sub 'exists'
     .param pmc    hash
@@ -256,14 +239,12 @@ false value if not.
     .return($I0)
 .end
 
-=begin
 
 =item $does_role := does($object, $role)
 
 Determine if C<$object> does the C<$role>, returning a true value if so, and a
 false value if not.
 
-=end
 
 .sub 'does'
     .param pmc    object
@@ -274,13 +255,11 @@ false value if not.
     .return($I0)
 .end
 
-=begin
 
 =item $contents := slurp($filename)
 
 Read the C<$contents> of a file as a single string.
 
-=end
 
 .sub 'slurp'
     .param string filename
@@ -292,13 +271,11 @@ Read the C<$contents> of a file as a single string.
     .return(contents)
 .end
 
-=begin
 
 =item spew($filename, $contents)
 
 Write the string C<$contents> to a file.
 
-=end
 
 .sub 'spew'
     .param string filename
@@ -309,13 +286,11 @@ Write the string C<$contents> to a file.
     close $P0
 .end
 
-=begin
 
 =item append($filename, $contents)
 
 Append the string C<$contents> to a file.
 
-=end
 
 .sub 'append'
     .param string filename
@@ -326,7 +301,6 @@ Append the string C<$contents> to a file.
     close $P0
 .end
 
-=begin
 
 =item $regex_object := rx($regex_source)
 
@@ -334,7 +308,6 @@ Compile C<$regex_source> (a string representing the source code form of a
 Perl 6 Regex) into a C<$regex_object>, suitable for using in C<match()> and
 C<subst()>.
 
-=end
 
 .sub 'rx'
     .param string source
@@ -346,14 +319,12 @@ C<subst()>.
     .return(object)
 .end
 
-=begin
 
 =item @matches := all_matches($regex, $text)
 
 Find all matches (C<:g> style, not C<:exhaustive>) for C<$regex> in the
 C<$text>.  The C<$regex> must be a regex object returned by C<rx()>.
 
-=end
 
 .sub 'all_matches'
     .param pmc    regex
@@ -378,7 +349,6 @@ C<$text>.  The C<$regex> must be a regex object returned by C<rx()>.
     .return(matches)
 .end
 
-=begin
 
 =item $edited := subst($original, $regex, $replacement)
 
@@ -390,7 +360,6 @@ The C<$replacement> may be either a simple string or a sub that will be called
 with each match object in turn, and must return the proper replacement string
 for that match.
 
-=end
 
 .sub 'subst'
     .param string original
@@ -438,13 +407,11 @@ for that match.
     .return(edited)
 .end
 
-=begin
 
 =item chdir($path)
 
 Change the current working directory to the specified C<$path>.
 
-=end
 
 .sub 'chdir'
     .param string path
@@ -454,13 +421,11 @@ Change the current working directory to the specified C<$path>.
     os.'chdir'(path)
 .end
 
-=begin
 
 =item $path := cwd()
 
 Return the current working directory.
 
-=end
 
 .sub 'cwd'
     .local pmc os
@@ -472,7 +437,6 @@ Return the current working directory.
     .return(path)
 .end
 
-=begin
 
 =item mkdir($path [, $mode])
 
@@ -480,7 +444,6 @@ Create a directory specified by C<$path> with mode C<$mode>.  C<$mode> is
 optional and defaults to octal C<777> (full permissions) if absent.  C<$mode>
 is modified by the user's current C<umask> as usual.
 
-=end
 
 .sub 'mkdir'
     .param string path
@@ -496,13 +459,11 @@ is modified by the user's current C<umask> as usual.
     os.'mkdir'(path, mode)
 .end
 
-=begin
 
 =item unlink($path)
 
 Unlink (delete) a file or empty directory named C<$path> in the filesystem.
 
-=end
 
 .sub 'unlink'
     .param string path
@@ -512,14 +473,12 @@ Unlink (delete) a file or empty directory named C<$path> in the filesystem.
     os.'rm'(path)
 .end
 
-=begin
 
 =item @info := stat($path)
 
 Returns a 13-item list of information about the given C<$path>, as in Perl 5.
 (See C<perldoc -f stat> for more details.)
 
-=end
 
 .sub 'stat'
     .param string path
@@ -531,14 +490,12 @@ Returns a 13-item list of information about the given C<$path>, as in Perl 5.
     .return (stat_list)
 .end
 
-=begin
 
 =item $found := path_exists($path);
 
 Return a true value if the C<$path> exists on the filesystem, or a false
 value if not.
 
-=end
 
 .sub 'path_exists'
     .param string path
@@ -554,13 +511,11 @@ value if not.
     .return (0)
 .end
 
-=begin
 
 =item @names := readdir($directory)
 
 List the names of all entries in the C<$directory>.
 
-=end
 
 .sub 'readdir'
     .param string dir
@@ -572,7 +527,6 @@ List the names of all entries in the C<$directory>.
     .return (names)
 .end
 
-=begin
 
 =item $path := fscat(@path_parts [, $filename])
 
@@ -581,7 +535,6 @@ OS separator.  If no C<$filename> is supplied, C<fscat()> will I<not> add a
 trailing slash (though slashes inside the C<@path_parts> will not be removed,
 so don't do that).
 
-=end
 
 .sub 'fscat'
     .param pmc    parts
@@ -604,13 +557,11 @@ so don't do that).
     .return (joined)
 .end
 
-=begin
 
 =item $joined := join($delimiter, @strings)
 
 Join C<@strings> together with the specified C<$delimiter>.
 
-=end
 
 .sub 'join'
     .param string delim
@@ -622,14 +573,12 @@ Join C<@strings> together with the specified C<$delimiter>.
     .return (joined)
 .end
 
-=begin
 
 =item @pieces := split($delimiter, $original)
 
 Split the C<$original> string with the specified C<$delimiter>, which is not
 included in the resulting C<@pieces>.
 
-=end
 
 .sub 'split'
     .param string delim
@@ -641,13 +590,11 @@ included in the resulting C<@pieces>.
     .return (pieces)
 .end
 
-=begin
 
 =item @array := as_array($list, $of, $items, ...)
 
 Slurp the list of arguments into an array and return it.
 
-=end
 
 .sub 'as_array'
      .param pmc items :slurpy
@@ -655,7 +602,6 @@ Slurp the list of arguments into an array and return it.
      .return (items)
 .end
 
-=begin
 
 =item $result := call_flattened(&code, $mixed, @args, $list, ...)
 
@@ -669,7 +615,6 @@ it with C<as_array()> first, like so:
 
     call_flattened(&code, as_array(@protected), @will_flatten)
 
-=end
 
 .sub 'call_flattened'
     .param pmc code
@@ -697,8 +642,6 @@ it with C<as_array()> first, like so:
   do_tailcall:
     .tailcall code(flattened :flat)
 .end
-
-=begin
 
 =back
 
@@ -733,7 +676,6 @@ Operating system version
 
 =back
 
-=end
 
 .sub 'onload' :anon :load :init
     load_bytecode 'config.pbc'
