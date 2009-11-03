@@ -22,7 +22,7 @@
             "type" : "repository"
         },
         "configure": {
-            "type" : "perl5_configure"
+            "type" : "parrot_configure"
         },
         "build"    : {
             "type" : "make"
@@ -38,9 +38,9 @@
         "provides"     : ["markdown"],
         "requires"     : {
             "fetch"    : ["git"],
-            "configure": ["perl5"],
+            "configure": [],
             "build"    : ["perl5", "make"],
-            "test"     : ["perl5", "make"],
+            "test"     : ["make"],
             "install"  : ["perl5", "make"],
             "runtime"  : []
         }
