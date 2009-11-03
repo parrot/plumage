@@ -17,6 +17,8 @@ sub MAIN () {
     say("Hello, I'm Configure. My job is to poke and prod\nyour system to figure out how to build Plumage.\n");
 
     # Load Parrot config and glue functions
+    pir::load_bytecode('PGE.pbc');
+
     pir::load_bytecode('src/lib/Glue.pir');
 
     # Slurp in the unconfigured Makefile text
