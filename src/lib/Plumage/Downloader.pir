@@ -1,8 +1,6 @@
 # Copyright (C) 2009, Parrot Foundation.
 # $Id$
 
-=begin
-
 =head1 NAME
 
 Plumage::Downloader - Fetch the contents of a url in various ways
@@ -14,8 +12,6 @@ Plumage::Downloader::save_to_file($url[, $filename])
 =head1 DESCRIPTION
 
 Downloads files.
-
-=end
 
 .namespace ['Plumage';'Downloader']
 
