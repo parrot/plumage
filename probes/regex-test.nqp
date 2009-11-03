@@ -3,7 +3,7 @@
 ###
 
 # TO USE:
-#   $ parrot_nqp regex-test.nqp
+#   $ nqp regex-test.nqp
 
 
 # Load Glue module, which includes the regex helper functions

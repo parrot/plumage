@@ -3,7 +3,7 @@
 ###
 
 # TO USE:
-#   $ parrot_nqp num-formats-test.nqp
+#   $ nqp num-formats-test.nqp
 
 
 say(Q:PIR{ %r = box 0o777 });

@@ -3,7 +3,7 @@
 ###
 
 # TO USE:
-#   $ parrot_nqp json-test.nqp
+#   $ nqp json-test.nqp
 
 
 # First, load the Parrot data structure dumper module
