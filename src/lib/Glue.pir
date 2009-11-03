@@ -60,6 +60,7 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     our $OS;
     our $OSVER;
 
+=cut
 
 .namespace []
 
@@ -80,6 +81,7 @@ Spawn the command with the given arguments as a new process; returns
 the status code of the spawned process, which is equal the the result
 of the waitpid system call, right bitshifted by 8.
 
+=cut
 
 .sub 'run'
     .param pmc command_and_args :slurpy
@@ -101,6 +103,7 @@ Print out the command and arguments, then spawn the command with the given
 arguments as a new process; return 1 if the process exited successfully, or
 0 if not.
 
+=cut
 
 .sub 'do_run'
     .param pmc command_and_args :slurpy
@@ -126,6 +129,7 @@ return the output of the command as a single string.
 
 B<WARNING>: Parrot currently implements this B<INSECURELY>!
 
+=cut
 
 .sub 'qx'
     .param pmc command_and_args :slurpy
@@ -155,6 +159,7 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
 
 Kill program, reporting error C<$message>.
 
+=cut
 
 .sub 'die'
     .param string message
@@ -174,6 +179,7 @@ In other words, C<try()> implements the following pseudocode:
     catch($ex) { $ret := &handler ?? &handler($ex, &code, @args) !! 0 }
     return $ret;
 
+=cut
 
 .sub 'try'
     .param pmc code
@@ -203,6 +209,7 @@ In other words, C<try()> implements the following pseudocode:
 
 Return an array containing the keys of the C<%hash>.
 
+=cut
 
 .sub 'keys'
     .param pmc hash
@@ -229,6 +236,7 @@ Return an array containing the keys of the C<%hash>.
 Determine if C<$key> exists in C<%hash>, returning a true value if so, and a
 false value if not.
 
+=cut
 
 .sub 'exists'
     .param pmc    hash
@@ -245,6 +253,7 @@ false value if not.
 Determine if C<$object> does the C<$role>, returning a true value if so, and a
 false value if not.
 
+=cut
 
 .sub 'does'
     .param pmc    object
@@ -260,6 +269,7 @@ false value if not.
 
 Read the C<$contents> of a file as a single string.
 
+=cut
 
 .sub 'slurp'
     .param string filename
@@ -276,6 +286,7 @@ Read the C<$contents> of a file as a single string.
 
 Write the string C<$contents> to a file.
 
+=cut
 
 .sub 'spew'
     .param string filename
@@ -291,6 +302,7 @@ Write the string C<$contents> to a file.
 
 Append the string C<$contents> to a file.
 
+=cut
 
 .sub 'append'
     .param string filename
@@ -308,6 +320,7 @@ Compile C<$regex_source> (a string representing the source code form of a
 Perl 6 Regex) into a C<$regex_object>, suitable for using in C<match()> and
 C<subst()>.
 
+=cut
 
 .sub 'rx'
     .param string source
@@ -325,6 +338,7 @@ C<subst()>.
 Find all matches (C<:g> style, not C<:exhaustive>) for C<$regex> in the
 C<$text>.  The C<$regex> must be a regex object returned by C<rx()>.
 
+=cut
 
 .sub 'all_matches'
     .param pmc    regex
@@ -360,6 +374,7 @@ The C<$replacement> may be either a simple string or a sub that will be called
 with each match object in turn, and must return the proper replacement string
 for that match.
 
+=cut
 
 .sub 'subst'
     .param string original
@@ -412,6 +427,7 @@ for that match.
 
 Change the current working directory to the specified C<$path>.
 
+=cut
 
 .sub 'chdir'
     .param string path
@@ -426,6 +442,7 @@ Change the current working directory to the specified C<$path>.
 
 Return the current working directory.
 
+=cut
 
 .sub 'cwd'
     .local pmc os
@@ -444,6 +461,7 @@ Create a directory specified by C<$path> with mode C<$mode>.  C<$mode> is
 optional and defaults to octal C<777> (full permissions) if absent.  C<$mode>
 is modified by the user's current C<umask> as usual.
 
+=cut
 
 .sub 'mkdir'
     .param string path
@@ -464,6 +482,7 @@ is modified by the user's current C<umask> as usual.
 
 Unlink (delete) a file or empty directory named C<$path> in the filesystem.
 
+=cut
 
 .sub 'unlink'
     .param string path
@@ -479,6 +498,7 @@ Unlink (delete) a file or empty directory named C<$path> in the filesystem.
 Returns a 13-item list of information about the given C<$path>, as in Perl 5.
 (See C<perldoc -f stat> for more details.)
 
+=cut
 
 .sub 'stat'
     .param string path
@@ -496,6 +516,7 @@ Returns a 13-item list of information about the given C<$path>, as in Perl 5.
 Return a true value if the C<$path> exists on the filesystem, or a false
 value if not.
 
+=cut
 
 .sub 'path_exists'
     .param string path
@@ -516,6 +537,7 @@ value if not.
 
 List the names of all entries in the C<$directory>.
 
+=cut
 
 .sub 'readdir'
     .param string dir
@@ -535,6 +557,7 @@ OS separator.  If no C<$filename> is supplied, C<fscat()> will I<not> add a
 trailing slash (though slashes inside the C<@path_parts> will not be removed,
 so don't do that).
 
+=cut
 
 .sub 'fscat'
     .param pmc    parts
@@ -562,6 +585,7 @@ so don't do that).
 
 Join C<@strings> together with the specified C<$delimiter>.
 
+=cut
 
 .sub 'join'
     .param string delim
@@ -579,6 +603,7 @@ Join C<@strings> together with the specified C<$delimiter>.
 Split the C<$original> string with the specified C<$delimiter>, which is not
 included in the resulting C<@pieces>.
 
+=cut
 
 .sub 'split'
     .param string delim
@@ -595,6 +620,7 @@ included in the resulting C<@pieces>.
 
 Slurp the list of arguments into an array and return it.
 
+=cut
 
 .sub 'as_array'
      .param pmc items :slurpy
@@ -615,6 +641,7 @@ it with C<as_array()> first, like so:
 
     call_flattened(&code, as_array(@protected), @will_flatten)
 
+=cut
 
 .sub 'call_flattened'
     .param pmc code
@@ -676,6 +703,7 @@ Operating system version
 
 =back
 
+=cut
 
 .sub 'onload' :anon :load :init
     load_bytecode 'config.pbc'
