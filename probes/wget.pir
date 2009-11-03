@@ -1,6 +1,8 @@
 # Copyright (C) 2009, Parrot Foundation.
 # $Id$
 
+=begin
+
 =head1 NAME
 
 wget.pir - HTTP client
@@ -15,7 +17,7 @@ Accepts a url to download, and optionally a filename to save it in.
 
 This is a very thin wrapper around Plumage::Downloader::save_url_to_file
 
-=cut
+=end
 
 .sub 'main' :main
     .param pmc argv

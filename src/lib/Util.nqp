@@ -2,6 +2,7 @@
 
 Util.nqp - Utility functions for NQP and Plumage
 
+=begin
 
 =head1 SYNOPSIS
 
@@ -25,7 +26,7 @@ Util.nqp - Utility functions for NQP and Plumage
 
 =head1 DESCRIPTION
 
-=cut
+=end
 
 
 # NQP bug XXXX: Fakecutables broken because 'nqp' language is not loaded.
@@ -46,6 +47,7 @@ our %BIN;
 our %CONF;
 our $OS;
 
+=begin
 
 =head2 Basic Functions
 
@@ -62,7 +64,7 @@ coersion, due to the current semantics of NQP.  This means that every
 application of C<&code> to an item in the C<@originals> produces exactly
 one entry in the C<@mapped> output.
 
-=cut
+=end
 
 sub map (&code, @originals) {
     my @mapped;
@@ -74,6 +76,7 @@ sub map (&code, @originals) {
     return @mapped;
 }
 
+=begin
 
 =head2 General Utilities
 
@@ -89,7 +92,7 @@ Converts an array into a set by using the array elements as hash keys and
 setting their corresponding value to 1, thus allowing cheap set membership
 checks.
 
-=cut
+=end
 
 sub set_from_array (@array) {
     my %set;
@@ -101,6 +104,8 @@ sub set_from_array (@array) {
     return %set;
 }
 
+
+=begin
 
 =back
 
@@ -127,7 +132,7 @@ following way:
         # Not found, try a different $program or fail
     }
 
-=cut
+=end
 
 sub find_program ($program) {
     my $path_sep := $OS eq 'MSWin32' ?? ';' !! ':';
@@ -150,13 +155,14 @@ sub find_program ($program) {
     return '';
 }
 
+=begin
 
 =item mkpath($directory_path)
 
 Basically an iterative C<mkdir()>, C<mkpath()> works its way down from the
 top making directories as needed until an entire path has been created.
 
-=cut
+=end
 
 sub mkpath ($path) {
     my @path := split('/', $path);
@@ -171,6 +177,7 @@ sub mkpath ($path) {
     }
 }
 
+=begin
 
 =item $writable := test_dir_writable($directory_path)
 
@@ -185,7 +192,7 @@ time.  In no circumstance should it be considered a security function; only
 checking for errors on every real operation can avoid security holes due to
 race conditions between test and action.
 
-=cut
+=end
 
 sub test_dir_writable($dir) {
     my $test_file := fscat(as_array($dir), 'WrItAbLe.UtL');
@@ -206,6 +213,8 @@ sub test_dir_writable($dir) {
     }
 }
 
+
+=begin
 
 =head2 Plumage Specific Functions
 
@@ -239,7 +248,7 @@ B<NOTE> that this function is currently B<NOT> protected from an infinite loop
 caused by bad config settings, nor is it protected from nefarious inputs
 producing unintended expansions.
 
-=cut
+=end
 
 sub replace_config_strings ($original) {
     my $new := $original;
@@ -264,7 +273,8 @@ sub config_value ($match) {
     return $config;
 }
 
+=begin
 
 =back
 
-=cut
+=end

@@ -2,6 +2,7 @@
 
 Metadata.nqp - Metadata-handling functions for Plumage
 
+=begin
 
 =head1 SYNOPSIS
 
@@ -16,10 +17,12 @@ Metadata.nqp - Metadata-handling functions for Plumage
 
 =head1 DESCRIPTION
 
-=cut
+=end
 
 our %CONF;
 our %ACTION;
+
+=begin
 
 =head2 Functions
 
@@ -31,7 +34,7 @@ Return a list of project names currently known to Plumage, regardless of
 whether they are currently installed or not.  Each name is suitable for passing
 to C<get_project_metadata()> to obtain more details.
 
-=cut
+=end
 
 sub get_project_list () {
     my @files := readdir(replace_config_strings(%CONF<plumage_metadata_dir>));
@@ -48,6 +51,7 @@ sub get_project_list () {
     return @projects;
 }
 
+=begin
 
 =item %info := get_project_metadata($project, $ignore_missing)
 
@@ -55,7 +59,7 @@ Return metadata for the project named C<$project>.  Returns a false value if no
 such project is known, and also outputs an error message unless
 C<$ignore_missing> is true.
 
-=cut
+=end
 
 sub get_project_metadata ($project, $ignore_missing) {
     my $meta_dir  := replace_config_strings(%CONF<plumage_metadata_dir>);
@@ -78,6 +82,7 @@ sub show_metadata_parse_error ($exception, &code, @args) {
     return 0;
 }
 
+=begin
 
 =item $is_valid := metadata_valid(%info)
 
@@ -86,7 +91,7 @@ seems otherwise valid.  Returns a true value if all tests pass, or a false value
 if not.  Also outputs error messages and hints to the user for any problems
 found.
 
-=cut
+=end
 
 sub metadata_valid (%info) {
     return metadata_spec_known(%info)
@@ -153,7 +158,8 @@ sub metadata_instruction_types_known (%info) {
     return 1;
 }
 
+=begin
 
 =back
 
-=cut
+=end
