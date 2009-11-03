@@ -40,7 +40,7 @@
             "fetch"    : ["git"],
             "configure": [],
             "build"    : ["perl5", "make"],
-            "test"     : ["make"],
+            "test"     : ["perl5", "make"],
             "install"  : ["perl5", "make"],
             "runtime"  : []
         }
