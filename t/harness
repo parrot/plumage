@@ -1,6 +1,7 @@
 #! nqp
 
 our @ARGS;
+our $PROGRAM_NAME;
 MAIN();
 
 # TAP grammar in ABNF
@@ -10,7 +11,7 @@ MAIN();
 # verbose mode
 
 sub MAIN () {
-    load_bytecode('src/lib/Glue.pbc');
+    pir::load_bytecode('src/lib/Glue.pbc');
     my $total_passed:= 0;
     my $total_failed:= 0;
     my $total_files := 0;
@@ -23,7 +24,7 @@ sub MAIN () {
         print($filename ~ '...');
 
         my $file        := slurp($_);
-        my $test_output := qx('nqp', $filename);
+        my $test_output := qx($PROGRAM_NAME, $filename);
         my $output      := split("\n",$test_output);
         my @plan_parts  := split('..',$output[0]);
 
@@ -57,7 +58,7 @@ sub MAIN () {
         }
         if ($failed) {
             say('failed ' ~ $failed ~ '/' ~ $num_tests ~ ' tests');
-        } elsif( @plan_parts[0] != 1 || $num_tests < 0) {
+        } elsif ( @plan_parts[0] != 1 || $num_tests < 0) {
             say('INVALID PLAN: ' ~ join('',@plan_parts));
             $failed_files++;
         } else {
@@ -66,7 +67,7 @@ sub MAIN () {
         $total_passed := $total_passed + $passed;
         $total_failed := $total_failed + $failed;
 
-        if( $num_tests != $curr_test ) {
+        if ( $num_tests != $curr_test ) {
             say("Planned to run " ~ $num_tests ~ " tests but ran " ~ $curr_test ~ " tests");
             say("FAILED");
         }

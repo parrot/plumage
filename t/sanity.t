@@ -4,7 +4,7 @@ MAIN();
 
 sub MAIN () {
     my $num_tests := 18;
-    load_bytecode('src/lib/Glue.pbc');
+    pir::load_bytecode('src/lib/Glue.pbc');
     Q:PIR{
         .local pmc c
         load_language 'parrot'
