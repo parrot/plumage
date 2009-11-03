@@ -1,8 +1,8 @@
+=begin
+
 =head1 NAME
 
 Metadata.nqp - Metadata-handling functions for Plumage
-
-=begin
 
 =head1 SYNOPSIS
 

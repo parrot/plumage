@@ -1,8 +1,8 @@
+=begin
+
 =head1 NAME
 
 Util.nqp - Utility functions for NQP and Plumage
-
-=begin
 
 =head1 SYNOPSIS
 
