@@ -1,8 +1,9 @@
+
+=begin
+
 =head1 NAME
 
 Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
-
-=begin
 
 =head1 SYNOPSIS
 
@@ -61,7 +62,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     our $OS;
     our $OSVER;
 
-    
 =end
 
 .namespace []
