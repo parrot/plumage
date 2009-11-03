@@ -6,7 +6,7 @@ Util.nqp - Utility functions for NQP and Plumage
 =head1 SYNOPSIS
 
     # Load this library
-    load_bytecode('src/lib/Util.pbc');
+    pir::load_bytecode('src/lib/Util.pbc');
 
     # Basics
     @mapped := map(&code, @originals);
@@ -37,7 +37,7 @@ Q:PIR{
 };
 
 # NQP bug XXXX: Must redeclare PIR globals because the NQP parser can't
-#               know about variables created at load_bytecode time.
+#               know about variables created at pir::load_bytecode time.
 our $PROGRAM_NAME;
 our @ARGS;
 our %ENV;

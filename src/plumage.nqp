@@ -111,22 +111,22 @@ our %CONF;
 
 sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
-    load_bytecode('src/lib/Glue.pbc');
+    pir::load_bytecode('src/lib/Glue.pbc');
 
     # Utility functions written in NQP
-    load_bytecode('src/lib/Util.pbc');
+    pir::load_bytecode('src/lib/Util.pbc');
 
     # Process command line options
-    load_bytecode('Getopt/Obj.pbc');
+    pir::load_bytecode('Getopt/Obj.pbc');
 
     # Parse files in JSON format
-    load_bytecode('Config/JSON.pbc');
+    pir::load_bytecode('Config/JSON.pbc');
 
     # Data structure dumper for PMCs (used for debugging)
-    load_bytecode('dumper.pbc');
+    pir::load_bytecode('dumper.pbc');
 
     # Plumage metadata functions
-    load_bytecode('src/lib/Metadata.pbc');
+    pir::load_bytecode('src/lib/Metadata.pbc');
 }
 
 sub fixup_commands ($commands) {
@@ -803,7 +803,7 @@ sub configure_nqp_configure ($project, %conf) {
     my $cwd := cwd();
     chdir($project);
 
-    my $parrot_nqp := fscat(as_array(%VM<config><bindir>), 'parrot_nqp');
+    my $parrot_nqp := fscat(as_array(%VM<config><bindir>), 'nqp');
     my $success    := do_run($parrot_nqp, 'Configure.nqp');
 
     chdir($cwd);

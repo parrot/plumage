@@ -6,7 +6,7 @@ Metadata.nqp - Metadata-handling functions for Plumage
 =head1 SYNOPSIS
 
     # Load this library
-    load_bytecode('src/lib/Metadata.pbc');
+    pir::load_bytecode('src/lib/Metadata.pbc');
 
     # Functions
     @projects := get_project_list()

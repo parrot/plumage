@@ -7,10 +7,10 @@
 
 
 # Load Glue module, which includes the regex helper functions
-load_bytecode('src/lib/Glue.pir');
+pir::load_bytecode('src/lib/Glue.pir');
 
 # Load data structure dumper
-load_bytecode('dumper.pbc');
+pir::load_bytecode('dumper.pbc');
 
 # Wheee, probe testing ...
 my $regex_source    := 'b+c';

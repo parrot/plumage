@@ -7,7 +7,7 @@
 
 
 # First, load the Parrot data structure dumper module
-load_bytecode('dumper.pbc');
+pir::load_bytecode('dumper.pbc');
 
 # All of the crazy testing
 my @tests := (
