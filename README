@@ -39,6 +39,28 @@ NQP from this repository:
 It is expected that this will soon become unnecessary.
 
 
+USING
+-----
+
+Once built, Plumage is relatively easy to use, especially if you've used
+another install tool such as apt-get or yum.  For example, to install
+Rakudo (a Perl 6 implementation), run the following command:
+
+  $ ./plumage install rakudo
+
+This will automatically install any dependencies that Rakudo may need.
+To see what those dependencies are, try this:
+
+  $ ./plumage showdeps rakudo
+
+To see what other commands and options are available, ask for usage info:
+
+  $ ./plumage usage
+
+If you have any problems, just come by #parrot at irc.parrot.org and ask.
+We're happy to help!
+
+
 CONTRIBUTING
 ------------
 
