@@ -1,9 +1,9 @@
 # Purpose: Use Parrot's config info to configure our Makefile.
 #
 # Usage:
-#     parrot_nqp Configure.nqp [input_makefile [output_makefile]]
+#     nqp Configure.nqp [input_makefile [output_makefile]]
 #
-# input_makefile  defaults to 'Makefile.in';
+# input_makefile  defaults to 'src/Makefile.in';
 # output_makefile defaults to 'Makefile'.
 
 our @ARGS;
@@ -18,7 +18,6 @@ sub MAIN () {
 
     # Load Parrot config and glue functions
     pir::load_bytecode('PGE.pbc');
-
     pir::load_bytecode('src/lib/Glue.pir');
 
     # Slurp in the unconfigured Makefile text
@@ -37,9 +36,10 @@ sub MAIN () {
     spew(@ARGS[1] || 'Makefile', $replaced);
 
     # Give the user a hint of next action
-    say("Configure completed for platform '" ~ $OS ~ "'.");
-    say("You can now type '" ~ %VM<config><make> ~ "' to build Plumage.\n");
-    say("You may also type '" ~ %VM<config><make> ~ " test' to run the Plumage test suite.\n");
+    my $make := %VM<config><make>;
+    say("Configure completed for platform '$OS'.");
+    say("You can now type '$make' to build Plumage.\n");
+    say("You may also type '$make test' to run the Plumage test suite.\n");
     say("Happy Hacking,\n\tThe Plumage Team");
 }
 
