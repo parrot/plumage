@@ -6,12 +6,15 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 =head1 SYNOPSIS
 
     # Load this library
-    load_bytecode('src/lib/Glue.pbc');
+    pir::load_bytecode('src/lib/Glue.pbc');
 
     # External programs
     $status_code := run(   $command, $and, $args, ...);
     $success     := do_run($command, $and, $args, ...);
     $output      := qx(    $command, $and, $args, ...);
+
+    # Other languages
+    $result := eval($source_code, $language);
 
     # Exceptions
     die($message);
@@ -25,6 +28,8 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     $does_role := does($object, $role);
 
     # I/O
+    print('things', ' to ', 'print', ...);
+    say(  'things', ' to ', 'say',   ...);
     $contents := slurp($filename);
     spew(  $filename, $contents);
     append($filename, $contents);
@@ -156,6 +161,30 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
 .end
 
 
+=item $result := eval($source_code, $language)
+
+Evaluate a string of C<$source_code> in a known Parrot C<$language>,
+returning the C<$result> of executing the compiled code.
+
+=cut
+
+.sub 'eval'
+    .param string source_code
+    .param string language
+
+    .local pmc compiler
+    language = downcase language
+    load_language language
+    compiler = compreg language
+
+    .local pmc compiled
+    compiled = compiler.'compile'(source_code)
+    $P0      = compiled()
+
+    .return ($P0)
+.end
+
+
 =item die($message)
 
 Kill program, reporting error C<$message>.
@@ -263,6 +292,39 @@ false value if not.
     $I0 = does object, role
 
     .return($I0)
+.end
+
+
+=item print('things', ' to ', 'print', ...)
+
+Print a list of strings to standard output.
+
+=cut
+
+.sub 'print'
+    .param pmc strings :slurpy
+
+    .local pmc it
+    it = iter strings
+  print_loop:
+    unless it goto print_end
+    $P0 = shift it
+    print $P0
+    goto print_loop
+  print_end:
+.end
+
+
+=item say('things', ' to ', 'say', ...)
+
+Print a list of strings to standard output, followed by a newline.
+
+=cut
+
+.sub 'say'
+    .param pmc strings :slurpy
+
+    .tailcall 'print'(strings :flat, "\n")
 .end
 
 
