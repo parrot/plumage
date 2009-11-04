@@ -27,10 +27,10 @@ sub test_inline_pir ($name) {
     say($string);
 }
 
-# Binding only, no assignment.  Also no interpolation.
+# Binding only, no assignment.  At least we have simple interpolation now.
 our %VM;
 our $libdir := get_versioned_libdir();
-say("\nVersioned libdir: " ~ $libdir);
+say("\nVersioned libdir: $libdir");
 
 sub get_versioned_libdir () {
     my $config := %VM<config>;
@@ -45,7 +45,7 @@ sub get_versioned_libdir () {
 our $OS;
 our $OSVER;
 our %ENV;
-say('Operating system: ' ~ $OS ~ ' ' ~ $OSVER);
+say("Operating system: $OS $OSVER");
 say('%ENV<PATH>:       ' ~ %ENV<PATH>);
 
 # Class declaration is ... suboptimal ... at the moment
