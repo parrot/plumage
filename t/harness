@@ -1,5 +1,11 @@
 #! nqp
 
+# Test harness written in NQP (the newer nqp-rx flavor)
+# by Jonathan "Duke" Leto http://leto.net
+
+# The current canonical home for this harness is Parrot Plumage  http://gitorious.org/parrot-plumage
+# Please make changes to this script in the Plumage repo
+
 our $EXECUTABLE_NAME;
 our @ARGS;
 MAIN();
