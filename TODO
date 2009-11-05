@@ -68,6 +68,8 @@ Metadata:
 * resources
   * feed_type and feed_uri for hosting that provides Atom/RSS commit feeds
   * branch
+  * module (CVS)
+  * user/pass (if not default for anonymous use)
   * commit/rev spec
   * multiple possible repos?
   * bug_tracker
