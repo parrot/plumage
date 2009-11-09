@@ -9,6 +9,9 @@ Util.nqp - Utility functions for NQP and Plumage
     # Load this library
     pir::load_bytecode('src/lib/Util.pbc');
 
+    # Hash extensions
+    @flattened := %hash.kv;
+
     # Basics
     @mapped  := map( &code, @originals);
     @matches := grep(&code, @all)
@@ -38,6 +41,32 @@ our %CONF;
 our $OS;
 
 =begin
+
+=head2 Hash Extensions
+
+=over 4
+
+=item @flattened := %hash.kv;
+
+Flatten C<%hash> into an array, alternating key and value.  This is useful
+when iterating over key and value simultaneously:
+
+    for %hash.kv -> $k, $v { ... }
+
+=end
+
+module Hash {
+    method kv () {
+        my @kv;
+        for self { @kv.push($_.key); @kv.push($_.value); }
+        @kv;
+    }
+}
+
+=begin
+
+=back
+
 
 =head2 Basic Functions
 
