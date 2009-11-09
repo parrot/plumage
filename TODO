@@ -183,8 +183,6 @@ NQP:
 ----
 * HLL interop: allow NQP to be used by other languages
 * Have to say 'our $OS;' to declare variable defined in Glue.pir
-* How to create/set/use class attributes in NQP?
-* Fix needing executable fix hack at top of file: Q:PIR{load_language 'nqp'};
 
 
 data_json:
