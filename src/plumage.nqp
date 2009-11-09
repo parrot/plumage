@@ -897,7 +897,7 @@ sub install_make ($project) {
     chdir($project);
 
     my $make     := %VM<config><make>;
-    my $bin_dir  := %VM<config><bin_dir>;
+    my $bin_dir  := %VM<config><bindir>;
     my $root_cmd := replace_config_strings(%CONF<root_command>);
     my $success;
 
