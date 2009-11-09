@@ -10,7 +10,8 @@ Util.nqp - Utility functions for NQP and Plumage
     pir::load_bytecode('src/lib/Util.pbc');
 
     # Basics
-    @mapped := map(&code, @originals);
+    @mapped  := map( &code, @originals);
+    @matches := grep(&code, @all)
 
     # General
     %set := set_from_array(@array);
@@ -28,17 +29,6 @@ Util.nqp - Utility functions for NQP and Plumage
 
 =end
 
-
-# NQP bug XXXX: Fakecutables broken because 'nqp' language is not loaded.
-Q:PIR{
-    $P0 = get_hll_global 'say'
-  unless null $P0 goto got_nqp
-    load_language 'nqp'
-  got_nqp:
-};
-
-# NQP bug XXXX: Must redeclare PIR globals because the NQP parser can't
-#               know about variables created at pir::load_bytecode time.
 our $PROGRAM_NAME;
 our @ARGS;
 our %ENV;
@@ -74,6 +64,27 @@ sub map (&code, @originals) {
     }
 
     return @mapped;
+}
+
+=begin
+
+=item @matches := grep(&code, @all)
+
+Select all members of C<@all> for which C<&code($member)> returns true.
+Order is retained, and duplicates are handled independently.
+
+=end
+
+sub grep (&code, @all) {
+    my @matches;
+
+    for @all {
+        if &code($_) {
+            @matches.push($_);
+        }
+    }
+
+    return @matches;
 }
 
 =begin
