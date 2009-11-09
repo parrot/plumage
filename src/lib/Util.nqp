@@ -209,8 +209,7 @@ sub test_dir_writable($dir) {
     my $test_file := fscat(as_array($dir), 'WrItAbLe.UtL');
 
     if path_exists($test_file) {
-        die("Test file '" ~ $test_file
-             ~ "'\nthat should never exist already does.");
+        die("Test file '$test_file'\nthat should never exist already does.");
     }
 
     try(spew, as_array($test_file, "test_dir_writable() test file.\n"));
