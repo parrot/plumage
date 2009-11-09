@@ -50,13 +50,13 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     @pieces := split($delimiter, $original);
 
     # Global variables;
-    our $EXECUTABLE_NAME;
-    our $PROGRAM_NAME;
-    our @ARGS;
-    our %ENV;
-    our %VM;
-    our $OS;
-    our $OSVER;
+    my $*EXECUTABLE_NAME;
+    my $*PROGRAM_NAME;
+    my @*ARGS;
+    my %*ENV;
+    my %*VM;
+    my $*OS;
+    my $*OSVER;
 
 =cut
 
@@ -651,31 +651,31 @@ included in the resulting C<@pieces>.
 
 =over 4
 
-=item $EXECUTABLE_NAME
+=item $*EXECUTABLE_NAME
 
 Full path of interpreter executable
 
-=item $PROGRAM_NAME
+=item $*PROGRAM_NAME
 
 Name of running program (argv[0] in C)
 
-=item @ARGS
+=item @*ARGS
 
 Program's command line arguments (including options, which are NOT parsed)
 
-=item %VM
+=item %*VM
 
 Parrot configuration
 
-=item %ENV
+=item %*ENV
 
 Process-wide environment variables
 
-=item $OS
+=item $*OS
 
 Operating system generic name
 
-=item $OSVER
+=item $*OSVER
 
 Operating system version
 
@@ -689,7 +689,7 @@ Operating system version
     $P1 = $P0[.IGLOBALS_CONFIG_HASH]
     $P2 = new ['Hash']
     $P2['config'] = $P1
-    set_hll_global '%VM', $P2
+    store_dynamic_lex '%*VM', $P2
 
     $P1 = $P0[.IGLOBALS_ARGV_LIST]
     if $P1 goto have_args
@@ -697,23 +697,23 @@ Operating system version
   have_args:
     $S0 = shift $P1
     $P2 = box $S0
-    set_hll_global '$PROGRAM_NAME', $P2
-    set_hll_global '@ARGS', $P1
+    store_dynamic_lex '$*PROGRAM_NAME', $P2
+    store_dynamic_lex '@*ARGS', $P1
 
     $S0 = interpinfo .INTERPINFO_EXECUTABLE_FULLNAME
     $P0 = box $S0
-    set_hll_global '$EXECUTABLE_NAME', $P0
+    store_dynamic_lex '$*EXECUTABLE_NAME', $P0
 
     $P0 = root_new ['parrot';'Env']
-    set_hll_global '%ENV', $P0
+    store_dynamic_lex '%*ENV', $P0
 
     $S0 = sysinfo .SYSINFO_PARROT_OS
     $P0 = box $S0
-    set_hll_global '$OS', $P0
+    store_dynamic_lex '$*OS', $P0
 
     $S0 = sysinfo .SYSINFO_PARROT_OS_VERSION
     $P0 = box $S0
-    set_hll_global '$OSVER', $P0
+    store_dynamic_lex '$*OSVER', $P0
 .end
 
 

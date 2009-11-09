@@ -5,11 +5,11 @@
 
 # NQP bug XXXX: Must redeclare PIR globals because the NQP parser can't
 #               know about variables created at load_bytecode time.
-our $PROGRAM_NAME;
-our @ARGS;
-our %ENV;
-our %VM;
-our $OS;
+my $*PROGRAM_NAME;
+my @*ARGS;
+my %*ENV;
+my %*VM;
+my $*OS;
 
 # Need to load helper libraries before even eval() is available
 load_helper_libraries();
@@ -162,12 +162,12 @@ sub parse_command_line_options () {
     $getopts.push_string('config-file=s');
     $getopts.push_string('ignore-fail:%');
 
-    %OPT := $getopts.get_options(@ARGS);
+    %OPT := $getopts.get_options(@*ARGS);
 }
 
 sub read_config_files () {
     # Find config files for this system and user (ignored if missing).
-    my $etc      := %VM<conf><sysconfdir>;
+    my $etc      := %*VM<conf><sysconfdir>;
     my $home     := user_home_dir();
     my $base     := 'plumage.json';
     my $sysconf  := fscat([$etc,  'parrot', 'plumage'], $base);
@@ -226,7 +226,7 @@ sub merge_tree_structures ($dst, $src) {
 }
 
 sub find_binaries () {
-    my %conf       := %VM<config>;
+    my %conf       := %*VM<config>;
     my $parrot_bin := %conf<bindir>;
 
     %BIN<parrot_config> := fscat([$parrot_bin], 'parrot_config');
@@ -275,7 +275,7 @@ sub MAIN () {
 }
 
 sub parse_command_line () {
-    my $command := @ARGS ?? @ARGS.shift !! 'usage';
+    my $command := @*ARGS ?? @*ARGS.shift !! 'usage';
 
     return $command;
 }
@@ -285,11 +285,11 @@ sub execute_command ($command) {
     my $args   := %COMMANDS{$command}<args>;
 
     if ($action) {
-        if $args eq 'project' && !@ARGS {
+        if $args eq 'project' && !@*ARGS {
             say('Please include the name of the project you wish info for.');
         }
         else {
-            $action(@ARGS);
+            $action(@*ARGS);
         }
     }
     else {
@@ -310,7 +310,7 @@ sub command_usage () {
 
 sub usage_info () {
     return
-"Usage: $PROGRAM_NAME [<options>] <command> [<arguments>]
+"Usage: $*PROGRAM_NAME [<options>] <command> [<arguments>]
 
 Options:
 
@@ -731,7 +731,7 @@ sub report_fetch_collision ($type, $project) {
     say("\n$project is a $type project, but the fetch directory:\n"
         ~ "\n    $project_dir\n\n"
         ~ "already exists and is not the right type.\n"
-        ~ "Please remove or rename it, then rerun $PROGRAM_NAME.\n");
+        ~ "Please remove or rename it, then rerun $*PROGRAM_NAME.\n");
 
     return 0;
 }
@@ -848,7 +848,7 @@ sub action_install ($project, %info) {
 }
 
 sub install_make ($project) {
-    my $bin_dir  := %VM<config><bindir>;
+    my $bin_dir  := %*VM<config><bindir>;
     my $root_cmd := replace_config_strings(%CONF<root_command>);
 
     chdir($project);
@@ -862,7 +862,7 @@ sub install_make ($project) {
 }
 
 sub install_parrot_setup ($project) {
-    my $bin_dir  := %VM<config><bindir>;
+    my $bin_dir  := %*VM<config><bindir>;
     my $root_cmd := replace_config_strings(%CONF<root_command>);
 
     chdir($project);
