@@ -106,6 +106,7 @@ Plumage:
   * Platform hints
     * config items not provided by parrot, like PATH separator
     * binary renames
+    * handle needing to HOMEDRIVE ~ HOME on Win32
   * Official metadata spec validator tool (module?), with test suite
   * Use Plumage's Configure.nqp and test harness for project config/test
   * Anything proto can do
@@ -145,6 +146,8 @@ Plumage:
   * Figure out how to mock svn/git repos so that build/fetch/test/configure
     steps can be tested
   * Check exit code of each test file
+  * Massively expand tests
+  * Improve harness output
 * Misc suggestions
   * Merge Plumage .pbc's all together into executable using pbc_merge
   * Avoid asking questions (after first setup?) if at all possible
