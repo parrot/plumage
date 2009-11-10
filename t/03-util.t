@@ -15,11 +15,13 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(20);
+    plan(26);
 
     test_hash_exists();
     test_hash_keys();
     test_hash_kv();
+
+    test_set_from_array();
 }
 
 sub test_hash_exists() {
@@ -96,4 +98,20 @@ sub test_hash_kv() {
     @kv           := %kv_hash.kv;
 
     is(@kv, 10, 'kv on hash with five entries has ten elements');
+}
+
+sub test_set_from_array() {
+    my @array;
+    my %set  := set_from_array(@array);
+    my @keys := %set.keys;
+    is(@keys, 0, 'set_from_array on empty array produces empty set');
+
+    @array := (1, "two", "two", 3, '3', 3);
+    %set   := set_from_array(@array);
+    @keys  := %set.keys;
+    is(@keys,     3, 'set_from_array on array with dups has correct number of keys');
+    is(%set<1>,   1, '... and first key is in set');
+    is(%set<two>, 1, '... and second key is in set');
+    is(%set<3>,   1, '... and third key is in set');
+    nok(%set.exists('four'), '... and non-existant key is not in set');
 }
