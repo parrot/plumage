@@ -25,6 +25,7 @@ Util.nqp - Utility functions for NQP and Plumage
     $binary_path := find_program($program);
     mkpath($directory_path);
     $writable := test_dir_writable($directory_path);
+    $home := user_home_dir();
 
     # Plumage-specific
     $replaced := replace_config_strings($original);
@@ -298,8 +299,22 @@ sub test_dir_writable($dir) {
     }
 }
 
+=begin
+
+=item $home := user_home_dir()
+
+Determine the user's home directory in the proper platform-dependent manner.
+
+=end
+
+sub user_home_dir() {
+    return (%ENV<HOMEDRIVE> // '') ~ %ENV<HOME>;
+}
 
 =begin
+
+=back
+
 
 =head2 Plumage Specific Functions
 
