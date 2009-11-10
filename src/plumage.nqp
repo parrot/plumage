@@ -149,7 +149,7 @@ sub fixup_commands ($commands) {
 }
 
 sub fixup_sub_actions (%actions) {
-    my @stages := keys(%actions);
+    my @stages := %actions.keys;
 
     for @stages {
         my $stage   := $_;
@@ -223,7 +223,7 @@ sub read_config_files () {
 }
 
 sub merge_tree_structures ($dst, $src) {
-    for keys($src) {
+    for $src.keys {
         my $d := $dst{$_};
         my $s := $src{$_};
 
@@ -259,7 +259,7 @@ sub build_stages () {
         my $stage       := $_;
         %STAGES{$stage} := as_array();
 
-        for keys(%STAGES) {
+        for %STAGES.keys {
             %STAGES{$_}.unshift($stage);
         }
 
@@ -561,7 +561,7 @@ sub resolve_dependencies (@projects) {
         if %BIN{$_} || find_program($_) {
             @have_bin.push($_);
         }
-        elsif exists(%BIN, $_) {
+        elsif %BIN.exists($_) {
             @need_bin.push($_);
         }
         elsif %is_installed{$_} {
@@ -605,7 +605,7 @@ sub all_dependencies (@projects) {
             if %info_deps {
                 my %requires := %info_deps<requires>;
                 if %requires {
-                    for keys(%requires) {
+                    for %requires.keys {
                         my @step_requires := %requires{$_};
                         if @step_requires {
                             for @step_requires {
@@ -648,7 +648,7 @@ sub perform_actions_on_projects (@actions, @projects) {
 }
 
 sub perform_actions_on_project (@actions, $project, %info) {
-    my $has_ignore_flag := exists(%OPT, 'ignore-fail');
+    my $has_ignore_flag := %OPT.exists('ignore-fail');
     my %ignore          := %OPT<ignore-fail>;
     my $ignore_all      := $has_ignore_flag && !%ignore;
 

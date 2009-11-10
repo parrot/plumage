@@ -4,7 +4,7 @@ our @ARGS;
 MAIN();
 
 sub MAIN () {
-    my $num_tests := 9;
+    my $num_tests := 7;
     pir::load_bytecode('src/lib/Glue.pbc');
     Q:PIR{
         .local pmc c
@@ -13,7 +13,6 @@ sub MAIN () {
         c.'import'('Test::More')
     };
     plan($num_tests);
-    test_exists();
     test_subst();
     test_join();
     test_split();
@@ -39,13 +38,4 @@ sub test_subst() {
     my $subst  := subst($string,rx('a'),'x');
     is($subst,'chewbxccx','substr works');
     is($string,'chewbacca','subst works on a clone');
-}
-
-sub test_exists() {
-    my %opt;
-    %opt<foobar> := 42;
-    my $exists := exists(%opt, 'foobar');
-    ok($exists, 'exists works for existing keys');
-    $exists := exists(%opt, 'zanzibar');
-    nok($exists, 'exists works for non-existent keys');
 }

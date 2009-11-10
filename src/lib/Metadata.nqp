@@ -133,7 +133,7 @@ sub metadata_spec_known (%info) {
 
 sub metadata_instruction_types_known (%info) {
     my %inst   := %info<instructions>;
-    my @stages := keys(%inst);
+    my @stages := %inst.keys;
 
     unless %inst && @stages {
         say("This project has no instructions.");
@@ -145,7 +145,7 @@ sub metadata_instruction_types_known (%info) {
         my $action := %ACTION{$_}{$type};
 
         unless $action {
-            my @types := keys(%ACTION{$_});
+            my @types := %ACTION{$_}.keys;
             my $types := join(', ', @types);
 
             say("I don't understand " ~ $_ ~ " type '" ~ $type ~ "'.\n"

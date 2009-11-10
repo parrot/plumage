@@ -40,13 +40,53 @@ our %BIN;
 our %CONF;
 our $OS;
 
+
 =begin
 
 =head2 Hash Extensions
 
+These methods extend the native NQP Hash class to support more of the basic
+functionality expected for Perl 6 Hashes.
+
+=end
+
+module Hash {
+
+=begin
+
 =over 4
 
-=item @flattened := %hash.kv;
+=item $found := %hash.exists($key)
+
+Return a true value if C<$key> exists in C<%hash>, or a false value otherwise.
+
+=end
+
+    method exists ($key) {
+        return Q:PIR{
+            $P1 = find_lex '$key'
+            $I0 = exists self[$P1]
+            %r  = box $I0
+        };
+    }
+
+=begin
+
+=item @keys := %hash.keys
+
+Return all the C<@keys> in the C<%hash> as an unordered array.
+
+=end
+
+    method keys () {
+        my @keys;
+        for self { @keys.push($_.key); }
+        @keys;
+    }
+
+=begin
+
+=item @flattened := %hash.kv
 
 Flatten C<%hash> into an array, alternating key and value.  This is useful
 when iterating over key and value simultaneously:
@@ -55,18 +95,22 @@ when iterating over key and value simultaneously:
 
 =end
 
-module Hash {
     method kv () {
         my @kv;
         for self { @kv.push($_.key); @kv.push($_.value); }
         @kv;
     }
-}
 
 =begin
 
 =back
 
+=end
+
+}
+
+
+=begin
 
 =head2 Basic Functions
 

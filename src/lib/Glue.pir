@@ -20,10 +20,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     die($message);
     try(&code, @args [, &handler]);
 
-    # Hash basics
-    @keys  := keys(%hash);
-    $found := exists(%hash, $key);
-
     # OO and types
     $does_role := does($object, $role);
 
@@ -232,49 +228,6 @@ In other words, C<try()> implements the following pseudocode:
 
   no_handler:
     .return (0)
-.end
-
-
-=item @keys := keys(%hash)
-
-Return an array containing the keys of the C<%hash>.
-
-=cut
-
-.sub 'keys'
-    .param pmc hash
-
-    .local pmc key_list, it
-    key_list = root_new ['parrot';'ResizableStringArray']
-    it       = iter hash
-
-  key_loop:
-    unless it goto no_more_keys
-
-    $S0 = shift it
-    push key_list, $S0
-
-    goto key_loop
-  no_more_keys:
-
-    .return(key_list)
-.end
-
-
-=item $found := exists(%hash, $key)
-
-Determine if C<$key> exists in C<%hash>, returning a true value if so, and a
-false value if not.
-
-=cut
-
-.sub 'exists'
-    .param pmc    hash
-    .param string key
-
-    $I0 = exists hash[key]
-
-    .return($I0)
 .end
 
 
