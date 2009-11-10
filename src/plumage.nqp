@@ -3,14 +3,6 @@
 ###
 
 
-# NQP bug XXXX: Fakecutables broken because 'nqp' language is not loaded.
-Q:PIR{
-    $P0 = get_hll_global 'say'
-  unless null $P0 goto got_nqp
-    load_language 'nqp'
-  got_nqp:
-};
-
 # NQP bug XXXX: Must redeclare PIR globals because the NQP parser can't
 #               know about variables created at load_bytecode time.
 our $PROGRAM_NAME;
@@ -18,6 +10,9 @@ our @ARGS;
 our %ENV;
 our %VM;
 our $OS;
+
+# Need to load helper libraries before even eval() is available
+load_helper_libraries();
 
 # NQP doesn't support array or hash literals, so parse main structure
 # from JSON and then fix up values that can't be represented in JSON.
@@ -80,7 +75,6 @@ my  $_ACTIONS_JSON := '
 }
 ';
 our %ACTION;
-load_helper_libraries();
 fixup_sub_actions(eval($_ACTIONS_JSON, 'data_json'));
 
 my $_DEFAULT_CONF_JSON := '
