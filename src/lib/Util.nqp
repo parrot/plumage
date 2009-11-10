@@ -10,6 +10,8 @@ Util.nqp - Utility functions for NQP and Plumage
     pir::load_bytecode('src/lib/Util.pbc');
 
     # Hash extensions
+    $found     := %hash.exists($key);
+    @keys      := %hash.keys;
     @flattened := %hash.kv;
 
     # Basics
