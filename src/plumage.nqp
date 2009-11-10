@@ -79,7 +79,7 @@ fixup_sub_actions(eval($_ACTIONS_JSON, 'data_json'));
 
 my $_DEFAULT_CONF_JSON := '
 {
-    "parrot_user_root"     : "#HOME#/.parrot",
+    "parrot_user_root"     : "#user_home_dir#/.parrot",
     "plumage_user_root"    : "#parrot_user_root#/plumage",
     "plumage_build_root"   : "#plumage_user_root#/build",
     "plumage_metadata_dir" : "metadata",
@@ -179,11 +179,14 @@ sub parse_command_line_options () {
 sub read_config_files () {
     # Find config files for this system and user (ignored if missing).
     my $etc      := %VM<conf><sysconfdir>;
-    my $home     := %ENV<HOME>;
+    my $home     := user_home_dir();
     my $base     := 'plumage.json';
     my $sysconf  := fscat(as_array($etc,  'parrot', 'plumage'), $base);
     my $userconf := fscat(as_array($home, 'parrot', 'plumage'), $base);
     my @configs  := as_array($sysconf, $userconf);
+
+    # Remember home dir, we'll need that later
+    %CONF<user_home_dir> := $home;
 
     # If another config specified via command line option, add it.  Because
     # this was manually set by the user, it is a fatal error if missing.
