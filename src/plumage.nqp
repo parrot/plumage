@@ -69,9 +69,9 @@ my  $_ACTIONS_JSON := '
 {
     "fetch"     : [ "repository", "git", "svn" ],
     "configure" : [ "perl5_configure", "parrot_configure", "nqp_configure" ],
-    "build"     : [ "make" ],
-    "test"      : [ "make" ],
-    "install"   : [ "make" ]
+    "build"     : [ "make", "parrot_setup" ],
+    "test"      : [ "make", "parrot_setup" ],
+    "install"   : [ "make", "parrot_setup" ]
 }
 ';
 our %ACTION;
@@ -834,6 +834,18 @@ sub build_make ($project) {
     return $success;
 }
 
+sub build_parrot_setup ($project) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot');
+    my $success := do_run($parrot, 'setup.pir');
+
+    chdir($cwd);
+
+    return $success;
+}
+
 
 # TEST
 
@@ -857,6 +869,18 @@ sub test_make ($project) {
 
     my $make := %VM<config><make>;
     my $success := do_run($make, 'test');
+
+    chdir($cwd);
+
+    return $success;
+}
+
+sub test_parrot_setup ($project) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot');
+    my $success := do_run($parrot, 'setup.pir', 'test');
 
     chdir($cwd);
 
@@ -900,6 +924,27 @@ sub install_make ($project) {
     }
     else {
         $success := do_run($make, 'install');
+    }
+
+    chdir($cwd);
+
+    return $success;
+}
+
+sub install_parrot_setup ($project) {
+    my $cwd := cwd();
+    chdir($project);
+
+    my $bin_dir  := %VM<config><bindir>;
+    my $parrot   := fscat(as_array($bin_dir), 'parrot');
+    my $root_cmd := replace_config_strings(%CONF<root_command>);
+    my $success;
+
+    if !test_dir_writable($bin_dir) && $root_cmd {
+        $success := do_run($root_cmd, $parrot, 'setup.pir', 'install');
+    }
+    else {
+        $success := do_run($parrot, 'setup.pir', 'install');
     }
 
     chdir($cwd);
