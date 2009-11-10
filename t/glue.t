@@ -1,41 +1,67 @@
 #! nqp
-our @ARGS;
 
 MAIN();
 
 sub MAIN () {
-    my $num_tests := 7;
+    # Load testing tools
+    pir::load_language('parrot');
+    pir::compreg__PS('parrot').import('Test::More');
+
+    # Load library to be tested
     pir::load_bytecode('src/lib/Glue.pbc');
-    Q:PIR{
-        .local pmc c
-        load_language 'parrot'
-        c = compreg 'parrot'
-        c.'import'('Test::More')
-    };
-    plan($num_tests);
+
+    # Run all tests for this library
+    run_tests();
+}
+
+sub run_tests () {
+    plan(17);
+
     test_subst();
     test_join();
     test_split();
     test_path_exists();
 }
+
 sub test_path_exists() {
-    ok(path_exists('.'),'path_exists finds .');
-    nok(path_exists('DOESNOTEXIST'),'path_exists returns false for nonexistent files');
+    ok( path_exists('.'),            'path_exists finds .');
+    nok(path_exists('DOESNOTEXIST'), 'path_exists returns false for nonexistent files');
 }
 
 sub test_join() {
-    is('a,b,c,d,e,f', join(',',('a','b','c','d','e','f')), 'join works');
+    is('a,b,c,d,e,f', join(',', ('a','b','c','d','e','f')), 'join works');
 }
 
 sub test_split() {
-    my @stuff := split('/', '1/5');
-    is(@stuff[0],1,'split works');
-    is(@stuff[1],5,'split works');
+    my @stuff := split('/', '1/5/7');
+    is(@stuff,    3, 'split produces the correct result count');
+    is(@stuff[0], 1, 'split produces correct result values');
+    is(@stuff[1], 5, 'split produces correct result values');
+    is(@stuff[2], 7, 'split produces correct result values');
+
+    my @things := split(':', ':a::b:');
+    is(@things,    5,   'split produces the correct result count');
+    is(@things[0], '',  'split produces correct result values');
+    is(@things[1], 'a', 'split produces correct result values');
+    is(@things[2], '',  'split produces correct result values');
+    is(@things[3], 'b', 'split produces correct result values');
+    is(@things[4], '',  'split produces correct result values');
 }
 
 sub test_subst() {
     my $string := 'chewbacca';
-    my $subst  := subst($string,rx('a'),'x');
-    is($subst,'chewbxccx','substr works');
-    is($string,'chewbacca','subst works on a clone');
+    my $subst  := subst($string, rx('a'), 'x');
+    is($subst,  'chewbxccx', 'subst works with plain string replacement');
+    is($string, 'chewbacca', 'plain string subst edits a clone');
+
+    my $text  := 'wookie';
+    my $fixed := subst($text, rx('w|k'), replacement);
+    is($fixed, 'wwookkie', 'subst works with code replacement');
+    is($text,  'wookie',   'code replacement subst edits a clone');
+}
+
+sub replacement($match) {
+    my $orig := ~$match;
+
+    return $orig ~ $orig;
 }
