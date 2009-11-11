@@ -125,19 +125,9 @@ sub load_helper_libraries () {
 
 sub fixup_commands ($commands) {
     # Convert action sub *names* into actual action subs
-    Q:PIR{
-        $P0 = find_lex '$commands'
-        $P1 = iter $P0
-      fixup_loop:
-        unless $P1 goto fixup_loop_end
-        $S0 = shift $P1
-        $P2 = $P1[$S0]
-        $S1 = $P2['action']
-        $P3 = get_hll_global $S1
-        $P2['action'] = $P3
-        goto fixup_loop
-      fixup_loop_end:
-    };
+    for $commands.kv -> $cmd, $opts {
+        $opts<action> := pir::get_hll_global__Ps($opts<action>);
+    }
 
     return $commands;
 }
@@ -151,11 +141,7 @@ sub fixup_sub_actions (%actions) {
 
         for @actions {
             my $sub_name := $stage ~ '_' ~ $_;
-            my $sub      := Q:PIR {
-                $P0 = find_lex '$sub_name'
-                $S0 = $P0
-                %r  = get_hll_global $S0
-            };
+            my $sub      := pir::get_hll_global__Ps($sub_name);
 
             if $sub {
                 %ACTION{$stage}{$_} := $sub;
@@ -261,11 +247,8 @@ sub build_stages () {
         }
 
         my $sub_name := "action_$stage";
-        my $sub      := Q:PIR {
-            $P0 = find_lex '$sub_name'
-            $S0 = $P0
-            %r  = get_hll_global $S0
-        };
+        my $sub      := pir::get_hll_global__Ps($sub_name);
+
         %STAGE_ACTION{$stage} := $sub;
     }
 }
@@ -311,7 +294,7 @@ sub execute_command ($command) {
     }
     else {
         say("I don't know how to '$command'!");
-        Q:PIR{ exit 1 };
+        pir::exit(1);
     }
 }
 
