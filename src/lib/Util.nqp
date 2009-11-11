@@ -9,10 +9,14 @@ Util.nqp - Utility functions for NQP and Plumage
     # Load this library
     pir::load_bytecode('src/lib/Util.pbc');
 
-    # Hash extensions
+    # Hash methods
     $found     := %hash.exists($key);
     @keys      := %hash.keys;
+    @values    := %hash.values;
     @flattened := %hash.kv;
+
+    # Array methods
+    @reversed := @array.reverse;
 
     # Basics
     @mapped  := map( &code, @originals);
@@ -46,7 +50,7 @@ our $OS;
 
 =begin
 
-=head2 Hash Extensions
+=head2 Hash Methods
 
 These methods extend the native NQP Hash class to support more of the basic
 functionality expected for Perl 6 Hashes.
@@ -89,6 +93,20 @@ Return all the C<@keys> in the C<%hash> as an unordered array.
 
 =begin
 
+=item @values := %hash.values
+
+Return all the C<@values> in the C<%hash> as an unordered array.
+
+=end
+
+    method values () {
+        my @values;
+        for self { @values.push($_.value); }
+        @values;
+    }
+
+=begin
+
 =item @flattened := %hash.kv
 
 Flatten C<%hash> into an array, alternating key and value.  This is useful
@@ -102,6 +120,42 @@ when iterating over key and value simultaneously:
         my @kv;
         for self { @kv.push($_.key); @kv.push($_.value); }
         @kv;
+    }
+
+=begin
+
+=back
+
+=end
+
+}
+
+
+=begin
+
+=head2 Array Methods
+
+These methods extend the native NQP Array class to support more of the basic
+functionality expected for Perl 6 Hashes.
+
+=end
+
+module Array {
+
+=begin
+
+=over 4
+
+=item @reversed := @array.reverse
+
+Return a C<@reversed> copy of the C<@array>.
+
+=end
+
+    method reverse () {
+        my @reversed;
+        for self { @reversed.unshift($_); }
+        @reversed;
     }
 
 =begin
