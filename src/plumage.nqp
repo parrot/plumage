@@ -651,9 +651,11 @@ sub perform_actions_on_project (@actions, $project, %info) {
 
     for @actions {
         my &action := %STAGE_ACTION{$_};
-
         if &action {
+           my $cwd    := cwd();
            my $result := &action($project, %info);
+           chdir($cwd);
+
            if $result {
                say("Successful.\n");
            }
@@ -712,14 +714,8 @@ sub fetch_repository ($project, %info) {
 sub fetch_git ($project, $uri) {
     if path_exists($project) {
         if path_exists(fscat(as_array($project, '.git'))) {
-            my $cwd := cwd();
             chdir($project);
-
-            my $success := do_run('git', 'pull');
-
-            chdir($cwd);
-
-            return $success;
+            return do_run('git', 'pull');
         }
         else {
             return report_fetch_collision('Git', $project);
@@ -771,41 +767,25 @@ sub action_configure ($project, %info) {
 }
 
 sub configure_perl5_configure ($project, %conf) {
-    my $cwd := cwd();
+    my @extra := map(replace_config_strings, %conf<extra_args>);
+    my $perl5 := %VM<config><perl>;
+
     chdir($project);
-
-    my @extra   := map(replace_config_strings, %conf<extra_args>);
-
-    my $perl5   := %VM<config><perl>;
-    my $success := call_flattened(do_run, $perl5, 'Configure.pl', @extra);
-
-    chdir($cwd);
-
-    return $success;
+    return call_flattened(do_run, $perl5, 'Configure.pl', @extra);
 }
 
 sub configure_parrot_configure ($project, %conf) {
-    my $cwd := cwd();
+    my $parrot := fscat(as_array(%VM<config><bindir>), 'parrot');
+
     chdir($project);
-
-    my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot');
-    my $success := do_run($parrot, 'Configure.pir');
-
-    chdir($cwd);
-
-    return $success;
+    return do_run($parrot, 'Configure.pir');
 }
 
 sub configure_nqp_configure ($project, %conf) {
-    my $cwd := cwd();
-    chdir($project);
-
     my $parrot_nqp := fscat(as_array(%VM<config><bindir>), 'nqp');
-    my $success    := do_run($parrot_nqp, 'Configure.nqp');
 
-    chdir($cwd);
-
-    return $success;
+    chdir($project);
+    return do_run($parrot_nqp, 'Configure.nqp');
 }
 
 
@@ -826,27 +806,17 @@ sub action_build ($project, %info) {
 }
 
 sub build_make ($project) {
-    my $cwd := cwd();
+    my $make := %VM<config><make>;
+
     chdir($project);
-
-    my $make    := %VM<config><make>;
-    my $success := do_run($make);
-
-    chdir($cwd);
-
-    return $success;
+    return do_run($make);
 }
 
 sub build_parrot_setup ($project) {
-    my $cwd := cwd();
+    my $parrot := fscat(as_array(%VM<config><bindir>), 'parrot');
+
     chdir($project);
-
-    my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot');
-    my $success := do_run($parrot, 'setup.pir');
-
-    chdir($cwd);
-
-    return $success;
+    return do_run($parrot, 'setup.pir');
 }
 
 
@@ -867,27 +837,17 @@ sub action_test ($project, %info) {
 }
 
 sub test_make ($project) {
-    my $cwd := cwd();
-    chdir($project);
-
     my $make := %VM<config><make>;
-    my $success := do_run($make, 'test');
 
-    chdir($cwd);
-
-    return $success;
+    chdir($project);
+    return do_run($make, 'test');
 }
 
 sub test_parrot_setup ($project) {
-    my $cwd := cwd();
+    my $parrot := fscat(as_array(%VM<config><bindir>), 'parrot');
+
     chdir($project);
-
-    my $parrot  := fscat(as_array(%VM<config><bindir>), 'parrot');
-    my $success := do_run($parrot, 'setup.pir', 'test');
-
-    chdir($cwd);
-
-    return $success;
+    return do_run($parrot, 'setup.pir', 'test');
 }
 
 
@@ -914,43 +874,31 @@ sub action_install ($project, %info) {
 }
 
 sub install_make ($project) {
-    my $cwd := cwd();
-    chdir($project);
-
     my $make     := %VM<config><make>;
     my $bin_dir  := %VM<config><bindir>;
     my $root_cmd := replace_config_strings(%CONF<root_command>);
-    my $success;
+
+    chdir($project);
 
     if !test_dir_writable($bin_dir) && $root_cmd {
-        $success := do_run($root_cmd, $make, 'install');
+        return do_run($root_cmd, $make, 'install');
     }
     else {
-        $success := do_run($make, 'install');
+        return do_run($make, 'install');
     }
-
-    chdir($cwd);
-
-    return $success;
 }
 
 sub install_parrot_setup ($project) {
-    my $cwd := cwd();
-    chdir($project);
-
     my $bin_dir  := %VM<config><bindir>;
     my $parrot   := fscat(as_array($bin_dir), 'parrot');
     my $root_cmd := replace_config_strings(%CONF<root_command>);
-    my $success;
+
+    chdir($project);
 
     if !test_dir_writable($bin_dir) && $root_cmd {
-        $success := do_run($root_cmd, $parrot, 'setup.pir', 'install');
+        return do_run($root_cmd, $parrot, 'setup.pir', 'install');
     }
     else {
-        $success := do_run($parrot, 'setup.pir', 'install');
+        return do_run($parrot, 'setup.pir', 'install');
     }
-
-    chdir($cwd);
-
-    return $success;
 }
