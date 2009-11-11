@@ -161,7 +161,7 @@ sub fixup_sub_actions (%actions) {
                 %ACTION{$stage}{$_} := $sub;
             }
             else {
-                die("Action sub '" ~ $sub_name ~ "' is missing!\n");
+                die("Action sub '$sub_name' is missing!\n");
             }
         }
     }
@@ -196,7 +196,7 @@ sub read_config_files () {
             @configs.push($optconf);
         }
         else {
-            die("Could not find config file '" ~ $optconf ~ "'.\n");
+            die("Could not find config file '$optconf'.\n");
         }
     }
 
@@ -211,7 +211,7 @@ sub read_config_files () {
                 %CONF := merge_tree_structures(%CONF, %conf);
             }
             else {
-                say("Could not parse JSON file '" ~ $_ ~ "'.");
+                say("Could not parse JSON file '$_'.");
             }
         }
     }
@@ -260,7 +260,7 @@ sub build_stages () {
             %STAGES{$_}.unshift($stage);
         }
 
-        my $sub_name := 'action_' ~ $stage;
+        my $sub_name := "action_$stage";
         my $sub      := Q:PIR {
             $P0 = find_lex '$sub_name'
             $S0 = $P0
@@ -310,7 +310,7 @@ sub execute_command ($command) {
         }
     }
     else {
-        say("I don't know how to '" ~ $command ~ "'!");
+        say("I don't know how to '$command'!");
         Q:PIR{ exit 1 };
     }
 }
@@ -327,7 +327,7 @@ sub command_usage () {
 
 sub usage_info () {
     return
-'Usage: ' ~ $PROGRAM_NAME ~ ' [<options>] <command> [<arguments>]
+"Usage: $PROGRAM_NAME [<options>] <command> [<arguments>]
 
 Options:
 
@@ -336,7 +336,7 @@ Options:
     --ignore-fail            Ignore any failing build stages
     --ignore-fail=<stage>    Ignore failures only in a particular stage
                              (may be repeated to select more than one stage)
-    --ignore-fail=<stage>=0  Don\'t ignore failures in this stage
+    --ignore-fail=<stage>=0  Don't ignore failures in this stage
 
 Commands:
 
@@ -352,7 +352,7 @@ Commands:
 
     version              Print program version and copyright
     usage                Print this usage info
-';
+";
 }
 
 
@@ -363,14 +363,14 @@ sub command_version () {
 sub version_info () {
     my $version := '0';
     return
-'This is Parrot Plumage, version ' ~ $version ~ '.
+"This is Parrot Plumage, version $version.
 
 Copyright (C) 2009, Parrot Foundation.
 
 This code is distributed under the terms of the Artistic License 2.0.
 For more details, see the full text of the license in the LICENSE file
 included in the Parrot Plumage source tree.
-';
+";
 }
 
 
@@ -388,12 +388,12 @@ sub command_projects () {
             if %general {
                 my $abstract := %general<abstract>;
                 if $abstract {
-                    $desc := ' - ' ~ $abstract;
+                    $desc := " - $abstract";
                 }
             }
         }
 
-        say('    ' ~ $_ ~ $desc);
+        say("    $_$desc");
     }
 
     say('');
@@ -467,7 +467,7 @@ sub install_required_projects (@projects) {
     if (@need_projects) {
         my $need_projects := join(', ', @need_projects);
         say("\nInstalling other projects to satisfy dependencies:\n"
-            ~ '    ' ~ $need_projects ~ "\n");
+            ~ "    $need_projects\n");
 
         return perform_actions_on_projects(%STAGES<install>, @need_projects);
     }
@@ -481,19 +481,19 @@ sub show_dependencies (@projects) {
     say('');
 
     my $have_bin     := join(' ', %resolutions<have_bin>);
-    say("Resolved by system binaries: " ~ $have_bin);
+    say("Resolved by system binaries: $have_bin");
 
     my $have_project := join(' ', %resolutions<have_project>);
-    say("Resolved by Parrot projects: " ~ $have_project);
+    say("Resolved by Parrot projects: $have_project");
 
     my $need_bin     := join(' ', %resolutions<need_bin>);
-    say("Missing system binaries:     " ~ $need_bin);
+    say("Missing system binaries:     $need_bin");
 
     my $need_project := join(' ', %resolutions<need_project>);
-    say("Missing Parrot projects:     " ~ $need_project);
+    say("Missing Parrot projects:     $need_project");
 
     my $need_unknown := join(' ', %resolutions<need_unknown>);
-    say("Missing and unrecognized:    " ~ $need_unknown);
+    say("Missing and unrecognized:    $need_unknown");
 
     if $need_unknown {
         # XXXX: Don't forget to fix this when metadata is retrieved from server
@@ -670,7 +670,7 @@ sub perform_actions_on_project (@actions, $project, %info) {
            }
         }
         else {
-           say("I don't know how to perfom action '" ~ $_ ~ "'.");
+           say("I don't know how to perfom action '$_'.");
         }
     }
 
@@ -692,7 +692,7 @@ sub action_fetch ($project, %info) {
         return &action($project, %info);
     }
     else {
-        say("Don't know how to fetch " ~ $project ~ '.');
+        say("Don't know how to fetch $project.");
         return 0;
     }
 }
@@ -700,13 +700,13 @@ sub action_fetch ($project, %info) {
 sub fetch_repository ($project, %info) {
     my %repo := %info<resources><repository>;
     if %repo {
-        say("Fetching " ~ $project ~ ' ...');
+        say("Fetching $project ...");
 
         my &action := %ACTION<fetch>{%repo<type>};
         return &action($project, %repo<checkout_uri>);
     }
     else {
-        say("Trying to fetch from a repository, but no repository info for " ~ $project ~ '.');
+        say("Trying to fetch from a repository, but no repository info for $project.");
         return 0;
     }
 }
@@ -740,11 +740,10 @@ sub report_fetch_collision ($type, $project) {
     my $build_root  := replace_config_strings(%CONF<plumage_build_root>);
     my $project_dir := fscat(as_array($build_root, $project));
 
-    say("\n"
-        ~ $project ~ ' is a ' ~ $type ~ " project, but the fetch directory:\n"
-        ~ "\n    " ~ $project_dir ~ "\n\n"
+    say("\n$project is a $type project, but the fetch directory:\n"
+        ~ "\n    $project_dir\n\n"
         ~ "already exists and is not the right type.\n"
-        ~ 'Please remove or rename it, then rerun ' ~ $PROGRAM_NAME ~ ".\n");
+        ~ "Please remove or rename it, then rerun $PROGRAM_NAME.\n");
 
     return 0;
 }
@@ -755,13 +754,13 @@ sub report_fetch_collision ($type, $project) {
 sub action_configure ($project, %info) {
     my %conf := %info<instructions><configure>;
     if %conf {
-        say("\nConfiguring " ~ $project ~ ' ...');
+        say("\nConfiguring $project ...");
 
         my &action := %ACTION<configure>{%conf<type>};
         return &action($project, %conf);
     }
     else {
-        say("\nConfiguration not required for " ~ $project ~ ".");
+        say("\nConfiguration not required for $project.");
         return 1;
     }
 }
@@ -794,13 +793,13 @@ sub configure_nqp_configure ($project, %conf) {
 sub action_build ($project, %info) {
     my %conf := %info<instructions><build>;
     if %conf {
-        say("\nBuilding " ~ $project ~ ' ...');
+        say("\nBuilding $project ...");
 
         my &action := %ACTION<build>{%conf<type>};
         return &action($project);
     }
     else {
-        say("\nBuild not required for " ~ $project ~ ".");
+        say("\nBuild not required for $project.");
         return 1;
     }
 }
@@ -825,13 +824,13 @@ sub build_parrot_setup ($project) {
 sub action_test ($project, %info) {
     my %conf := %info<instructions><test>;
     if %conf {
-        say("\nTesting " ~ $project ~ ' ...');
+        say("\nTesting $project ...");
 
         my &action := %ACTION<test>{%conf<type>};
         return &action($project);
     }
     else {
-        say("\nNo test method found for " ~ $project ~ ".");
+        say("\nNo test method found for $project.");
         return 1;
     }
 }
@@ -856,7 +855,7 @@ sub test_parrot_setup ($project) {
 sub action_install ($project, %info) {
     my %conf := %info<instructions><install>;
     if %conf {
-        say("\nInstalling " ~ $project ~ ' ...');
+        say("\nInstalling $project ...");
 
         my &action  := %ACTION<install>{%conf<type>};
         my $success := &action($project);
@@ -868,7 +867,7 @@ sub action_install ($project, %info) {
         return $success;
     }
     else {
-        say("Don't know how to install " ~ project ~ ".");
+        say("Don't know how to install $project.");
         return 0;
     }
 }
