@@ -135,16 +135,15 @@ sub fixup_commands ($commands) {
 sub fixup_sub_actions (%actions) {
     my @stages := %actions.keys;
 
-    for @stages {
-        my $stage   := $_;
+    for @stages -> $stage {
         my @actions := %actions{$stage};
 
-        for @actions {
-            my $sub_name := $stage ~ '_' ~ $_;
+        for @actions -> $action {
+            my $sub_name := $stage ~ '_' ~ $action;
             my $sub      := pir::get_hll_global__Ps($sub_name);
 
             if $sub {
-                %ACTION{$stage}{$_} := $sub;
+                %ACTION{$stage}{$action} := $sub;
             }
             else {
                 die("Action sub '$sub_name' is missing!\n");
@@ -190,14 +189,14 @@ sub read_config_files () {
     my %default := eval($_DEFAULT_CONF_JSON, 'data_json');
     %CONF := merge_tree_structures(%CONF, %default);
 
-    for @configs {
-        if path_exists($_) {
-            my %conf := try(Config::JSON::ReadConfig, as_array($_));
+    for @configs -> $config {
+        if path_exists($config) {
+            my %conf := try(Config::JSON::ReadConfig, as_array($config));
             if %conf {
                 %CONF := merge_tree_structures(%CONF, %conf);
             }
             else {
-                say("Could not parse JSON file '$_'.");
+                say("Could not parse JSON file '$config'.");
             }
         }
     }
@@ -206,16 +205,16 @@ sub read_config_files () {
 }
 
 sub merge_tree_structures ($dst, $src) {
-    for $src.keys {
-        my $d := $dst{$_};
-        my $s := $src{$_};
+    for $src.keys -> $k {
+        my $d := $dst{$k};
+        my $s := $src{$k};
 
         if  $d && does($d, 'hash')
         &&  $s && does($s, 'hash') {
-            $dst{$_} := merge_tree_structures($d, $s);
+            $dst{$k} := merge_tree_structures($d, $s);
         }
         else {
-            $dst{$_} := $s;
+            $dst{$k} := $s;
         }
     }
 
@@ -238,12 +237,11 @@ sub find_binaries () {
 sub build_stages () {
     my @stages := split(' ', 'install test build configure fetch');
 
-    for @stages {
-        my $stage       := $_;
+    for @stages -> $stage {
         %STAGES{$stage} := as_array();
 
-        for %STAGES.keys {
-            %STAGES{$_}.unshift($stage);
+        for %STAGES {
+            $_.value.unshift($stage);
         }
 
         my $sub_name := "action_$stage";
@@ -362,10 +360,10 @@ sub command_projects () {
 
     say("\nKnown projects:\n");
 
-    for @projects {
+    for @projects -> $project {
         my $desc := '';
 
-        my %info := get_project_metadata($_, 0);
+        my %info := get_project_metadata($project, 0);
         if %info && metadata_valid(%info) {
             my %general := %info<general>;
             if %general {
@@ -376,7 +374,7 @@ sub command_projects () {
             }
         }
 
-        say("    $_$desc");
+        say("    $project$desc");
     }
 
     say('');
@@ -388,8 +386,8 @@ sub command_info (@projects) {
         say('Please include the name of the project you wish info for.');
     }
 
-    for @projects {
-        my %info := get_project_metadata($_, 0);
+    for @projects -> $project {
+        my %info := get_project_metadata($project, 0);
         if %info {
             _dumper(%info, 'INFO');
         }
@@ -403,8 +401,8 @@ sub command_showdeps (@projects) {
     }
 
     my $unknown_project := 0;
-    for @projects {
-        my %info := get_project_metadata($_, 0);
+    for @projects -> $project {
+        my %info := get_project_metadata($project, 0);
 
         unless %info {
             $unknown_project := 1;
@@ -537,21 +535,21 @@ sub resolve_dependencies (@projects) {
     my @need_project;
     my @need_unknown;
 
-    for @all_deps {
-        if %BIN{$_} || find_program($_) {
-            @have_bin.push($_);
+    for @all_deps -> $dep {
+        if %BIN{$dep} || find_program($dep) {
+            @have_bin.push($dep);
         }
-        elsif %BIN.exists($_) {
-            @need_bin.push($_);
+        elsif %BIN.exists($dep) {
+            @need_bin.push($dep);
         }
-        elsif %is_installed{$_} {
-            @have_project.push($_);
+        elsif %is_installed{$dep} {
+            @have_project.push($dep);
         }
-        elsif %is_project{$_} {
-            @need_project.push($_);
+        elsif %is_project{$dep} {
+            @need_project.push($dep);
         }
         else {
-            @need_unknown.push($_);
+            @need_unknown.push($dep);
         }
     }
 
@@ -571,9 +569,9 @@ sub all_dependencies (@projects) {
     my @deps;
     my %seen;
 
-    for @projects {
-        @dep_stack.unshift($_);
-        %seen{$_} := 1;
+    for @projects -> $project {
+        @dep_stack.unshift($project);
+        %seen{$project} := 1;
     }
 
     while @dep_stack {
@@ -585,15 +583,12 @@ sub all_dependencies (@projects) {
             if %info_deps {
                 my %requires := %info_deps<requires>;
                 if %requires {
-                    for %requires.keys {
-                        my @step_requires := %requires{$_};
-                        if @step_requires {
-                            for @step_requires {
-                                unless %seen{$_} {
-                                    @dep_stack.push($_);
-                                    @deps.unshift($_);
-                                    %seen{$_} := 1;
-                                }
+                    for %requires.values -> @step_requires {
+                        for @step_requires -> $dep {
+                            unless %seen{$dep} {
+                                @dep_stack.push($dep);
+                                @deps.unshift($dep);
+                                %seen{$dep} := 1;
                             }
                         }
                     }
@@ -611,11 +606,11 @@ sub perform_actions_on_projects (@actions, @projects) {
     my $build_root := replace_config_strings(%CONF<plumage_build_root>);
     mkpath($build_root);
 
-    for @projects {
-        my %info := get_project_metadata($_, 0);
+    for @projects -> $project {
+        my %info := get_project_metadata($project, 0);
         if %info && metadata_valid(%info) {
             chdir($build_root);
-            my $success := perform_actions_on_project(@actions, $_, %info);
+            my $success := perform_actions_on_project(@actions, $project, %info);
             chdir($cwd);
 
             unless $success {
@@ -632,8 +627,8 @@ sub perform_actions_on_project (@actions, $project, %info) {
     my %ignore          := %OPT<ignore-fail>;
     my $ignore_all      := $has_ignore_flag && !%ignore;
 
-    for @actions {
-        my &action := %STAGE_ACTION{$_};
+    for @actions -> $action {
+        my &action := %STAGE_ACTION{$action};
         if &action {
            my $cwd    := cwd();
            my $result := &action($project, %info);
@@ -643,7 +638,7 @@ sub perform_actions_on_project (@actions, $project, %info) {
                say("Successful.\n");
            }
            else {
-               if $ignore_all || %ignore && %ignore{$_} {
+               if $ignore_all || %ignore && %ignore{$action} {
                    say("FAILED, but ignoring failure at user request.\n");
                }
                else {
@@ -653,7 +648,7 @@ sub perform_actions_on_project (@actions, $project, %info) {
            }
         }
         else {
-           say("I don't know how to perfom action '$_'.");
+           say("I don't know how to perfom action '$action'.");
         }
     }
 
