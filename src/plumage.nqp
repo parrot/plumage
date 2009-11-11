@@ -33,6 +33,10 @@ my  $_COMMANDS_JSON := '
         "action" : "command_projects",
         "args"   : "none"
     },
+    "status"   : {
+        "action" : "command_status",
+        "args"   : "opt_project"
+    },
     "info"       : {
         "action" : "command_info",
         "args"   : "project"
@@ -322,6 +326,7 @@ Options:
 Commands:
 
     projects             List all known projects
+    status   [<project>] Show status of projects (defaults to all)
     info      <project>  Print info about a particular project
     showdeps  <project>  Show dependency resolution for a project
 
@@ -375,6 +380,23 @@ sub command_projects () {
         }
 
         say("    $project$desc");
+    }
+
+    say('');
+}
+
+
+sub command_status () {
+    my @projects  := get_project_list();
+    my @installed := get_installed_projects();
+    my %installed := set_from_array(@installed);
+
+    say("\nKnown projects:\n");
+
+    for @projects -> $project {
+        my $status := %installed{$project} ?? 'installed' !! '-';
+        my $output := pir::sprintf__SsP("    %-30s   %s", ($project, $status));
+        say($output);
     }
 
     say('');
@@ -512,11 +534,7 @@ sub get_installed_projects () {
 
     my @projects;
     if $contents {
-        for split("\n", $contents) {
-            if $_ {
-                @projects.push($_);
-            }
-        }
+        @projects := grep(-> $_ { ?$_ }, split("\n", $contents));
     }
 
     return @projects;
