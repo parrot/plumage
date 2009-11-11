@@ -116,7 +116,7 @@ Plumage:
       * Interaction with sudo?
       * Other prompts?
     * Create new project helper
-    * 'showstate' command (show build and install status)
+    * 'showstate' command (show build and install status) (WIP)
     * 'update' command
     * 'uninstall' or 'remove' command
     * 'wipeout' or 'purge' command -- uninstall and uncache
