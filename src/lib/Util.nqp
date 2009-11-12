@@ -282,11 +282,11 @@ sub find_program ($program) {
 
     @exts.unshift('');
 
-    for @paths {
-        my $path := fscat(as_array($_), $program);
+    for @paths -> $dir {
+        my $path := fscat([$dir], $program);
 
-        for @exts {
-            my $pathext := $path ~ $_;
+        for @exts -> $ext {
+            my $pathext := "$path$ext";
             if path_exists($pathext) {
                 return $pathext;
             }
@@ -309,8 +309,8 @@ sub mkpath ($path) {
     my @path := split('/', $path);
     my $cur  := '';
 
-    for @path {
-        $cur := fscat(as_array($cur, $_));
+    for @path -> $dir {
+        $cur := fscat([$cur, $dir]);
 
         unless path_exists($cur) {
             mkdir($cur);
@@ -336,13 +336,13 @@ race conditions between test and action.
 =end
 
 sub test_dir_writable($dir) {
-    my $test_file := fscat(as_array($dir), 'WrItAbLe.UtL');
+    my $test_file := fscat([$dir], 'WrItAbLe.UtL');
 
     if path_exists($test_file) {
         die("Test file '$test_file'\nthat should never exist already does.");
     }
 
-    try(spew, as_array($test_file, "test_dir_writable() test file.\n"));
+    try(spew, [$test_file, "test_dir_writable() test file.\n"]);
 
     if path_exists($test_file) {
         unlink($test_file);

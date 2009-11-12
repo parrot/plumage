@@ -41,9 +41,9 @@ sub get_project_list () {
     my $regex := rx('\.json$');
     my @projects;
 
-    for @files {
-        if $regex($_) {
-            my $project := subst($_, $regex, '');
+    for @files -> $file {
+        if $regex($file) {
+            my $project := subst($file, $regex, '');
             @projects.push($project);
         }
     }
@@ -63,21 +63,21 @@ C<$ignore_missing> is true.
 
 sub get_project_metadata ($project, $ignore_missing) {
     my $meta_dir  := replace_config_strings(%CONF<plumage_metadata_dir>);
-    my $json_file := fscat(as_array($meta_dir), $project ~ '.json');
+    my $json_file := fscat([$meta_dir], "$project.json");
 
     unless path_exists($json_file) {
         unless $ignore_missing {
-            say("I don't know anything about project '" ~ $project ~ "'.");
+            say("I don't know anything about project '$project'.");
         }
         return 0;
     }
 
-    return try(Config::JSON::ReadConfig, as_array($json_file),
+    return try(Config::JSON::ReadConfig, [$json_file],
                show_metadata_parse_error);
 }
 
 sub show_metadata_parse_error ($exception, &code, @args) {
-    say("Failed to parse metadata file '" ~ @args[0] ~ "': " ~ $exception);
+    say("Failed to parse metadata file '{ @args[0] }': $exception");
 
     return 0;
 }
@@ -109,8 +109,7 @@ sub metadata_spec_known (%info) {
     }
 
     unless %spec<uri> eq $known_uri {
-        say("This project's metadata specifies unknown metadata spec URI '"
-            ~ %spec<uri> ~ "'.");
+        say("This project's metadata specifies unknown metadata spec URI '{ %spec<uri> }'.");
         return 0;
     }
 
@@ -119,13 +118,11 @@ sub metadata_spec_known (%info) {
     }
     elsif %spec<version>  > $known_version {
         say("This project's metadata is too new to parse; it is version "
-            ~ %spec<version> ~ " and I only understand version "
-            ~ $known_version ~ ".");
+            ~ "{ %spec<version> } and I only understand version $known_version.");
     }
     else {
         say("This project's metadata is too old to parse; it is version "
-            ~ %spec<version> ~ " and I only understand version "
-            ~ $known_version ~ ".");
+            ~ "{ %spec<version> } and I only understand version $known_version.");
     }
 
     return 0;
@@ -140,16 +137,16 @@ sub metadata_instruction_types_known (%info) {
         return 0;
     }
 
-    for @stages {
-        my $type   := %inst{$_}<type>;
-        my $action := %ACTION{$_}{$type};
+    for @stages -> $stage {
+        my $type   := %inst{$stage}<type>;
+        my $action := %ACTION{$stage}{$type};
 
         unless $action {
-            my @types := %ACTION{$_}.keys;
+            my @types := %ACTION{$stage}.keys;
             my $types := join(', ', @types);
 
-            say("I don't understand " ~ $_ ~ " type '" ~ $type ~ "'.\n"
-                ~ "I only understand these types: " ~ $types);
+            say("I don't understand $stage type '$type'.\n"
+                ~ "I only understand these types: $types");
 
             return 0;
         }
