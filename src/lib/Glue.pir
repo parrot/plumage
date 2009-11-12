@@ -50,7 +50,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     @pieces := split($delimiter, $original);
 
     # Context
-    @array  := as_array($list, $of, $items, ...);
     $result := call_flattened(&code, $mixed, @args, $list, ...);
 
     # Global variables;
@@ -632,19 +631,6 @@ included in the resulting C<@pieces>.
 .end
 
 
-=item @array := as_array($list, $of, $items, ...)
-
-Slurp the list of arguments into an array and return it.
-
-=cut
-
-.sub 'as_array'
-     .param pmc items :slurpy
-
-     .return (items)
-.end
-
-
 =item $result := call_flattened(&code, $mixed, @args, $list, ...)
 
 Call C<&code> with flattened arguments.  This is done by first slurping all
@@ -653,9 +639,9 @@ each element that C<does 'array'>.  Finally, the C<&code> is tailcalled with
 the flattened array using the Parrot C<:flat> flag.
 
 To avoid flattening an array that should be passed as a single argument, wrap
-it with C<as_array()> first, like so:
+it with C<[]> first, like so:
 
-    call_flattened(&code, as_array(@protected), @will_flatten)
+    call_flattened(&code, [@protected], @will_flatten)
 
 =cut
 
