@@ -170,8 +170,8 @@ sub read_config_files () {
     my $etc      := %VM<conf><sysconfdir>;
     my $home     := user_home_dir();
     my $base     := 'plumage.json';
-    my $sysconf  := fscat(($etc,  'parrot', 'plumage'), $base);
-    my $userconf := fscat(($home, 'parrot', 'plumage'), $base);
+    my $sysconf  := fscat([$etc,  'parrot', 'plumage'], $base);
+    my $userconf := fscat([$home, 'parrot', 'plumage'], $base);
     my @configs  := ($sysconf, $userconf);
 
     # Remember home dir, we'll need that later
@@ -195,7 +195,7 @@ sub read_config_files () {
 
     for @configs -> $config {
         if path_exists($config) {
-            my %conf := try(Config::JSON::ReadConfig, ($config,));
+            my %conf := try(Config::JSON::ReadConfig, [$config]);
             if %conf {
                 %CONF := merge_tree_structures(%CONF, %conf);
             }
@@ -229,7 +229,7 @@ sub find_binaries () {
     my %conf       := %VM<config>;
     my $parrot_bin := %conf<bindir>;
 
-    %BIN<parrot_config> := fscat(($parrot_bin,), 'parrot_config');
+    %BIN<parrot_config> := fscat([$parrot_bin], 'parrot_config');
 
     %BIN<perl5> := %conf<perl>;
     %BIN<make>  := %conf<make>;
@@ -242,7 +242,7 @@ sub build_stages () {
     my @stages := split(' ', 'install test build configure fetch');
 
     for @stages -> $stage {
-        %STAGES{$stage} := as_array();
+        %STAGES{$stage} := [];
 
         for %STAGES {
             $_.value.unshift($stage);
@@ -395,7 +395,7 @@ sub command_status () {
 
     for @projects -> $project {
         my $status := %installed{$project} ?? 'installed' !! '-';
-        my $output := pir::sprintf__SsP("    %-30s   %s", ($project, $status));
+        my $output := pir::sprintf__SsP("    %-30s   %s", [$project, $status]);
         say($output);
     }
 
@@ -530,7 +530,7 @@ sub mark_projects_installed (@projects) {
 
 sub get_installed_projects () {
     my $inst_file := replace_config_strings(%CONF<installed_list_file>);
-    my $contents  := try(slurp, ($inst_file,));
+    my $contents  := try(slurp, [$inst_file]);
 
     my @projects;
     if $contents {
@@ -709,7 +709,7 @@ sub fetch_repository ($project, %info) {
 
 sub fetch_git ($project, $uri) {
     if path_exists($project) {
-        if path_exists(fscat(($project, '.git'),)) {
+        if path_exists(fscat([$project, '.git'])) {
             chdir($project);
             return do_run('git', 'pull');
         }
@@ -724,7 +724,7 @@ sub fetch_git ($project, $uri) {
 
 sub fetch_svn ($project, $uri) {
     if  path_exists($project)
-    && !path_exists(fscat(($project, '.svn'),)) {
+    && !path_exists(fscat([$project, '.svn'])) {
         return report_fetch_collision('Subversion', $project);
     }
     else {
@@ -734,7 +734,7 @@ sub fetch_svn ($project, $uri) {
 
 sub report_fetch_collision ($type, $project) {
     my $build_root  := replace_config_strings(%CONF<plumage_build_root>);
-    my $project_dir := fscat(($build_root, $project),);
+    my $project_dir := fscat([$build_root, $project]);
 
     say("\n$project is a $type project, but the fetch directory:\n"
         ~ "\n    $project_dir\n\n"
@@ -770,14 +770,14 @@ sub configure_perl5_configure ($project, %conf) {
 }
 
 sub configure_parrot_configure ($project, %conf) {
-    my $parrot := fscat((%VM<config><bindir>,), 'parrot');
+    my $parrot := fscat([%VM<config><bindir>], 'parrot');
 
     chdir($project);
     return do_run($parrot, 'Configure.pir');
 }
 
 sub configure_nqp_configure ($project, %conf) {
-    my $parrot_nqp := fscat((%VM<config><bindir>,), 'nqp');
+    my $parrot_nqp := fscat([%VM<config><bindir>], 'nqp');
 
     chdir($project);
     return do_run($parrot_nqp, 'Configure.nqp');
@@ -808,7 +808,7 @@ sub build_make ($project) {
 }
 
 sub build_parrot_setup ($project) {
-    my $parrot := fscat((%VM<config><bindir>,), 'parrot');
+    my $parrot := fscat([%VM<config><bindir>], 'parrot');
 
     chdir($project);
     return do_run($parrot, 'setup.pir');
@@ -839,7 +839,7 @@ sub test_make ($project) {
 }
 
 sub test_parrot_setup ($project) {
-    my $parrot := fscat((%VM<config><bindir>,), 'parrot');
+    my $parrot := fscat([%VM<config><bindir>], 'parrot');
 
     chdir($project);
     return do_run($parrot, 'setup.pir', 'test');
@@ -857,7 +857,7 @@ sub action_install ($project, %info) {
         my $success := &action($project);
 
         if $success {
-            mark_projects_installed(($project,));
+            mark_projects_installed([$project]);
         }
 
         return $success;
@@ -885,7 +885,7 @@ sub install_make ($project) {
 
 sub install_parrot_setup ($project) {
     my $bin_dir  := %VM<config><bindir>;
-    my $parrot   := fscat(($bin_dir,), 'parrot');
+    my $parrot   := fscat([$bin_dir], 'parrot');
     my $root_cmd := replace_config_strings(%CONF<root_command>);
 
     chdir($project);
