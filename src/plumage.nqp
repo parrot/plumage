@@ -777,7 +777,7 @@ sub configure_parrot_configure ($project, %conf) {
 }
 
 sub configure_nqp_configure ($project, %conf) {
-    my $parrot_nqp := fscat([%VM<config><bindir>], 'nqp');
+    my $parrot_nqp := fscat([%VM<config><bindir>], 'parrot-nqp');
 
     chdir($project);
     return do_run($parrot_nqp, 'Configure.nqp');
