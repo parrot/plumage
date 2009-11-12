@@ -38,7 +38,7 @@
         "provides"     : ["decnum-dynpmcs"],
         "requires"     : {
             "fetch"    : ["svn"],
-            "configure": [],
+            "configure": ["perl5"],
             "build"    : ["perl5", "make"],
             "test"     : ["perl5", "make"],
             "install"  : ["make"],
