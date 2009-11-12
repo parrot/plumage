@@ -3,7 +3,7 @@
 ###
 
 # TO USE:
-#   $ nqp cap-test.nqp
+#   $ parrot-nqp cap-test.nqp
 
 
 # First, load the "glue builtins" borrowed from Rakudo.

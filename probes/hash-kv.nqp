@@ -3,7 +3,7 @@
 ###
 
 # TO USE:
-#   $ nqp hash-kv.nqp
+#   $ parrot-nqp hash-kv.nqp
 
 # Original Hash.kv by pmichaud++ in http://nopaste.snit.ch/18559;
 # updated to handle new-style hash iteration semantics

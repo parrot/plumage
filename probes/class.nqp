@@ -3,7 +3,7 @@
 ###
 
 # TO USE:
-#   $ nqp class.nqp
+#   $ parrot-nqp class.nqp
 
 
 class Foo {
