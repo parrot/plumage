@@ -22,21 +22,13 @@ BUILDING
 Configure and make as usual, except the configure script must be run using
 Parrot's NQP language:
 
-  $ nqp Configure.nqp
+  $ parrot-nqp Configure.nqp
   $ make
   $ make test
 
-If your Parrot does not have an nqp binary, this is a strong indication that
-your Parrot is too old, and you will need to upgrade it before building
+If your Parrot does not have a parrot-nqp binary, this is a strong indication
+that your Parrot is too old, and you will need to upgrade it before building
 Parrot Plumage.
-
-NOTE: Currently the official location of NQP is in flux.  Before you can
-build Parrot Plumage, you may need to manually download, build, and install
-NQP from this repository:
-
-    git://github.com/perl6/nqp-rx.git
-
-It is expected that this will soon become unnecessary.
 
 
 USING
