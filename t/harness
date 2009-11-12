@@ -1,4 +1,4 @@
-#! nqp
+#! parrot-nqp
 
 # Test harness written in NQP (the newer nqp-rx flavor)
 # by Jonathan "Duke" Leto http://leto.net
