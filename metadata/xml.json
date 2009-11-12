@@ -4,8 +4,8 @@
         "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
     },
     "general"      : {
-        "name"     : "markdown",
-        "abstract" : "Markdown on Parrot",
+        "name"     : "xml",
+        "abstract" : "XML on Parrot",
         "authority": "http://github.com/fperrad",
         "version"  : "HEAD",
         "license"  : {
@@ -14,8 +14,8 @@
         },
         "copyright_holder" : "Parrot Foundation",
         "generated_by"     : "Francois Perrad <francois.perrad@gadz.org>",
-        "keywords"         : ["markdown"],
-        "description"      : "This is the port of the Markdown, a lightweight markup language, on the Parrot VM."
+        "keywords"         : ["xml"],
+        "description"      : "some toys: a SAX like parser & a simple handler XmlWriter"
     },
     "instructions" : {
         "fetch"    : {
@@ -32,9 +32,10 @@
         }
     },
     "dependency-info"  : {
-        "provides"     : ["markdown"],
+        "provides"     : ["Xml;Sax;Xml", "Xml;Handler;XmlWriter"],
         "requires"     : {
             "fetch"    : ["git"],
+            "configure": [],
             "build"    : [],
             "test"     : ["perl5"],
             "install"  : [],
@@ -44,9 +45,9 @@
     "resources"            : {
         "repository"       : {
              "type"        : "git",
-             "checkout_uri": "git://github.com/fperrad/markdown.git",
-             "browser_uri" : "http://github.com/fperrad/markdown",
-             "project_uri" : "http://github.com/fperrad/markdown"
+             "checkout_uri": "git://github.com/fperrad/xml.git",
+             "browser_uri" : "http://github.com/fperrad/xml",
+             "project_uri" : "http://github.com/fperrad/xml"
         }
     }
 }
