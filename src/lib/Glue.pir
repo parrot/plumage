@@ -49,9 +49,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     $joined := join($delimiter, @strings);
     @pieces := split($delimiter, $original);
 
-    # Context
-    $result := call_flattened(&code, $mixed, @args, $list, ...);
-
     # Global variables;
     our $EXECUTABLE_NAME;
     our $PROGRAM_NAME;
@@ -646,47 +643,6 @@ included in the resulting C<@pieces>.
     .return (pieces)
 .end
 
-
-=item $result := call_flattened(&code, $mixed, @args, $list, ...)
-
-Call C<&code> with flattened arguments.  This is done by first slurping all
-arguments into an array, then iterating over the array flattening by one level
-each element that C<does 'array'>.  Finally, the C<&code> is tailcalled with
-the flattened array using the Parrot C<:flat> flag.
-
-To avoid flattening an array that should be passed as a single argument, wrap
-it with C<[]> first, like so:
-
-    call_flattened(&code, [@protected], @will_flatten)
-
-=cut
-
-.sub 'call_flattened'
-    .param pmc code
-    .param pmc args :slurpy
-
-    .local pmc flattened, args_it, array_it
-    flattened = root_new ['parrot';'ResizablePMCArray']
-    args_it   = iter args
-
-  args_loop:
-    unless args_it goto do_tailcall
-    $P0 = shift args_it
-    $I0 = does $P0, 'array'
-    if $I0 goto flatten_array
-    push flattened, $P0
-    goto args_loop
-  flatten_array:
-    array_it = iter $P0
-  array_loop:
-    unless array_it goto args_loop
-    $P1 = shift array_it
-    push flattened, $P1
-    goto array_loop
-
-  do_tailcall:
-    .tailcall code(flattened :flat)
-.end
 
 =back
 
