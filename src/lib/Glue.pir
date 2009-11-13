@@ -80,7 +80,8 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
 Spawn the command with the given arguments as a new process; returns
 the status code of the spawned process, which is equal the the result
-of the waitpid system call, right bitshifted by 8.
+of the waitpid system call, right bitshifted by 8.  Throws an exception
+if the process could not be spawned at all.
 
 =cut
 
@@ -102,7 +103,10 @@ of the waitpid system call, right bitshifted by 8.
 
 Print out the command and arguments, then spawn the command with the given
 arguments as a new process; return 1 if the process exited successfully, or
-0 if not.
+0 if not.  Unlike C<run()> and C<qx()>, will I<not> throw an exception if
+the process cannot be spawned.  Since this is a convenience function, it will
+instead return 0 on spawn failure, just as if the child process had spawned
+successfully but itself exited with failure.
 
 =cut
 
@@ -114,8 +118,18 @@ arguments as a new process; return 1 if the process exited successfully, or
     say cmd
 
     .local int status
+    push_eh spawn_failed
     status = spawnw command_and_args
+    pop_eh
+    goto check_status
 
+  spawn_failed:
+    .local pmc ex
+    .get_results (ex)
+    pop_eh
+    status = -1
+
+  check_status:
     if status goto failed
     .return (1)
   failed:
@@ -126,7 +140,9 @@ arguments as a new process; return 1 if the process exited successfully, or
 =item $output := qx($command, $and, $args, ...)
 
 Spawn the command with the given arguments as a read only pipe;
-return the output of the command as a single string.
+return the output of the command as a single string.  Throws an
+exception if the pipe cannot be opened or the command cannot be
+executed.
 
 B<WARNING>: Parrot currently implements this B<INSECURELY>!
 

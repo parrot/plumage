@@ -74,13 +74,13 @@ sub test_plumage_test_invalid() {
 }
 
 sub test_invalid() {
-    my $status := run('invalidjunkdoesnotexist');
-    ok($status == 255, 'run()ing invalidjunk returns false');
+    my $success := do_run('invalidjunkdoesnotexist');
+    nok($success, 'do_run()ing invalidjunk returns false');
 }
 
 sub test_version() {
-    my $status := run('./plumage', 'version');
-    ok(!$status, 'plumage version returns true');
+    my $success := do_run('./plumage', 'version');
+    ok($success, 'plumage version returns success');
 
     my $output := qx('./plumage', 'version');
     like($output, ':s Parrot Plumage',    'plumage version knows its name');
@@ -94,6 +94,6 @@ sub test_plumage_usage() {
 }
 
 sub test_plumage_invalid() {
-    my $status := run('./plumage', 'asdfversion');
-    ok($status == 1, 'plumage returns false for invalid stuff');
+    my $success := do_run('./plumage', 'asdfversion');
+    nok($success, 'plumage returns failure for invalid commands');
 }
