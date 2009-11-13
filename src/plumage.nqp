@@ -766,7 +766,7 @@ sub configure_perl5_configure ($project, %conf) {
     my $perl5 := %VM<config><perl>;
 
     chdir($project);
-    return call_flattened(do_run, $perl5, 'Configure.pl', @extra);
+    return do_run($perl5, 'Configure.pl', |@extra);
 }
 
 sub configure_parrot_configure ($project, %conf) {
