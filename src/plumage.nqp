@@ -273,11 +273,7 @@ sub MAIN () {
 }
 
 sub parse_command_line () {
-    my $command := 'usage';
-
-    if (@ARGS) {
-        $command := @ARGS.shift;
-    }
+    my $command := @ARGS ?? @ARGS.shift !! 'usage';
 
     return $command;
 }
@@ -373,9 +369,8 @@ sub command_projects () {
             my %general := %info<general>;
             if %general {
                 my $abstract := %general<abstract>;
-                if $abstract {
-                    $desc := " - $abstract";
-                }
+
+                $desc := " - $abstract" if $abstract;
             }
         }
 
@@ -410,9 +405,8 @@ sub command_info (@projects) {
 
     for @projects -> $project {
         my %info := get_project_metadata($project, 0);
-        if %info {
-            _dumper(%info, 'INFO');
-        }
+
+        _dumper(%info, 'INFO') if %info;
     }
 }
 
@@ -533,9 +527,7 @@ sub get_installed_projects () {
     my $contents  := try(slurp, [$inst_file]);
 
     my @projects;
-    if $contents {
-        @projects := grep(-> $_ { ?$_ }, split("\n", $contents));
-    }
+       @projects := grep(-> $_ { ?$_ }, split("\n", $contents)) if $contents;
 
     return @projects;
 }
@@ -631,9 +623,7 @@ sub perform_actions_on_projects (@actions, @projects) {
             my $success := perform_actions_on_project(@actions, $project, %info);
             chdir($cwd);
 
-            unless $success {
-                return 0;
-            }
+            return 0 unless $success;
         }
     }
 

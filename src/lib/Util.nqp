@@ -209,9 +209,7 @@ sub grep (&code, @all) {
     my @matches;
 
     for @all {
-        if &code($_) {
-            @matches.push($_);
-        }
+        @matches.push($_) if &code($_);
     }
 
     return @matches;
@@ -287,9 +285,7 @@ sub find_program ($program) {
 
         for @exts -> $ext {
             my $pathext := "$path$ext";
-            if path_exists($pathext) {
-                return $pathext;
-            }
+            return $pathext if path_exists($pathext);
         }
     }
 
@@ -338,9 +334,8 @@ race conditions between test and action.
 sub test_dir_writable($dir) {
     my $test_file := fscat([$dir], 'WrItAbLe.UtL');
 
-    if path_exists($test_file) {
-        die("Test file '$test_file'\nthat should never exist already does.");
-    }
+    die("Test file '$test_file'\nthat should never exist already does.")
+        if path_exists($test_file);
 
     try(spew, [$test_file, "test_dir_writable() test file.\n"]);
 
