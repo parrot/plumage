@@ -1,5 +1,7 @@
 #! parrot-nqp
 
+our $PLUMAGE;
+
 MAIN();
 
 sub MAIN () {
@@ -10,7 +12,10 @@ sub MAIN () {
     # Load glue library to get qx()
     pir::load_bytecode('src/lib/Glue.pbc');
 
-    # Run all tests for this library
+    # Set correct path for plumage binary
+    $PLUMAGE := fscat(['.'], 'plumage');
+
+    # Run all sanity tests for plumage
     run_tests();
 }
 
@@ -32,44 +37,44 @@ sub run_tests () {
 }
 
 sub test_plumage_no_args() {
-    my $output := qx('./plumage');
+    my $output := qx($PLUMAGE);
     like($output, ':s Print program version and copyright',   'no args give usage');
     like($output, ':s Print info about a particular project', 'no args give usage');
 }
 
 sub test_plumage_fetch_no_args() {
-    my $output := qx('./plumage', 'fetch');
+    my $output := qx($PLUMAGE, 'fetch');
     like($output, ':s Please include the name of the project you wish info for', 'plumage fetch no args');
 }
 
 sub test_plumage_info() {
-    my $output := qx('./plumage', 'info', 'rakudo');
+    my $output := qx($PLUMAGE, 'info', 'rakudo');
     like($output, ':s Perl 6 on Parrot', 'info rakudo');
     like($output, 'dependency\-info',    'info rakudo');
 }
 
 sub test_plumage_configure_invalid() {
-    my $output := qx('./plumage', 'configure', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'configure', 'coboloncogs');
     like($output, ':s I don.t know anything about project .coboloncogs.');
 }
 
 sub test_plumage_install_invalid() {
-    my $output := qx('./plumage', 'install', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'install', 'coboloncogs');
     like($output, ':s I don.t know anything about project .coboloncogs.');
 }
 
 sub test_plumage_info_invalid() {
-    my $output := qx('./plumage', 'info', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'info', 'coboloncogs');
     like($output, ':s I don.t know anything about project .coboloncogs.');
 }
 
 sub test_plumage_build_invalid() {
-    my $output := qx('./plumage', 'build', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'build', 'coboloncogs');
     like($output, ':s I don.t know anything about project .coboloncogs.');
 }
 
 sub test_plumage_test_invalid() {
-    my $output := qx('./plumage', 'test', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'test', 'coboloncogs');
     like($output, ':s I don.t know anything about project .coboloncogs.');
 }
 
@@ -79,21 +84,21 @@ sub test_invalid() {
 }
 
 sub test_version() {
-    my $success := do_run('./plumage', 'version');
+    my $success := do_run($PLUMAGE, 'version');
     ok($success, 'plumage version returns success');
 
-    my $output := qx('./plumage', 'version');
+    my $output := qx($PLUMAGE, 'version');
     like($output, ':s Parrot Plumage',    'plumage version knows its name');
     like($output, ':s Parrot Foundation', 'version mentions Parrot Foundation');
     like($output, ':s Artistic License',  'version mentions Artistic License');
 }
 sub test_plumage_usage() {
-    my $output := qx('./plumage', 'usage');
+    my $output := qx($PLUMAGE, 'usage');
     like($output, ':s Print program version and copyright');
     like($output, ':s Print info about a particular project');
 }
 
 sub test_plumage_invalid() {
-    my $success := do_run('./plumage', 'asdfversion');
+    my $success := do_run($PLUMAGE, 'asdfversion');
     nok($success, 'plumage returns failure for invalid commands');
 }
