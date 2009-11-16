@@ -303,7 +303,7 @@ top making directories as needed until an entire path has been created.
 
 sub mkpath ($path) {
     my @path := split('/', $path);
-    my $cur  := '';
+    my $cur  := @path.shift;
 
     for @path -> $dir {
         $cur := fscat([$cur, $dir]);
