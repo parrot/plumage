@@ -230,6 +230,8 @@ sub find_binaries () {
     my $parrot_bin := %conf<bindir>;
 
     %BIN<parrot_config> := fscat([$parrot_bin], 'parrot_config');
+    %BIN<parrot-nqp>    := fscat([$parrot_bin], 'parrot-nqp');
+    %BIN<parrot>        := fscat([$parrot_bin], 'parrot');
 
     %BIN<perl5> := %conf<perl>;
     %BIN<make>  := %conf<make>;
@@ -753,24 +755,19 @@ sub action_configure ($project, %info) {
 
 sub configure_perl5_configure ($project, %conf) {
     my @extra := map(replace_config_strings, %conf<extra_args>);
-    my $perl5 := %VM<config><perl>;
 
     chdir($project);
-    return do_run($perl5, 'Configure.pl', |@extra);
+    return do_run(%BIN<perl5>, 'Configure.pl', |@extra);
 }
 
 sub configure_parrot_configure ($project, %conf) {
-    my $parrot := fscat([%VM<config><bindir>], 'parrot');
-
     chdir($project);
-    return do_run($parrot, 'Configure.pir');
+    return do_run(%BIN<parrot>, 'Configure.pir');
 }
 
 sub configure_nqp_configure ($project, %conf) {
-    my $parrot_nqp := fscat([%VM<config><bindir>], 'parrot-nqp');
-
     chdir($project);
-    return do_run($parrot_nqp, 'Configure.nqp');
+    return do_run(%BIN<parrot-nqp>, 'Configure.nqp');
 }
 
 
@@ -791,17 +788,13 @@ sub action_build ($project, %info) {
 }
 
 sub build_make ($project) {
-    my $make := %VM<config><make>;
-
     chdir($project);
-    return do_run($make);
+    return do_run(%BIN<make>);
 }
 
 sub build_parrot_setup ($project) {
-    my $parrot := fscat([%VM<config><bindir>], 'parrot');
-
     chdir($project);
-    return do_run($parrot, 'setup.pir');
+    return do_run(%BIN<parrot>, 'setup.pir');
 }
 
 
@@ -822,17 +815,13 @@ sub action_test ($project, %info) {
 }
 
 sub test_make ($project) {
-    my $make := %VM<config><make>;
-
     chdir($project);
-    return do_run($make, 'test');
+    return do_run(%BIN<make>, 'test');
 }
 
 sub test_parrot_setup ($project) {
-    my $parrot := fscat([%VM<config><bindir>], 'parrot');
-
     chdir($project);
-    return do_run($parrot, 'setup.pir', 'test');
+    return do_run(%BIN<parrot>, 'setup.pir', 'test');
 }
 
 
@@ -859,31 +848,29 @@ sub action_install ($project, %info) {
 }
 
 sub install_make ($project) {
-    my $make     := %VM<config><make>;
     my $bin_dir  := %VM<config><bindir>;
     my $root_cmd := replace_config_strings(%CONF<root_command>);
 
     chdir($project);
 
     if !test_dir_writable($bin_dir) && $root_cmd {
-        return do_run($root_cmd, $make, 'install');
+        return do_run($root_cmd, %BIN<make>, 'install');
     }
     else {
-        return do_run($make, 'install');
+        return do_run(%BIN<make>, 'install');
     }
 }
 
 sub install_parrot_setup ($project) {
     my $bin_dir  := %VM<config><bindir>;
-    my $parrot   := fscat([$bin_dir], 'parrot');
     my $root_cmd := replace_config_strings(%CONF<root_command>);
 
     chdir($project);
 
     if !test_dir_writable($bin_dir) && $root_cmd {
-        return do_run($root_cmd, $parrot, 'setup.pir', 'install');
+        return do_run($root_cmd, %BIN<parrot>, 'setup.pir', 'install');
     }
     else {
-        return do_run($parrot, 'setup.pir', 'install');
+        return do_run(%BIN<parrot>, 'setup.pir', 'install');
     }
 }
