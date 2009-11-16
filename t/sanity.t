@@ -22,49 +22,47 @@ sub MAIN () {
 sub run_tests () {
     plan(18);
 
+    # Fuzz tests
     test_invalid();
-    test_version();
     test_plumage_invalid();
-    test_plumage_usage();
-    test_plumage_info();
     test_plumage_info_invalid();
+    test_plumage_configure_invalid();
     test_plumage_build_invalid();
     test_plumage_test_invalid();
-    test_plumage_configure_invalid();
     test_plumage_install_invalid();
+
+    # Missing argument tests
     test_plumage_no_args();
     test_plumage_fetch_no_args();
+
+    # Behavior tests
+    test_plumage_usage();
+    test_plumage_version();
+    test_plumage_info();
 }
 
-sub test_plumage_no_args() {
-    my $output := qx($PLUMAGE);
-    like($output, ':s Print program version and copyright',   'no args give usage');
-    like($output, ':s Print info about a particular project', 'no args give usage');
+
+#
+# FUZZ TESTS
+#
+
+sub test_invalid() {
+    my $success := do_run('invalidjunkdoesnotexist');
+    nok($success, 'do_run()ing invalidjunk returns false');
 }
 
-sub test_plumage_fetch_no_args() {
-    my $output := qx($PLUMAGE, 'fetch');
-    like($output, ':s Please include the name of the project you wish info for', 'plumage fetch no args');
-}
-
-sub test_plumage_info() {
-    my $output := qx($PLUMAGE, 'info', 'rakudo');
-    like($output, ':s Perl 6 on Parrot', 'info rakudo');
-    like($output, 'dependency\-info',    'info rakudo');
-}
-
-sub test_plumage_configure_invalid() {
-    my $output := qx($PLUMAGE, 'configure', 'coboloncogs');
-    like($output, ':s I don.t know anything about project .coboloncogs.');
-}
-
-sub test_plumage_install_invalid() {
-    my $output := qx($PLUMAGE, 'install', 'coboloncogs');
-    like($output, ':s I don.t know anything about project .coboloncogs.');
+sub test_plumage_invalid() {
+    my $success := do_run($PLUMAGE, 'asdfversion');
+    nok($success, 'plumage returns failure for invalid commands');
 }
 
 sub test_plumage_info_invalid() {
     my $output := qx($PLUMAGE, 'info', 'coboloncogs');
+    like($output, ':s I don.t know anything about project .coboloncogs.');
+}
+
+sub test_plumage_configure_invalid() {
+    my $output := qx($PLUMAGE, 'configure', 'coboloncogs');
     like($output, ':s I don.t know anything about project .coboloncogs.');
 }
 
@@ -78,12 +76,39 @@ sub test_plumage_test_invalid() {
     like($output, ':s I don.t know anything about project .coboloncogs.');
 }
 
-sub test_invalid() {
-    my $success := do_run('invalidjunkdoesnotexist');
-    nok($success, 'do_run()ing invalidjunk returns false');
+sub test_plumage_install_invalid() {
+    my $output := qx($PLUMAGE, 'install', 'coboloncogs');
+    like($output, ':s I don.t know anything about project .coboloncogs.');
 }
 
-sub test_version() {
+
+#
+# MISSING ARGUMENT TESTS
+#
+
+sub test_plumage_no_args() {
+    my $output := qx($PLUMAGE);
+    like($output, ':s Print program version and copyright',   'no args give usage');
+    like($output, ':s Print info about a particular project', 'no args give usage');
+}
+
+sub test_plumage_fetch_no_args() {
+    my $output := qx($PLUMAGE, 'fetch');
+    like($output, ':s Please include the name of the project you wish info for', 'plumage fetch no args');
+}
+
+
+#
+# BEHAVIOR TESTS
+#
+
+sub test_plumage_usage() {
+    my $output := qx($PLUMAGE, 'usage');
+    like($output, ':s Print program version and copyright');
+    like($output, ':s Print info about a particular project');
+}
+
+sub test_plumage_version() {
     my $success := do_run($PLUMAGE, 'version');
     ok($success, 'plumage version returns success');
 
@@ -92,13 +117,9 @@ sub test_version() {
     like($output, ':s Parrot Foundation', 'version mentions Parrot Foundation');
     like($output, ':s Artistic License',  'version mentions Artistic License');
 }
-sub test_plumage_usage() {
-    my $output := qx($PLUMAGE, 'usage');
-    like($output, ':s Print program version and copyright');
-    like($output, ':s Print info about a particular project');
-}
 
-sub test_plumage_invalid() {
-    my $success := do_run($PLUMAGE, 'asdfversion');
-    nok($success, 'plumage returns failure for invalid commands');
+sub test_plumage_info() {
+    my $output := qx($PLUMAGE, 'info', 'rakudo');
+    like($output, ':s Perl 6 on Parrot', 'info rakudo');
+    like($output, 'dependency\-info',    'info rakudo');
 }
