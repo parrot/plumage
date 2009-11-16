@@ -701,14 +701,14 @@ sub fetch_git ($project, $uri) {
     if path_exists($project) {
         if path_exists(fscat([$project, '.git'])) {
             chdir($project);
-            return do_run('git', 'pull');
+            return do_run(%BIN<git>, 'pull');
         }
         else {
             return report_fetch_collision('Git', $project);
         }
     }
     else {
-        return do_run('git', 'clone', $uri, $project);
+        return do_run(%BIN<git>, 'clone', $uri, $project);
     }
 }
 
@@ -718,7 +718,7 @@ sub fetch_svn ($project, $uri) {
         return report_fetch_collision('Subversion', $project);
     }
     else {
-        return do_run('svn', 'checkout', $uri, $project);
+        return do_run(%BIN<svn>, 'checkout', $uri, $project);
     }
 }
 
