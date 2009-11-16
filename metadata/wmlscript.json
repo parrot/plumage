@@ -1,0 +1,52 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "markdown",
+        "abstract" : "Markdown on Parrot",
+        "authority": "http://github.com/fperrad",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Parrot Foundation",
+        "generated_by"     : "Francois Perrad <francois.perrad@gadz.org>",
+        "keywords"         : ["wmlscript", "wap"],
+        "description"      : "WMLScript Bytecode Translator"
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["wmlscript"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "build"    : [],
+            "test"     : ["perl5"],
+            "install"  : [],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/fperrad/wmlscript.git",
+             "browser_uri" : "http://github.com/fperrad/wmlscript",
+             "project_uri" : "http://github.com/fperrad/wmlscript"
+        }
+    }
+}
