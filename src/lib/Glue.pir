@@ -683,13 +683,21 @@ Operating system version
 
 =cut
 
+# Properly ignore undeclared lexicals
+.macro dynlex(name, reg)
+    find_dynamic_lex $P3, .name
+    if null $P3 goto .$skip
+    store_dynamic_lex .name, .reg
+.label $skip:
+.endm
+
 .sub 'onload' :anon :load :init
     load_bytecode 'config.pbc'
     $P0 = getinterp
     $P1 = $P0[.IGLOBALS_CONFIG_HASH]
     $P2 = new ['Hash']
     $P2['config'] = $P1
-    store_dynamic_lex '%*VM', $P2
+    .dynlex('%*VM', $P2)
 
     $P1 = $P0[.IGLOBALS_ARGV_LIST]
     if $P1 goto have_args
@@ -697,23 +705,23 @@ Operating system version
   have_args:
     $S0 = shift $P1
     $P2 = box $S0
-    store_dynamic_lex '$*PROGRAM_NAME', $P2
-    store_dynamic_lex '@*ARGS', $P1
+    .dynlex('%*PROGRAM_NAME', $P2)
+    .dynlex('@*ARGS', $P1)
 
     $S0 = interpinfo .INTERPINFO_EXECUTABLE_FULLNAME
     $P0 = box $S0
-    store_dynamic_lex '$*EXECUTABLE_NAME', $P0
+    .dynlex('$*EXECUTABLE_NAME', $P0)
 
     $P0 = root_new ['parrot';'Env']
-    store_dynamic_lex '%*ENV', $P0
+    .dynlex('%*ENV', $P0)
 
     $S0 = sysinfo .SYSINFO_PARROT_OS
     $P0 = box $S0
-    store_dynamic_lex '$*OS', $P0
+    .dynlex('$*OS', $P0)
 
     $S0 = sysinfo .SYSINFO_PARROT_OS_VERSION
     $P0 = box $S0
-    store_dynamic_lex '$*OSVER', $P0
+    .dynlex('$*OSVER', $P0)
 .end
 
 
