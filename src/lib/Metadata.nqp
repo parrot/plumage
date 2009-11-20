@@ -17,13 +17,6 @@ Metadata.nqp - Metadata-handling functions for Plumage
 
 =head1 DESCRIPTION
 
-=end
-
-our %CONF;
-our %ACTION;
-
-=begin
-
 =head2 Functions
 
 =over 4
@@ -37,7 +30,7 @@ to C<get_project_metadata()> to obtain more details.
 =end
 
 sub get_project_list () {
-    my @files := readdir(replace_config_strings(%CONF<plumage_metadata_dir>));
+    my @files := readdir(replace_config_strings(%*CONF<plumage_metadata_dir>));
     my $regex := rx('\.json$');
     my @projects;
 
@@ -62,7 +55,7 @@ C<$ignore_missing> is true.
 =end
 
 sub get_project_metadata ($project, $ignore_missing) {
-    my $meta_dir  := replace_config_strings(%CONF<plumage_metadata_dir>);
+    my $meta_dir  := replace_config_strings(%*CONF<plumage_metadata_dir>);
     my $json_file := fscat([$meta_dir], "$project.json");
 
     unless path_exists($json_file) {
@@ -139,10 +132,10 @@ sub metadata_instruction_types_known (%info) {
 
     for @stages -> $stage {
         my $type   := %inst{$stage}<type>;
-        my $action := %ACTION{$stage}{$type};
+        my $action := %*ACTION{$stage}{$type};
 
         unless $action {
-            my @types := %ACTION{$stage}.keys;
+            my @types := %*ACTION{$stage}.keys;
             my $types := join(', ', @types);
 
             say("I don't understand $stage type '$type'.\n"

@@ -37,19 +37,6 @@ Util.nqp - Utility functions for NQP and Plumage
 
 =head1 DESCRIPTION
 
-=end
-
-our $PROGRAM_NAME;
-our @ARGS;
-our %ENV;
-our %VM;
-our %BIN;
-our %CONF;
-our $OS;
-
-
-=begin
-
 =head2 Hash Methods
 
 These methods extend the native NQP Hash class to support more of the basic
@@ -258,7 +245,7 @@ other processes, and similar operating system constructs.
 
 =item $binary_path := find_program($program)
 
-Search C<%ENVE<lt>PATHE<gt>> to find the full path for a given C<$program>.  If
+Search C<%*ENVE<lt>PATHE<gt>> to find the full path for a given C<$program>.  If
 the program is not found, C<find_program()> returns an empty path string,
 which is false in boolean context.  Thus this is typically used in the
 following way:
@@ -274,9 +261,9 @@ following way:
 =end
 
 sub find_program ($program) {
-    my $path_sep := $OS eq 'MSWin32' ?? ';' !! ':';
-    my @paths    := split($path_sep, %ENV<PATH>);
-    my @exts     := split($path_sep, %ENV<PATHEXT>);
+    my $path_sep := $*OS eq 'MSWin32' ?? ';' !! ':';
+    my @paths    := split($path_sep, %*ENV<PATH>);
+    my @exts     := split($path_sep, %*ENV<PATHEXT>);
 
     @exts.unshift('');
 
@@ -357,7 +344,7 @@ Determine the user's home directory in the proper platform-dependent manner.
 =end
 
 sub user_home_dir() {
-    return (%ENV<HOMEDRIVE> // '') ~ %ENV<HOME>;
+    return (%*ENV<HOMEDRIVE> // '') ~ %*ENV<HOME>;
 }
 
 =begin
@@ -379,10 +366,10 @@ Replace all config strings (marked as C<#config_var_name#>) within the
 C<$original> string with replacements found in one of the global
 configuration hashes. These are searched in the following order:
 
-    %CONF        # Plumage configuration
-    %VM<config>  # VM (Parrot) configuration
-    %BIN         # Locations of system programs
-    %ENV         # Program environment
+    %*CONF        # Plumage configuration
+    %*VM<config>  # VM (Parrot) configuration
+    %*BIN         # Locations of system programs
+    %*ENV         # Program environment
 
 If no replacement is found in any of the above, an empty string is used
 instead.
@@ -413,10 +400,10 @@ sub replace_config_strings ($original) {
 
 sub config_value ($match) {
     my $key    := $match<ident>;
-    my $config := %CONF{$key}
-               || %VM<config>{$key}
-               || %BIN{$key}
-               || %ENV{$key}
+    my $config := %*CONF{$key}
+               || %*VM<config>{$key}
+               || %*BIN{$key}
+               || %*ENV{$key}
                || '';
 
     return $config;

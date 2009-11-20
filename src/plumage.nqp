@@ -78,7 +78,7 @@ my  $_ACTIONS_JSON := '
     "install"   : [ "make", "parrot_setup" ]
 }
 ';
-our %ACTION;
+my %*ACTION;
 fixup_sub_actions(eval($_ACTIONS_JSON, 'data_json'));
 
 my $_DEFAULT_CONF_JSON := '
@@ -103,9 +103,10 @@ MAIN();
 
 our %STAGE_ACTION;
 our %STAGES;
-our %BIN;
 our %OPT;
-our %CONF;
+
+my %*CONF;
+my %*BIN;
 
 sub load_helper_libraries () {
     # Globals, common functions, system access, etc.
@@ -147,7 +148,7 @@ sub fixup_sub_actions (%actions) {
             my $sub      := pir::get_hll_global__Ps($sub_name);
 
             if $sub {
-                %ACTION{$stage}{$action} := $sub;
+                %*ACTION{$stage}{$action} := $sub;
             }
             else {
                 die("Action sub '$sub_name' is missing!\n");
@@ -175,7 +176,7 @@ sub read_config_files () {
     my @configs  := ($sysconf, $userconf);
 
     # Remember home dir, we'll need that later
-    %CONF<user_home_dir> := $home;
+    %*CONF<user_home_dir> := $home;
 
     # If another config specified via command line option, add it.  Because
     # this was manually set by the user, it is a fatal error if missing.
@@ -191,13 +192,13 @@ sub read_config_files () {
 
     # Merge together default, system, user, and option configs
     my %default := eval($_DEFAULT_CONF_JSON, 'data_json');
-    %CONF := merge_tree_structures(%CONF, %default);
+    %*CONF := merge_tree_structures(%*CONF, %default);
 
     for @configs -> $config {
         if path_exists($config) {
             my %conf := try(Config::JSON::ReadConfig, [$config]);
             if %conf {
-                %CONF := merge_tree_structures(%CONF, %conf);
+                %*CONF := merge_tree_structures(%*CONF, %conf);
             }
             else {
                 say("Could not parse JSON file '$config'.");
@@ -205,7 +206,7 @@ sub read_config_files () {
         }
     }
 
-    # _dumper(%CONF, 'CONF');
+    # _dumper(%*CONF, 'CONF');
 }
 
 sub merge_tree_structures ($dst, $src) {
@@ -229,15 +230,15 @@ sub find_binaries () {
     my %conf       := %*VM<config>;
     my $parrot_bin := %conf<bindir>;
 
-    %BIN<parrot_config> := fscat([$parrot_bin], 'parrot_config');
-    %BIN<parrot-nqp>    := fscat([$parrot_bin], 'parrot-nqp');
-    %BIN<parrot>        := fscat([$parrot_bin], 'parrot');
+    %*BIN<parrot_config> := fscat([$parrot_bin], 'parrot_config');
+    %*BIN<parrot-nqp>    := fscat([$parrot_bin], 'parrot-nqp');
+    %*BIN<parrot>        := fscat([$parrot_bin], 'parrot');
 
-    %BIN<perl5> := %conf<perl>;
-    %BIN<make>  := %conf<make>;
+    %*BIN<perl5> := %conf<perl>;
+    %*BIN<make>  := %conf<make>;
 
-    %BIN<svn>   := find_program('svn');
-    %BIN<git>   := find_program('git');
+    %*BIN<svn>   := find_program('svn');
+    %*BIN<git>   := find_program('git');
 }
 
 sub build_stages () {
@@ -519,13 +520,13 @@ sub show_dependencies (@projects) {
 
 sub mark_projects_installed (@projects) {
     my $lines := join("\n", @projects) ~ "\n";
-    my $file  := replace_config_strings(%CONF<installed_list_file>);
+    my $file  := replace_config_strings(%*CONF<installed_list_file>);
 
     append($file, $lines);
 }
 
 sub get_installed_projects () {
-    my $inst_file := replace_config_strings(%CONF<installed_list_file>);
+    my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
     my $contents  := try(slurp, [$inst_file]);
 
     my @projects;
@@ -548,10 +549,10 @@ sub resolve_dependencies (@projects) {
     my @need_unknown;
 
     for @all_deps -> $dep {
-        if %BIN{$dep} || find_program($dep) {
+        if %*BIN{$dep} || find_program($dep) {
             @have_bin.push($dep);
         }
-        elsif %BIN.exists($dep) {
+        elsif %*BIN.exists($dep) {
             @need_bin.push($dep);
         }
         elsif %is_installed{$dep} {
@@ -615,7 +616,7 @@ sub all_dependencies (@projects) {
 
 sub perform_actions_on_projects (@actions, @projects) {
     my $cwd        := cwd();
-    my $build_root := replace_config_strings(%CONF<plumage_build_root>);
+    my $build_root := replace_config_strings(%*CONF<plumage_build_root>);
     mkpath($build_root);
 
     for @projects -> $project {
@@ -676,7 +677,7 @@ sub perform_actions_on_project (@actions, $project, %info) {
 sub action_fetch ($project, %info) {
     my %fetch := %info<instructions><fetch>;
     if %fetch {
-        my &action := %ACTION<fetch>{%fetch<type>};
+        my &action := %*ACTION<fetch>{%fetch<type>};
         return &action($project, %info);
     }
     else {
@@ -690,7 +691,7 @@ sub fetch_repository ($project, %info) {
     if %repo {
         say("Fetching $project ...");
 
-        my &action := %ACTION<fetch>{%repo<type>};
+        my &action := %*ACTION<fetch>{%repo<type>};
         return &action($project, %repo<checkout_uri>);
     }
     else {
@@ -703,14 +704,14 @@ sub fetch_git ($project, $uri) {
     if path_exists($project) {
         if path_exists(fscat([$project, '.git'])) {
             chdir($project);
-            return do_run(%BIN<git>, 'pull');
+            return do_run(%*BIN<git>, 'pull');
         }
         else {
             return report_fetch_collision('Git', $project);
         }
     }
     else {
-        return do_run(%BIN<git>, 'clone', $uri, $project);
+        return do_run(%*BIN<git>, 'clone', $uri, $project);
     }
 }
 
@@ -720,12 +721,12 @@ sub fetch_svn ($project, $uri) {
         return report_fetch_collision('Subversion', $project);
     }
     else {
-        return do_run(%BIN<svn>, 'checkout', $uri, $project);
+        return do_run(%*BIN<svn>, 'checkout', $uri, $project);
     }
 }
 
 sub report_fetch_collision ($type, $project) {
-    my $build_root  := replace_config_strings(%CONF<plumage_build_root>);
+    my $build_root  := replace_config_strings(%*CONF<plumage_build_root>);
     my $project_dir := fscat([$build_root, $project]);
 
     say("\n$project is a $type project, but the fetch directory:\n"
@@ -744,7 +745,7 @@ sub action_configure ($project, %info) {
     if %conf {
         say("\nConfiguring $project ...");
 
-        my &action := %ACTION<configure>{%conf<type>};
+        my &action := %*ACTION<configure>{%conf<type>};
         return &action($project, %conf);
     }
     else {
@@ -757,17 +758,17 @@ sub configure_perl5_configure ($project, %conf) {
     my @extra := map(replace_config_strings, %conf<extra_args>);
 
     chdir($project);
-    return do_run(%BIN<perl5>, 'Configure.pl', |@extra);
+    return do_run(%*BIN<perl5>, 'Configure.pl', |@extra);
 }
 
 sub configure_parrot_configure ($project, %conf) {
     chdir($project);
-    return do_run(%BIN<parrot>, 'Configure.pir');
+    return do_run(%*BIN<parrot>, 'Configure.pir');
 }
 
 sub configure_nqp_configure ($project, %conf) {
     chdir($project);
-    return do_run(%BIN<parrot-nqp>, 'Configure.nqp');
+    return do_run(%*BIN<parrot-nqp>, 'Configure.nqp');
 }
 
 
@@ -778,7 +779,7 @@ sub action_build ($project, %info) {
     if %conf {
         say("\nBuilding $project ...");
 
-        my &action := %ACTION<build>{%conf<type>};
+        my &action := %*ACTION<build>{%conf<type>};
         return &action($project);
     }
     else {
@@ -789,12 +790,12 @@ sub action_build ($project, %info) {
 
 sub build_make ($project) {
     chdir($project);
-    return do_run(%BIN<make>);
+    return do_run(%*BIN<make>);
 }
 
 sub build_parrot_setup ($project) {
     chdir($project);
-    return do_run(%BIN<parrot>, 'setup.pir');
+    return do_run(%*BIN<parrot>, 'setup.pir');
 }
 
 
@@ -805,7 +806,7 @@ sub action_test ($project, %info) {
     if %conf {
         say("\nTesting $project ...");
 
-        my &action := %ACTION<test>{%conf<type>};
+        my &action := %*ACTION<test>{%conf<type>};
         return &action($project);
     }
     else {
@@ -816,12 +817,12 @@ sub action_test ($project, %info) {
 
 sub test_make ($project) {
     chdir($project);
-    return do_run(%BIN<make>, 'test');
+    return do_run(%*BIN<make>, 'test');
 }
 
 sub test_parrot_setup ($project) {
     chdir($project);
-    return do_run(%BIN<parrot>, 'setup.pir', 'test');
+    return do_run(%*BIN<parrot>, 'setup.pir', 'test');
 }
 
 
@@ -832,7 +833,7 @@ sub action_install ($project, %info) {
     if %conf {
         say("\nInstalling $project ...");
 
-        my &action  := %ACTION<install>{%conf<type>};
+        my &action  := %*ACTION<install>{%conf<type>};
         my $success := &action($project);
 
         if $success {
@@ -849,28 +850,28 @@ sub action_install ($project, %info) {
 
 sub install_make ($project) {
     my $bin_dir  := %*VM<config><bindir>;
-    my $root_cmd := replace_config_strings(%CONF<root_command>);
+    my $root_cmd := replace_config_strings(%*CONF<root_command>);
 
     chdir($project);
 
     if !test_dir_writable($bin_dir) && $root_cmd {
-        return do_run($root_cmd, %BIN<make>, 'install');
+        return do_run($root_cmd, %*BIN<make>, 'install');
     }
     else {
-        return do_run(%BIN<make>, 'install');
+        return do_run(%*BIN<make>, 'install');
     }
 }
 
 sub install_parrot_setup ($project) {
     my $bin_dir  := %*VM<config><bindir>;
-    my $root_cmd := replace_config_strings(%CONF<root_command>);
+    my $root_cmd := replace_config_strings(%*CONF<root_command>);
 
     chdir($project);
 
     if !test_dir_writable($bin_dir) && $root_cmd {
-        return do_run($root_cmd, %BIN<parrot>, 'setup.pir', 'install');
+        return do_run($root_cmd, %*BIN<parrot>, 'setup.pir', 'install');
     }
     else {
-        return do_run(%BIN<parrot>, 'setup.pir', 'install');
+        return do_run(%*BIN<parrot>, 'setup.pir', 'install');
     }
 }

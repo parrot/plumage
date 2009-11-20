@@ -6,9 +6,9 @@
 # input_makefile  defaults to 'src/Makefile.in';
 # output_makefile defaults to 'Makefile'.
 
-our @ARGS;
-our %VM;
-our $OS;
+my @*ARGS;
+my %*VM;
+my $*OS;
 
 MAIN();
 
@@ -21,23 +21,23 @@ sub MAIN () {
     pir::load_bytecode('src/lib/Glue.pir');
 
     # Slurp in the unconfigured Makefile text
-    my $unconfigured := slurp(@ARGS[0] || 'src/Makefile.in');
+    my $unconfigured := slurp(@*ARGS[0] || 'src/Makefile.in');
 
     # Replace all of the @foo@ markers
     my $replaced := subst($unconfigured, rx('\@<ident>\@'), replacement);
 
     # Fix paths on Windows
-    if ($OS eq 'MSWin32') {
+    if ($*OS eq 'MSWin32') {
         $replaced := subst($replaced, rx('\/'),     '\\'   );
         $replaced := subst($replaced, rx('\\\\\*'), '\\\\*');
     }
 
     # Spew out the final makefile
-    spew(@ARGS[1] || 'Makefile', $replaced);
+    spew(@*ARGS[1] || 'Makefile', $replaced);
 
     # Give the user a hint of next action
-    my $make := %VM<config><make>;
-    say("Configure completed for platform '$OS'.");
+    my $make := %*VM<config><make>;
+    say("Configure completed for platform '$*OS'.");
     say("You can now type '$make' to build Plumage.\n");
     say("You may also type '$make test' to run the Plumage test suite.\n");
     say("Happy Hacking,\n\tThe Plumage Team");
@@ -45,7 +45,7 @@ sub MAIN () {
 
 sub replacement ($match) {
     my $key    := $match<ident>;
-    my $config := %VM<config>{$key} || '';
+    my $config := %*VM<config>{$key} || '';
 
     return $config;
 }

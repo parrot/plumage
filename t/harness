@@ -6,8 +6,8 @@
 # The current canonical home for this harness is Parrot Plumage  http://gitorious.org/parrot-plumage
 # Please make changes to this script in the Plumage repo
 
-our $EXECUTABLE_NAME;
-our @ARGS;
+my $*EXECUTABLE_NAME;
+my @*ARGS;
 MAIN();
 
 # TAP grammar in ABNF
@@ -23,14 +23,14 @@ sub MAIN () {
     my $total_files := 0;
     my $failed_files:= 0;
 
-    for @ARGS {
+    for @*ARGS {
         my $filename := $_;
         $total_files++;
 
         print("$filename ...");
 
         my $file        := slurp($_);
-        my $test_output := qx($EXECUTABLE_NAME, $filename);
+        my $test_output := qx($*EXECUTABLE_NAME, $filename);
         my $output      := split("\n",$test_output);
         my @plan_parts  := split('..',$output[0]);
 
