@@ -366,7 +366,7 @@ included in the Parrot Plumage source tree.
 
 
 sub command_projects () {
-    my @projects := get_project_list();
+    my @projects := Plumage::Metadata.get_project_list();
 
     say("\nKnown projects:\n");
 
@@ -392,7 +392,7 @@ sub command_projects () {
 
 
 sub command_status () {
-    my @projects  := get_project_list();
+    my @projects  := Plumage::Metadata.get_project_list();
     my @installed := get_installed_projects();
     my %installed := set_from_array(@installed);
 
@@ -544,7 +544,7 @@ sub get_installed_projects () {
 
 sub resolve_dependencies (@projects) {
     my @all_deps       := all_dependencies(@projects);
-    my @known_projects := get_project_list();
+    my @known_projects := Plumage::Metadata.get_project_list();
     my @installed      := get_installed_projects();
     my %is_project     := set_from_array(@known_projects);
     my %is_installed   := set_from_array(@installed);

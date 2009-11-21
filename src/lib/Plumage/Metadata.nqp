@@ -9,6 +9,9 @@ Plumage::Metadata - Project metadata: find it, parse it, query it
     # Load this library
     pir::load_bytecode('src/lib/Plumage/Metadata.pbc');
 
+    # Get list of known project names (regardless of install status)
+    my @projects := Plumage::Metadata.get_project_list();
+
     # Instantiate a new metadata object
     my $metadata := Plumage::Metadata.new();
 
@@ -44,15 +47,37 @@ Plumage::Metadata - Project metadata: find it, parse it, query it
 
 class Plumage::Metadata;
 
+
+# ATTRIBUTES AND ACCESSORS
+
 has %!metadata;
 has $!valid;
 has $!error;
-
 
 method is_valid () { ?$!valid    }
 method error    () {  $!error    }
 method metadata () {  %!metadata }
 
+
+# CLASS METHODS
+
+method get_project_list () {
+    my @files := readdir(replace_config_strings(%*CONF<plumage_metadata_dir>));
+    my $regex := rx('\.json$');
+    my @projects;
+
+    for @files -> $file {
+        if $regex($file) {
+            my $project := subst($file, $regex, '');
+            @projects.push($project);
+        }
+    }
+
+    return @projects;
+}
+
+
+# INSTANCE METHODS
 
 method project_metadata_path ($dir?) {
     my @dir  := pir::length($dir) ?? [$dir, 'plumage']
