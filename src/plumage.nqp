@@ -109,6 +109,9 @@ my %*CONF;
 my %*BIN;
 
 sub load_helper_libraries () {
+    # Support OO
+    pir::load_bytecode('P6object.pbc');
+
     # Globals, common functions, system access, etc.
     pir::load_bytecode('src/lib/Glue.pbc');
 
@@ -124,8 +127,11 @@ sub load_helper_libraries () {
     # Data structure dumper for PMCs (used for debugging)
     pir::load_bytecode('dumper.pbc');
 
-    # Plumage metadata functions
+    # Plumage metadata functions (OLD)
     pir::load_bytecode('src/lib/Metadata.pbc');
+
+    # Plumage metadata module
+    pir::load_bytecode('src/lib/Plumage/Metadata.pbc');
 }
 
 sub fixup_commands ($commands) {
@@ -365,11 +371,12 @@ sub command_projects () {
     say("\nKnown projects:\n");
 
     for @projects -> $project {
-        my $desc := '';
+        my $desc  := '';
+        my $meta  := Plumage::Metadata.new();
+        my $valid := $meta.find_by_project_name($project);
 
-        my %info := get_project_metadata($project, 0);
-        if %info && metadata_valid(%info) {
-            my %general := %info<general>;
+        if $valid {
+            my %general := $meta.metadata<general>;
             if %general {
                 my $abstract := %general<abstract>;
 
