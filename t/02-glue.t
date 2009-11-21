@@ -15,14 +15,24 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(17);
+    plan(20);
 
     test_subst();
     test_join();
     test_split();
     test_path_exists();
+    test_qx();
 }
 
+sub test_qx() {
+    my $cmd := '/bin/true';
+    my $output := qx($cmd);
+    nok(qx(''),'qx() on the empty string returns false');
+
+    $output := qx('IHOPETHATTHISPATHDOESNOTEXISTANDISEXECUTABLEANDRETURNSTRUE');
+    like($output, ':s command not found','qx() on invalid path returns false');
+    ok($output, 'qx() on /bin/true returns a truthy value');
+}
 sub test_path_exists() {
     ok( path_exists('.'),            'path_exists finds .');
     nok(path_exists('DOESNOTEXIST'), 'path_exists returns false for nonexistent files');
