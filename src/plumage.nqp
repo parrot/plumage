@@ -414,9 +414,15 @@ sub command_info (@projects) {
     }
 
     for @projects -> $project {
-        my %info := get_project_metadata($project, 0);
+        my $meta  := Plumage::Metadata.new();
+        my $valid := $meta.find_by_project_name($project);
 
-        _dumper(%info, 'INFO') if %info;
+        if $valid {
+            _dumper($meta.metadata, 'INFO');
+        }
+        else {
+            say("I don't know anything about project '$project'.");
+        }
     }
 }
 
@@ -428,9 +434,11 @@ sub command_showdeps (@projects) {
 
     my $unknown_project := 0;
     for @projects -> $project {
-        my %info := get_project_metadata($project, 0);
+        my $meta  := Plumage::Metadata.new();
+        my $valid := $meta.find_by_project_name($project);
 
-        unless %info {
+        unless $valid {
+            say("I don't know anything about project '$project'.");
             $unknown_project := 1;
         }
     }
@@ -596,10 +604,11 @@ sub all_dependencies (@projects) {
 
     while @dep_stack {
         my $project := @dep_stack.pop();
-        my %info    := get_project_metadata($project, 1);
+        my $meta    := Plumage::Metadata.new();
+        my $valid   := $meta.find_by_project_name($project);
 
-        if %info && metadata_valid(%info) {
-            my %info_deps := %info<dependency-info>;
+        if $valid {
+            my %info_deps := $meta.metadata<dependency-info>;
             if %info_deps {
                 my %requires := %info_deps<requires>;
                 if %requires {
@@ -627,13 +636,18 @@ sub perform_actions_on_projects (@actions, @projects) {
     mkpath($build_root);
 
     for @projects -> $project {
-        my %info := get_project_metadata($project, 0);
-        if %info && metadata_valid(%info) {
+        my $meta    := Plumage::Metadata.new();
+        my $valid   := $meta.find_by_project_name($project);
+
+        if $valid {
             chdir($build_root);
-            my $success := perform_actions_on_project(@actions, $project, %info);
+            my $success := perform_actions_on_project(@actions, $project, $meta.metadata);
             chdir($cwd);
 
             return 0 unless $success;
+        }
+        else {
+            say("I don't know anything about project '$project'.");
         }
     }
 

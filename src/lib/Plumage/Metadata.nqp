@@ -104,15 +104,13 @@ method load_from_project_dir ($dir) {
 # XXXX: Need to fix try() syntax
 method load_from_file ($path) {
     %!metadata := try(Config::JSON::ReadConfig, [$path],
-                      record_metadata_parse_error);
-
-    return self.validate;
-}
-
-method record_metadata_parse_error ($exception, &code, @args) {
-    $!error := "Failed to parse metadata file '{ @args[0] }': $exception";
+                      -> $e, &c, @args {
+    $!error := "Failed to parse metadata file '{ @args[0] }': $e";
 
     return 0;
+});
+
+    return self.validate;
 }
 
 method validate () {
