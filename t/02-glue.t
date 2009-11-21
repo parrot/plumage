@@ -1,5 +1,7 @@
 #! parrot-nqp
 
+my $*EXECUTABLE_NAME;
+
 MAIN();
 
 sub MAIN () {
@@ -24,15 +26,6 @@ sub run_tests () {
     test_qx();
 }
 
-sub test_qx() {
-    my $cmd := '/bin/true';
-    my $output := qx($cmd);
-    nok(qx(''),'qx() on the empty string returns false');
-
-    $output := qx('IHOPETHATTHISPATHDOESNOTEXISTANDISEXECUTABLEANDRETURNSTRUE');
-    like($output, ':s command not found','qx() on invalid path returns false');
-    ok($output, 'qx() on /bin/true returns a truthy value');
-}
 sub test_path_exists() {
     ok( path_exists('.'),            'path_exists finds .');
     nok(path_exists('DOESNOTEXIST'), 'path_exists returns false for nonexistent files');
@@ -74,4 +67,15 @@ sub replacement($match) {
     my $orig := ~$match;
 
     return $orig ~ $orig;
+}
+
+sub test_qx() {
+    is(qx(''), '', 'qx("") returns an empty string');
+
+    $output := qx('IHOPETHATTHISPATHDOESNOTEXISTANDISEXECUTABLEANDRETURNSTRUE');
+    like($output, ':s not found','qx() on invalid path returns not found error');
+
+    my $output := qx($*EXECUTABLE_NAME, '-e', '"say(42); pir::exit(0)"');
+    is($output, "42\n", 'qx() captures output, retaining line endings');
+    # ok($output, 'qx() on exit(0) program returns a truthy value');
 }
