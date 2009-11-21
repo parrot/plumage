@@ -138,10 +138,10 @@ successfully but itself exited with failure.
 
 Spawn the command with the given arguments as a read only pipe;
 return the output of the command as a single string.  Throws an
-exception if the pipe cannot be opened or the command cannot be
-executed.
+exception if the pipe cannot be opened.  Sets the caller's C<$!>
+to the exit value of the child process.
 
-B<WARNING>: Parrot currently implements this B<INSECURELY>!
+B<WARNING>: Parrot currently implements the pipe open B<INSECURELY>!
 
 =cut
 
@@ -159,6 +159,16 @@ B<WARNING>: Parrot currently implements this B<INSECURELY>!
     pipe.'encoding'('utf8')
     output = pipe.'readall'()
     pipe.'close'()
+
+    .local pmc exit_status
+    $I0 = pipe.'exit_status'()
+    exit_status = box $I0
+
+    find_dynamic_lex $P0, '$!'
+    if null $P0 goto skip_exit_status
+    store_dynamic_lex '$!', exit_status
+  skip_exit_status:
+
     .return (output)
 
   pipe_open_error:
