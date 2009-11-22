@@ -114,7 +114,7 @@ method _find_source_dir($start_dir?) {
 
 method perform_actions (@actions, :$ignore_all, :%ignore) {
     for @actions -> $action {
-        if self._method_exists($action) {
+        if self.HOW.can(self, $action) {
            my $cwd    := cwd();
            my $result := self._dynmeth($action);
            chdir($cwd);
@@ -151,15 +151,6 @@ method _dynmeth ($method_name) {
         $S0 = $P1
         $P2 = find_method $P0, $S0
         %r  = $P0.$P2()
-    }
-}
-
-method _method_exists ($method_name) {
-    return Q:PIR {
-        $P0 = find_lex 'self'
-        $P1 = find_lex '$method_name'
-        $S0 = $P1
-        %r  = find_method $P0, $S0
     }
 }
 

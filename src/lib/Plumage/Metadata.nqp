@@ -271,8 +271,9 @@ method metadata_instruction_types_known () {
 
     # XXXX: This needs to be stricter, and offer suggestions
     for %inst.keys -> $stage {
-        my $type := %inst{$stage}<type>;
-        my $exists := Plumage::Project._method_exists("{$stage}_$type");
+        my $type   := %inst{$stage}<type>;
+        my $exists := Plumage::Project.HOW.can(Plumage::Project,
+                                               "{$stage}_$type");
 
         unless $exists {
             $!error := "I don't understand $stage type '$type'.";
