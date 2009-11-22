@@ -40,10 +40,11 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     $path  := cwd();
     mkdir($path [, $mode]);
     unlink($path);
-    @info  := stat($path);
-    $found := path_exists($path);
-    @names := readdir($directory);
-    $path  := fscat(@path_parts [, $filename]);
+    @info   := stat($path);
+    $found  := path_exists($path);
+    $is_dir := is_dir($path);
+    @names  := readdir($directory);
+    $path   := fscat(@path_parts [, $filename]);
 
     # String basics
     $joined := join($delimiter, @strings);
@@ -65,6 +66,7 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 .include 'interpinfo.pasm'
 .include 'sysinfo.pasm'
 .include 'iglobals.pasm'
+.include 'stat.pasm'
 
 
 =head1 DESCRIPTION
@@ -564,6 +566,31 @@ value if not.
     stat_list = 'stat'(path)
     pop_eh
     .return (1)
+
+  stat_failed:
+    pop_eh
+    .return (0)
+.end
+
+
+=item $is_dir := is_dir($path);
+
+Return a true value if the C<$path> exists on the filesystem and is a
+directory, or a false value if not.
+
+=cut
+
+.sub 'is_dir'
+    .param string path
+
+    push_eh stat_failed
+    .local pmc stat_list
+    stat_list = 'stat'(path)
+    pop_eh
+
+    .local int is_dir
+    is_dir = stat path, .STAT_ISDIR
+    .return (is_dir)
 
   stat_failed:
     pop_eh
