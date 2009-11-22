@@ -69,18 +69,6 @@ my  $_COMMANDS_JSON := '
 ';
 our %COMMANDS := fixup_commands(eval($_COMMANDS_JSON, 'data_json'));
 
-my  $_ACTIONS_JSON := '
-{
-    "fetch"     : [ "repository", "git", "svn" ],
-    "configure" : [ "perl5_configure", "parrot_configure", "nqp_configure" ],
-    "build"     : [ "make", "parrot_setup" ],
-    "test"      : [ "make", "parrot_setup" ],
-    "install"   : [ "make", "parrot_setup" ]
-}
-';
-my %*ACTION;
-fixup_sub_actions(eval($_ACTIONS_JSON, 'data_json'));
-
 my $_DEFAULT_CONF_JSON := '
 {
     "parrot_user_root"     : "#user_home_dir#/.parrot",
@@ -101,7 +89,6 @@ MAIN();
 ###
 
 
-our %STAGE_ACTION;
 our %STAGES;
 our %OPT;
 
@@ -141,26 +128,6 @@ sub fixup_commands ($commands) {
     }
 
     return $commands;
-}
-
-sub fixup_sub_actions (%actions) {
-    my @stages := %actions.keys;
-
-    for @stages -> $stage {
-        my @actions := %actions{$stage};
-
-        for @actions -> $action {
-            my $sub_name := $stage ~ '_' ~ $action;
-            my $sub      := pir::get_hll_global__Ps($sub_name);
-
-            if $sub {
-                %*ACTION{$stage}{$action} := $sub;
-            }
-            else {
-                die("Action sub '$sub_name' is missing!\n");
-            }
-        }
-    }
 }
 
 sub parse_command_line_options () {
@@ -256,11 +223,6 @@ sub build_stages () {
         for %STAGES {
             $_.value.unshift($stage);
         }
-
-        my $sub_name := "action_$stage";
-        my $sub      := pir::get_hll_global__Ps($sub_name);
-
-        %STAGE_ACTION{$stage} := $sub;
     }
 }
 
@@ -653,247 +615,4 @@ sub perform_actions_on_projects (@actions, @projects) {
     }
 
     return 1;
-}
-
-sub perform_actions_on_project (@actions, $project, %info) {
-    my $has_ignore_flag := %OPT.exists('ignore-fail');
-    my %ignore          := %OPT<ignore-fail>;
-    my $ignore_all      := $has_ignore_flag && !%ignore;
-
-    for @actions -> $action {
-        my &action := %STAGE_ACTION{$action};
-        if &action {
-           my $cwd    := cwd();
-           my $result := &action($project, %info);
-           chdir($cwd);
-
-           if $result {
-               say("Successful.\n");
-           }
-           else {
-               if $ignore_all || %ignore && %ignore{$action} {
-                   say("FAILED, but ignoring failure at user request.\n");
-               }
-               else {
-                   say("###\n### FAILED!\n###\n");
-                   return 0;
-               }
-           }
-        }
-        else {
-           say("I don't know how to perfom action '$action'.");
-        }
-    }
-
-    return 1;
-}
-
-
-###
-### ACTIONS
-###
-
-
-# FETCH
-
-sub action_fetch ($project, %info) {
-    my %fetch := %info<instructions><fetch>;
-    if %fetch {
-        my &action := %*ACTION<fetch>{%fetch<type>};
-        return &action($project, %info);
-    }
-    else {
-        say("Don't know how to fetch $project.");
-        return 0;
-    }
-}
-
-sub fetch_repository ($project, %info) {
-    my %repo := %info<resources><repository>;
-    if %repo {
-        say("Fetching $project ...");
-
-        my &action := %*ACTION<fetch>{%repo<type>};
-        return &action($project, %repo<checkout_uri>);
-    }
-    else {
-        say("Trying to fetch from a repository, but no repository info for $project.");
-        return 0;
-    }
-}
-
-sub fetch_git ($project, $uri) {
-    if path_exists($project) {
-        if path_exists(fscat([$project, '.git'])) {
-            chdir($project);
-            return do_run(%*BIN<git>, 'pull');
-        }
-        else {
-            return report_fetch_collision('Git', $project);
-        }
-    }
-    else {
-        return do_run(%*BIN<git>, 'clone', $uri, $project);
-    }
-}
-
-sub fetch_svn ($project, $uri) {
-    if  path_exists($project)
-    && !path_exists(fscat([$project, '.svn'])) {
-        return report_fetch_collision('Subversion', $project);
-    }
-    else {
-        return do_run(%*BIN<svn>, 'checkout', $uri, $project);
-    }
-}
-
-sub report_fetch_collision ($type, $project) {
-    my $build_root  := replace_config_strings(%*CONF<plumage_build_root>);
-    my $project_dir := fscat([$build_root, $project]);
-
-    say("\n$project is a $type project, but the fetch directory:\n"
-        ~ "\n    $project_dir\n\n"
-        ~ "already exists and is not the right type.\n"
-        ~ "Please remove or rename it, then rerun $*PROGRAM_NAME.\n");
-
-    return 0;
-}
-
-
-# CONFIGURE
-
-sub action_configure ($project, %info) {
-    my %conf := %info<instructions><configure>;
-    if %conf {
-        say("\nConfiguring $project ...");
-
-        my &action := %*ACTION<configure>{%conf<type>};
-        return &action($project, %conf);
-    }
-    else {
-        say("\nConfiguration not required for $project.");
-        return 1;
-    }
-}
-
-sub configure_perl5_configure ($project, %conf) {
-    my @extra := map(replace_config_strings, %conf<extra_args>);
-
-    chdir($project);
-    return do_run(%*BIN<perl5>, 'Configure.pl', |@extra);
-}
-
-sub configure_parrot_configure ($project, %conf) {
-    chdir($project);
-    return do_run(%*BIN<parrot>, 'Configure.pir');
-}
-
-sub configure_nqp_configure ($project, %conf) {
-    chdir($project);
-    return do_run(%*BIN<parrot-nqp>, 'Configure.nqp');
-}
-
-
-# MAKE
-
-sub action_build ($project, %info) {
-    my %conf := %info<instructions><build>;
-    if %conf {
-        say("\nBuilding $project ...");
-
-        my &action := %*ACTION<build>{%conf<type>};
-        return &action($project);
-    }
-    else {
-        say("\nBuild not required for $project.");
-        return 1;
-    }
-}
-
-sub build_make ($project) {
-    chdir($project);
-    return do_run(%*BIN<make>);
-}
-
-sub build_parrot_setup ($project) {
-    chdir($project);
-    return do_run(%*BIN<parrot>, 'setup.pir');
-}
-
-
-# TEST
-
-sub action_test ($project, %info) {
-    my %conf := %info<instructions><test>;
-    if %conf {
-        say("\nTesting $project ...");
-
-        my &action := %*ACTION<test>{%conf<type>};
-        return &action($project);
-    }
-    else {
-        say("\nNo test method found for $project.");
-        return 1;
-    }
-}
-
-sub test_make ($project) {
-    chdir($project);
-    return do_run(%*BIN<make>, 'test');
-}
-
-sub test_parrot_setup ($project) {
-    chdir($project);
-    return do_run(%*BIN<parrot>, 'setup.pir', 'test');
-}
-
-
-# INSTALL
-
-sub action_install ($project, %info) {
-    my %conf := %info<instructions><install>;
-    if %conf {
-        say("\nInstalling $project ...");
-
-        my &action  := %*ACTION<install>{%conf<type>};
-        my $success := &action($project);
-
-        if $success {
-            mark_projects_installed([$project]);
-        }
-
-        return $success;
-    }
-    else {
-        say("Don't know how to install $project.");
-        return 0;
-    }
-}
-
-sub install_make ($project) {
-    my $bin_dir  := %*VM<config><bindir>;
-    my $root_cmd := replace_config_strings(%*CONF<root_command>);
-
-    chdir($project);
-
-    if !test_dir_writable($bin_dir) && $root_cmd {
-        return do_run($root_cmd, %*BIN<make>, 'install');
-    }
-    else {
-        return do_run(%*BIN<make>, 'install');
-    }
-}
-
-sub install_parrot_setup ($project) {
-    my $bin_dir  := %*VM<config><bindir>;
-    my $root_cmd := replace_config_strings(%*CONF<root_command>);
-
-    chdir($project);
-
-    if !test_dir_writable($bin_dir) && $root_cmd {
-        return do_run($root_cmd, %*BIN<parrot>, 'setup.pir', 'install');
-    }
-    else {
-        return do_run(%*BIN<parrot>, 'setup.pir', 'install');
-    }
 }

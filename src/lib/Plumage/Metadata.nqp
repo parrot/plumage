@@ -269,16 +269,13 @@ method metadata_instruction_types_known () {
         return 0;
     }
 
+    # XXXX: This needs to be stricter, and offer suggestions
     for %inst.keys -> $stage {
-        my $type   := %inst{$stage}<type>;
-        my $action := %*ACTION{$stage}{$type};
+        my $type := %inst{$stage}<type>;
+        my $exists := Plumage::Project._method_exists("{$stage}_$type");
 
-        unless $action {
-            my @types := %*ACTION{$stage}.keys;
-            my $types := join(', ', @types);
-
-            $!error := "I don't understand $stage type '$type'.\n"
-                     ~ "I only understand these types: $types";
+        unless $exists {
+            $!error := "I don't understand $stage type '$type'.";
             return 0;
         }
     }
