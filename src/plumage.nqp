@@ -129,6 +129,9 @@ sub load_helper_libraries () {
 
     # Plumage metadata module
     pir::load_bytecode('src/lib/Plumage/Metadata.pbc');
+
+    # Plumage project module
+    pir::load_bytecode('src/lib/Plumage/Project.pbc');
 }
 
 sub fixup_commands ($commands) {
@@ -632,19 +635,20 @@ sub perform_actions_on_projects (@actions, @projects) {
     my $build_root := replace_config_strings(%*CONF<plumage_build_root>);
     mkpath($build_root);
 
-    for @projects -> $project {
-        my $meta    := Plumage::Metadata.new();
-        my $valid   := $meta.find_by_project_name($project);
+    my $has_ignore_flag := %OPT.exists('ignore-fail');
+    my %ignore          := %OPT<ignore-fail>;
+    my $ignore_all      := $has_ignore_flag && !%ignore;
 
-        if $valid {
+    for @projects -> $project_name {
+        my $project := Plumage::Project.new($project_name);
+        if pir::defined__IP($project) {
             chdir($build_root);
-            my $success := perform_actions_on_project(@actions, $project, $meta.metadata);
+            my $success := $project.perform_actions(@actions,
+                                                    :ignore_all($ignore_all),
+                                                    :ignore(%ignore));
             chdir($cwd);
 
             return 0 unless $success;
-        }
-        else {
-            say("I don't know anything about project '$project'.");
         }
     }
 
