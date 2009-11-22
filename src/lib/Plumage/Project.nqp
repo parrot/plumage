@@ -15,6 +15,9 @@ Plumage::Project - A project, its metadata, and its state
     my $project := Plumage::Project.new('git/foo');   # By specific directory
     my $project := Plumage::Project.new('this');      # By current directory
 
+    # Perform multiple actions on a project in sequence, stopping on failure
+    $project.perform_actions(@actions, :$ignore_all, :%ignore);
+
     # Perform individual actions on a project
     $project.fetch;
     $project.configure;
