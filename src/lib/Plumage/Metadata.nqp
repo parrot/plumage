@@ -9,36 +9,22 @@ Plumage::Metadata - Project metadata: find it, parse it, query it
     # Load this library
     pir::load_bytecode('src/lib/Plumage/Metadata.pbc');
 
-    # Get list of known project names (regardless of install status)
-    my @projects := Plumage::Metadata.get_project_list();
+    # Class Methods
+    my @projects := Plumage::Metadata.get_project_list;
+    my $found    := Plumage::Metadata.exists($project_directory);
+    my $path     := Plumage::Metadata.project_metadata_path($project_directory);
+    my $meta     := Plumage::Metadata.new;
 
-    # Instantiate a new metadata object
-    my $metadata := Plumage::Metadata.new();
+    # Accessors
+    my $valid := $meta.is_valid;
+    my $error := $meta.error;
+    my $data  := $meta.metadata;
 
-    # Can we find metadata in the usual place under this directory?
-    my $found := $metadata.exists($project_directory);
-
-    # What *is* the usual place to find metadata within a project?
-    my $path  := $metadata.project_metadata_path($project_directory);
-
-    # Load and parse a project's default metadata file
-    my $valid := $metadata.load_from_project_dir($project_directory);
-
-    # Load and parse a particular metadata file
-    my $valid := $metadata.load_from_file($metadata_file_path);
-
-    # Parse metadata that is already in string form
-    # XXXX: NYI
-    my $valid := $metadata.load_from_string($serialized_metadata);
-
-    # Search for, fetch, and parse metadata given a project's name
-    my $valid := $metadata.find_by_project_name($project_name);
-
-    # Have we loaded, parsed, and validated proper metadata?
-    my $valid := $metadata.is_valid;
-
-    # If not valid, what error caused the failure?
-    my $error := $metadata.error;
+    # Search / Load / Parse
+    my $valid := $meta.find_by_project_name($project_name);
+    my $valid := $meta.load_from_project_dir($project_directory);
+    my $valid := $meta.load_from_file($metadata_file_path);
+    my $valid := $meta.load_from_string($serialized_metadata);
 
 
 =head1 DESCRIPTION
@@ -48,18 +34,19 @@ Plumage::Metadata - Project metadata: find it, parse it, query it
 class Plumage::Metadata;
 
 
-# ATTRIBUTES AND ACCESSORS
+=begin
 
-has %!metadata;
-has $!valid;
-has $!error;
+=head2 Class Methods
 
-method is_valid () { ?$!valid    }
-method error    () {  $!error    }
-method metadata () {  %!metadata }
+=over 4
 
+=item @projects := Plumage::Metadata.get_project_list
 
-# CLASS METHODS
+Return a list of project names currently known to Plumage, regardless of
+whether they are currently installed or not.  Each name is suitable for
+passing to C<$meta.find_by_project_name()> to obtain more details.
+
+=end
 
 method get_project_list () {
     my @files := readdir(replace_config_strings(%*CONF<plumage_metadata_dir>));
@@ -77,7 +64,32 @@ method get_project_list () {
 }
 
 
-# INSTANCE METHODS
+=begin
+
+=item $found := Plumage::Metadata.exists($project_directory?)
+
+Determine if a Plumage metadata file exists in a given C<$project_directory>.
+If the directory is omitted, the current directory is assumed to be the
+top of the project.  Uses C<project_metadata_path> to determine the default
+location for Plumage metadata files.
+
+=end
+
+method exists ($dir?) {
+    return path_exists(self.project_metadata_path($dir));
+}
+
+
+=begin
+
+=item $path := Plumage::Metadata.project_metadata_path($project_directory?)
+
+Determine the correct path to the default location for Plumage metadata
+within a project tree.  If the C<$project_directory> is provided, it is
+included as the leading portion of the returned C<$path>.  If it is omitted,
+the C<$path> will be the generic default location relative to a project root.
+
+=end
 
 method project_metadata_path ($dir?) {
     my @dir  := pir::length($dir) ?? [$dir, 'plumage']
@@ -87,9 +99,66 @@ method project_metadata_path ($dir?) {
     return $path;
 }
 
-method exists ($dir?) {
-    return path_exists(self.project_metadata_path($dir));
-}
+
+=begin
+
+=item $meta := Plumage::Metadata.new
+
+Instantiate a new, empty metadata object.
+
+=back
+
+
+=head2 Accessors
+
+=over 4
+
+=item $valid := $meta.is_valid
+
+True if C<$meta> has loaded, parsed, and validated proper metadata, false
+otherwise.
+
+=item $error := $meta.error
+
+If not valid, what error caused the failure?  Resets to empty when the object
+successfully loads and parses valid metadata.
+
+=item $data  := $meta.metadata
+
+Fetch the actual data structure from the metadata object.
+
+=back
+
+=end
+
+has %!metadata;
+has $!valid;
+has $!error;
+
+method is_valid () { ?$!valid    }
+method error    () {  $!error    }
+method metadata () {  %!metadata }
+
+
+=begin
+
+=head2 Search / Load / Parse
+
+After creating an empty metadata object using C<new>, use these methods to load
+metadata for a particular project.  Each finds the metadata by a different
+method, but all eventually return a boolean C<$value> indicating whether valid
+metadata was successfully loaded and parsed.  If the C<$value> is false, use
+the C<error> accessor to determine what went wrong; otherwise, use the
+C<metadata> accessor to retrieve the loaded data structure.
+
+=over 4
+
+=item $valid := $meta.find_by_project_name($project_name)
+
+Find metadata using the project's name, in the format retrieved by
+C<get_project_list>.
+
+=end
 
 method find_by_project_name ($project_name) {
     my $meta_dir := replace_config_strings(%*CONF<plumage_metadata_dir>);
@@ -97,18 +166,56 @@ method find_by_project_name ($project_name) {
     return self.load_from_file(fscat([$meta_dir], "$project_name.json"));
 }
 
+
+=begin
+
+=item $valid := $meta.load_from_project_dir($project_directory)
+
+Given the directory path for the top level of a project, load and parse the
+project's metadata from the default metadata file location (determined using
+C<project_metadata_path>).
+
+=end
+
 method load_from_project_dir ($dir) {
     return self.load_from_file(self.project_metadata_path($dir));
 }
 
-# XXXX: Need to fix try() syntax
+
+=begin
+
+=item $valid := $meta.load_from_file($metadata_file_path)
+
+Load and parse a particular metadata file.
+
+=end
+
 method load_from_file ($path) {
     %!metadata := try(Config::JSON::ReadConfig, [$path],
                       -> $e, &c, @args {
-    $!error := "Failed to parse metadata file '{ @args[0] }': $e";
+                          $!error := "Failed to parse metadata file '"
+                                   ~ @args[0] ~ "': $e";
+                          0;
+                      });
 
-    return 0;
-});
+    return self.validate;
+}
+
+
+=begin
+
+=item $valid := $meta.load_from_string($serialized_metadata)
+
+Parse metadata that is already in string form.
+
+=end
+
+method load_from_string($serialized) {
+    %!metadata := try(eval, [$serialized, 'data_json'],
+                      -> $e, &c, @args {
+                          $!error := "Failed to parse metadata string: $e";
+                          0;
+                      });
 
     return self.validate;
 }
