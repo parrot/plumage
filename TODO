@@ -116,7 +116,7 @@ Plumage:
       * Other prompts?
     * Create new project helper
     * 'showstate' command (show build and install status) (WIP)
-    * 'update' command
+    * 'update' command (falls back to default based on fetch or clean/fetch)
     * 'uninstall' or 'remove' command
     * 'wipeout' or 'purge' command -- uninstall and uncache
     * 'fetch' able to do owner-clone for git repos
