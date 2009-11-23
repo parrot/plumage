@@ -117,7 +117,7 @@ method perform_actions (@actions, :$ignore_all, :%ignore) {
     for @actions -> $action {
         if self.HOW.can(self, $action) {
            my $cwd    := cwd();
-           my $result := self._dynmeth($action);
+           my $result := self."$action"();
            chdir($cwd);
 
            if $result {
@@ -143,25 +143,12 @@ method perform_actions (@actions, :$ignore_all, :%ignore) {
 }
 
 
-# XXXX: Work around NQP-rx limitation ('self."$method"' doesn't work)
-# XXXX: NEED TO CHECK THAT $method_name IS ON APPROVED LIST
-method _dynmeth ($method_name) {
-    return Q:PIR {
-        $P0 = find_lex 'self'
-        $P1 = find_lex '$method_name'
-        $S0 = $P1
-        $P2 = find_method $P0, $S0
-        %r  = $P0.$P2()
-    }
-}
-
-
 # FETCH
 
 method fetch () {
     my %fetch := $!metadata.metadata<instructions><fetch>;
     if %fetch {
-        return self._dynmeth("fetch_{%fetch<type>}");
+        return self."fetch_{%fetch<type>}"();
     }
     else {
         say("Don't know how to fetch $!name.");
@@ -174,7 +161,7 @@ method fetch_repository () {
     if %repo {
         say("Fetching $!name ...");
 
-        return self._dynmeth("fetch_{%repo<type>}");
+        return self."fetch_{%repo<type>}"();
     }
     else {
         say("Trying to fetch from a repository, but no repository info for $!name.");
@@ -230,7 +217,7 @@ method configure () {
 
         chdir($!source_dir);
 
-        return self._dynmeth("configure_{%conf<type>}");
+        return self."configure_{%conf<type>}"();
     }
     else {
         say("\nConfiguration not required for $!name.");
@@ -263,7 +250,7 @@ method build () {
 
         chdir($!source_dir);
 
-        return self._dynmeth("build_{%build<type>}");
+        return self."build_{%build<type>}"();
     }
     else {
         say("\nBuild not required for $!name.");
@@ -289,7 +276,7 @@ method test () {
 
         chdir($!source_dir);
 
-        return self._dynmeth("test_{%test<type>}");
+        return self."test_{%test<type>}"();
     }
     else {
         say("\nNo test method found for $!name.");
@@ -315,7 +302,7 @@ method install () {
 
         chdir($!source_dir);
 
-        my $success := self._dynmeth("install_{%inst<type>}");
+        my $success := self."install_{%inst<type>}"();
 
         if $success {
             mark_projects_installed([$!name]);
