@@ -86,13 +86,12 @@ Metadata:
 
 Plumage:
 --------
-* Bootstrap:
-  * Switch to Configure.pir, no NQP needed
+* Switch to setup.nqp once NQP-rx supports native hash declarations
 * Hosting:
   * allison looking into parrot.org
   * moritz gave access to a Debian Lenny box
 * Functionality:
-  * Magic local directory project name ('.')
+  * Magic local directory project name ('this') -- WIP
   * Read meta from repo after fetch/patch/configure
   * Cache copy of final meta at install time for later query
   * Help
@@ -150,6 +149,7 @@ Plumage:
   * Improve harness output
 * Misc suggestions
   * Merge Plumage .pbc's all together into executable using pbc_merge
+  * Make Plumage itself installable
   * Avoid asking questions (after first setup?) if at all possible
   * Recommendations ("optional dependencies") should not abort top-level
     install if they fail to install
@@ -174,7 +174,6 @@ Parrot:
 * Fixes needed:
   * More secure pipe spawn
     * current insecure version does 'sh', '-c', 'command and args'
-  * Pipe spawn with exit code also
 * Config values needed:
   * PATH separator
 * Finish JSON -> data_json conversion
@@ -184,8 +183,7 @@ Parrot:
 
 NQP:
 ----
-* HLL interop: allow NQP to be used by other languages
-* Have to say 'our $OS;' to declare variable defined in Glue.pir
+* See http://wiki.github.com/perl6/nqp-rx/plumage-requests
 
 
 data_json:
