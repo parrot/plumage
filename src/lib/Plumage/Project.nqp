@@ -61,7 +61,8 @@ method _init($locator) {
         $!source_dir := self._find_source_dir($locator);
         $!metadata.load_from_project_dir($!source_dir);
     }
-    elsif pir::substr($locator, -5, 5) eq '.json' {
+    elsif pir::length($locator) > 5
+       && pir::substr($locator, -5, 5) eq '.json' {
         $!metadata.load_from_file($locator);
 
         my $file_dir := subst($locator, rx('<-[/]>+$'), '');
