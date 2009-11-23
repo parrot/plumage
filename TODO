@@ -7,8 +7,9 @@ Study:
 ------
 * CPAN META/MYMETA changes afoot
 * proto changes afoot
-* Haskell Cabal
-* Ruby Rake
+* Haskell Cabal (http://www.haskell.org/cabal/)
+* LuaRocks (http://www.luarocks.org/en/luarocks)
+* Ruby Rake (http://rake.rubyforge.org/)
 * Possibly useful modules
   * ExtUtils::Liblist
   * Devel::CheckLib
