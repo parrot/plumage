@@ -4,8 +4,8 @@
         "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
     },
     "general"      : {
-        "name"     : "markdown",
-        "abstract" : "Markdown on Parrot",
+        "name"     : "wmlscript",
+        "abstract" : "WMLScript Bytecode Translator",
         "authority": "http://github.com/fperrad",
         "version"  : "HEAD",
         "license"  : {
@@ -13,7 +13,7 @@
             "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
         },
         "copyright_holder" : "Parrot Foundation",
-        "generated_by"     : "Francois Perrad <francois.perrad@gadz.org>",
+        "generated_by"     : "distutils",
         "keywords"         : ["wmlscript", "wap"],
         "description"      : "WMLScript Bytecode Translator"
     },
