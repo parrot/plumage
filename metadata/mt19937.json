@@ -4,7 +4,7 @@
         "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
     },
     "general"      : {
-        "name"     : "MT19937",
+        "name"     : "mt19937",
         "abstract" : "Mersenne Twisted pseudorandom number generator",
         "authority": "http://github.com/fperrad",
         "version"  : "HEAD",
@@ -13,7 +13,7 @@
             "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
         },
         "copyright_holder" : "Parrot Foundation",
-        "generated_by"     : "Francois Perrad <francois.perrad@gadz.org>",
+        "generated_by"     : "distutils",
         "keywords"         : ["random", "prng"],
         "description"      : "Mersenne Twisted pseudorandom number generator in PIR for Parrot VM."
     },
@@ -32,12 +32,11 @@
         }
     },
     "dependency-info"  : {
-        "provides"     : ["Math;Random;MT"],
+        "provides"     : ["mt19937"],
         "requires"     : {
             "fetch"    : ["git"],
-            "configure": [],
             "build"    : [],
-            "test"     : [],
+            "test"     : ["perl5"],
             "install"  : [],
             "runtime"  : []
         }
