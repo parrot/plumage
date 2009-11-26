@@ -324,7 +324,9 @@ sub test_dir_writable($dir) {
     die("Test file '$test_file'\nthat should never exist already does.")
         if path_exists($test_file);
 
-    try(spew, [$test_file, "test_dir_writable() test file.\n"]);
+    try {
+       spew($test_file, "test_dir_writable() test file.\n");
+    };
 
     if path_exists($test_file) {
         unlink($test_file);

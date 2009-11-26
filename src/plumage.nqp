@@ -169,11 +169,10 @@ sub read_config_files () {
 
     for @configs -> $config {
         if path_exists($config) {
-            my %conf := try(Config::JSON::ReadConfig, [$config]);
-            if %conf {
-                %*CONF := merge_tree_structures(%*CONF, %conf);
-            }
-            else {
+            my %conf := Config::JSON::ReadConfig($config);
+            %*CONF   := merge_tree_structures(%*CONF, %conf);
+
+            CATCH {
                 say("Could not parse JSON file '$config'.");
             }
         }
@@ -504,12 +503,14 @@ sub mark_projects_installed (@projects) {
 
 sub get_installed_projects () {
     my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
-    my $contents  := try(slurp, [$inst_file]);
-
-    my @projects;
-       @projects := grep(-> $_ { ?$_ }, split("\n", $contents)) if $contents;
+    my $contents  := slurp($inst_file);
+    my @projects  := grep(-> $_ { ?$_ }, split("\n", $contents));
 
     return @projects;
+
+    CATCH {
+        return [];
+    }
 }
 
 sub resolve_dependencies (@projects) {

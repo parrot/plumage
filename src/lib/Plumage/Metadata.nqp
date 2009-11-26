@@ -191,14 +191,15 @@ Load and parse a particular metadata file.
 =end
 
 method load_from_file ($path) {
-    %!metadata := try(Config::JSON::ReadConfig, [$path],
-                      -> $e, &c, @args {
-                          $!error := "Failed to parse metadata file '"
-                                   ~ @args[0] ~ "': $e";
-                          0;
-                      });
+    %!metadata := Config::JSON::ReadConfig($path);
 
     return self.validate;
+
+    CATCH {
+        $!error    := "Failed to parse metadata file '$path': $!";
+        %!metadata := 0;
+        return 0;
+    }
 }
 
 
@@ -211,13 +212,15 @@ Parse metadata that is already in string form.
 =end
 
 method load_from_string($serialized) {
-    %!metadata := try(eval, [$serialized, 'data_json'],
-                      -> $e, &c, @args {
-                          $!error := "Failed to parse metadata string: $e";
-                          0;
-                      });
+    %!metadata := eval($serialized, 'data_json');
 
     return self.validate;
+
+    CATCH {
+        $!error    := "Failed to parse metadata string: $!";
+        %!metadata := 0;
+        return 0;
+    }
 }
 
 method validate () {
