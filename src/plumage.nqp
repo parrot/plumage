@@ -186,8 +186,8 @@ sub merge_tree_structures ($dst, $src) {
         my $d := $dst{$k};
         my $s := $src{$k};
 
-        if  $d && does($d, 'hash')
-        &&  $s && does($s, 'hash') {
+        if  $d && pir::does__IPs($d, 'hash')
+        &&  $s && pir::does__IPs($s, 'hash') {
             $dst{$k} := merge_tree_structures($d, $s);
         }
         else {

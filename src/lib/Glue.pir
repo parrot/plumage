@@ -16,9 +16,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     # Other languages
     $result := eval($source_code, $language);
 
-    # OO and types
-    $does_role := does($object, $role);
-
     # I/O
     print('things', ' to ', 'print', ...);
     say(  'things', ' to ', 'say',   ...);
@@ -198,23 +195,6 @@ returning the C<$result> of executing the compiled code.
     $P0      = compiled()
 
     .return ($P0)
-.end
-
-
-=item $does_role := does($object, $role)
-
-Determine if C<$object> does the C<$role>, returning a true value if so, and a
-false value if not.
-
-=cut
-
-.sub 'does'
-    .param pmc    object
-    .param string role
-
-    $I0 = does object, role
-
-    .return($I0)
 .end
 
 
