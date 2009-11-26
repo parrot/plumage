@@ -321,7 +321,7 @@ race conditions between test and action.
 sub test_dir_writable($dir) {
     my $test_file := fscat([$dir], 'WrItAbLe.UtL');
 
-    die("Test file '$test_file'\nthat should never exist already does.")
+    pir::die("Test file '$test_file'\nthat should never exist already does.")
         if path_exists($test_file);
 
     try {

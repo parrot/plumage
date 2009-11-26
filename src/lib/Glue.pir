@@ -16,9 +16,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     # Other languages
     $result := eval($source_code, $language);
 
-    # Exceptions
-    die($message);
-
     # OO and types
     $does_role := does($object, $role);
 
@@ -201,19 +198,6 @@ returning the C<$result> of executing the compiled code.
     $P0      = compiled()
 
     .return ($P0)
-.end
-
-
-=item die($message)
-
-Kill program, reporting error C<$message>.
-
-=cut
-
-.sub 'die'
-    .param string message
-
-    die message
 .end
 
 

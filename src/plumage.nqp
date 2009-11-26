@@ -159,7 +159,7 @@ sub read_config_files () {
             @configs.push($optconf);
         }
         else {
-            die("Could not find config file '$optconf'.\n");
+            pir::die("Could not find config file '$optconf'.\n");
         }
     }
 
