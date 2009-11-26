@@ -31,8 +31,8 @@ sub MAIN () {
 
         my $file        := slurp($_);
         my $test_output := qx($*EXECUTABLE_NAME, $filename);
-        my $output      := split("\n",$test_output);
-        my @plan_parts  := split('..',$output[0]);
+        my $output      := pir::split("\n",$test_output);
+        my @plan_parts  := pir::split('..',$output[0]);
 
         my $num_tests   := @plan_parts[1];
         my $curr_test   := 0;
@@ -44,12 +44,12 @@ sub MAIN () {
         for $output {
             my $line := $_;
             if ( $line ) {
-                my $line_parts := split('ok ',$line);
+                my $line_parts := pir::split('ok ',$line);
                 my $test_number:= $line_parts[1];
 
                 # strip out comments
                 unless ($test_number > 0) {
-                    my @test_num_parts := split(' -',$test_number);
+                    my @test_num_parts := pir::split(' -',$test_number);
                     $test_number       := @test_num_parts[0];
                 }
 

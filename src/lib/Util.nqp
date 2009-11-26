@@ -262,8 +262,8 @@ following way:
 
 sub find_program ($program) {
     my $path_sep := $*OS eq 'MSWin32' ?? ';' !! ':';
-    my @paths    := split($path_sep, %*ENV<PATH>);
-    my @exts     := split($path_sep, %*ENV<PATHEXT>);
+    my @paths    := pir::split($path_sep, %*ENV<PATH>);
+    my @exts     := pir::split($path_sep, %*ENV<PATHEXT>);
 
     @exts.unshift('');
 
@@ -289,7 +289,7 @@ top making directories as needed until an entire path has been created.
 =end
 
 sub mkpath ($path) {
-    my @path := split('/', $path);
+    my @path := pir::split('/', $path);
     my $cur  := @path.shift;
 
     for @path -> $dir {

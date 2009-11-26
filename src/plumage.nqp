@@ -214,7 +214,7 @@ sub find_binaries () {
 }
 
 sub build_stages () {
-    my @stages := split(' ', 'install test build configure fetch');
+    my @stages := pir::split(' ', 'install test build configure fetch');
 
     for @stages -> $stage {
         %STAGES{$stage} := [];
@@ -504,7 +504,7 @@ sub mark_projects_installed (@projects) {
 sub get_installed_projects () {
     my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
     my $contents  := slurp($inst_file);
-    my @projects  := grep(-> $_ { ?$_ }, split("\n", $contents));
+    my @projects  := grep(-> $_ { ?$_ }, pir::split("\n", $contents));
 
     return @projects;
 

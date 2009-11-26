@@ -17,11 +17,10 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(24);
+    plan(14);
 
     test_subst();
     test_join();
-    test_split();
     test_path_exists();
     test_qx();
 }
@@ -33,22 +32,6 @@ sub test_path_exists() {
 
 sub test_join() {
     is('a,b,c,d,e,f', join(',', ('a','b','c','d','e','f')), 'join works');
-}
-
-sub test_split() {
-    my @stuff := split('/', '1/5/7');
-    is(@stuff,    3, 'split produces the correct result count');
-    is(@stuff[0], 1, 'split produces correct result values');
-    is(@stuff[1], 5, 'split produces correct result values');
-    is(@stuff[2], 7, 'split produces correct result values');
-
-    my @things := split(':', ':a::b:');
-    is(@things,    5,   'split produces the correct result count');
-    is(@things[0], '',  'split produces correct result values');
-    is(@things[1], 'a', 'split produces correct result values');
-    is(@things[2], '',  'split produces correct result values');
-    is(@things[3], 'b', 'split produces correct result values');
-    is(@things[4], '',  'split produces correct result values');
 }
 
 sub test_subst() {

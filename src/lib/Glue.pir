@@ -41,7 +41,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
     # String basics
     $joined := join($delimiter, @strings);
-    @pieces := split($delimiter, $original);
 
     # Global variables;
     my $*EXECUTABLE_NAME;
@@ -586,24 +585,6 @@ Join C<@strings> together with the specified C<$delimiter>.
     joined = join delim, strings
 
     .return (joined)
-.end
-
-
-=item @pieces := split($delimiter, $original)
-
-Split the C<$original> string with the specified C<$delimiter>, which is not
-included in the resulting C<@pieces>.
-
-=cut
-
-.sub 'split'
-    .param string delim
-    .param string original
-
-    .local pmc pieces
-    pieces = split delim, original
-
-    .return (pieces)
 .end
 
 
