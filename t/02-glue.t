@@ -17,10 +17,9 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(14);
+    plan(13);
 
     test_subst();
-    test_join();
     test_path_exists();
     test_qx();
 }
@@ -28,10 +27,6 @@ sub run_tests () {
 sub test_path_exists() {
     ok( path_exists('.'),            'path_exists finds .');
     nok(path_exists('DOESNOTEXIST'), 'path_exists returns false for nonexistent files');
-}
-
-sub test_join() {
-    is('a,b,c,d,e,f', join(',', ('a','b','c','d','e','f')), 'join works');
 }
 
 sub test_subst() {

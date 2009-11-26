@@ -441,7 +441,7 @@ sub install_required_projects (@projects) {
     my @need_projects := %resolutions<need_project>;
 
     if (@need_projects) {
-        my $need_projects := join(', ', @need_projects);
+        my $need_projects := pir::join(', ', @need_projects);
         say("\nInstalling other projects to satisfy dependencies:\n"
             ~ "    $need_projects\n");
 
@@ -456,19 +456,19 @@ sub show_dependencies (@projects) {
 
     say('');
 
-    my $have_bin     := join(' ', %resolutions<have_bin>);
+    my $have_bin     := pir::join(' ', %resolutions<have_bin>);
     say("Resolved by system binaries: $have_bin");
 
-    my $have_project := join(' ', %resolutions<have_project>);
+    my $have_project := pir::join(' ', %resolutions<have_project>);
     say("Resolved by Parrot projects: $have_project");
 
-    my $need_bin     := join(' ', %resolutions<need_bin>);
+    my $need_bin     := pir::join(' ', %resolutions<need_bin>);
     say("Missing system binaries:     $need_bin");
 
-    my $need_project := join(' ', %resolutions<need_project>);
+    my $need_project := pir::join(' ', %resolutions<need_project>);
     say("Missing Parrot projects:     $need_project");
 
-    my $need_unknown := join(' ', %resolutions<need_unknown>);
+    my $need_unknown := pir::join(' ', %resolutions<need_unknown>);
     say("Missing and unrecognized:    $need_unknown");
 
     if $need_unknown {
@@ -495,7 +495,7 @@ sub show_dependencies (@projects) {
 }
 
 sub mark_projects_installed (@projects) {
-    my $lines := join("\n", @projects) ~ "\n";
+    my $lines := pir::join("\n", @projects) ~ "\n";
     my $file  := replace_config_strings(%*CONF<installed_list_file>);
 
     append($file, $lines);

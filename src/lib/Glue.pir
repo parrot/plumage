@@ -39,9 +39,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     @names  := readdir($directory);
     $path   := fscat(@path_parts [, $filename]);
 
-    # String basics
-    $joined := join($delimiter, @strings);
-
     # Global variables;
     my $*EXECUTABLE_NAME;
     my $*PROGRAM_NAME;
@@ -566,23 +563,6 @@ so don't do that).
     joined .= sep
     joined .= filename
   no_filename:
-
-    .return (joined)
-.end
-
-
-=item $joined := join($delimiter, @strings)
-
-Join C<@strings> together with the specified C<$delimiter>.
-
-=cut
-
-.sub 'join'
-    .param string delim
-    .param pmc    strings
-
-    .local string joined
-    joined = join delim, strings
 
     .return (joined)
 .end
