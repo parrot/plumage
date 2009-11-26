@@ -18,7 +18,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
     # Exceptions
     die($message);
-    try(&code, @args [, &handler]);
 
     # OO and types
     $does_role := does($object, $role);
@@ -215,43 +214,6 @@ Kill program, reporting error C<$message>.
     .param string message
 
     die message
-.end
-
-
-=item $ret := try(&code, @args [, &handler])
-
-Call C<&code> with flattened C<@args>.  If there are any exceptions, catch
-them and invoke C<&handler> with the exception, C<&code>, and C<@args>.
-If C<&handler> is absent, simply return C<0> if an exception is caught.
-In other words, C<try()> implements the following pseudocode:
-
-    try        { $ret := &code(|@args)                                }
-    catch($ex) { $ret := &handler ?? &handler($ex, &code, @args) !! 0 }
-    return $ret;
-
-=cut
-
-.sub 'try'
-    .param pmc code
-    .param pmc args
-    .param pmc handler :optional
-    .param int has_handler :opt_flag
-
-    push_eh do_handler
-    $P0 = code(args :flat)
-    pop_eh
-    .return ($P0)
-
-  do_handler:
-    .local pmc ex
-    .get_results (ex)
-    pop_eh
-    eq has_handler, 0, no_handler
-    $P0 = handler(ex, code, args)
-    .return ($P0)
-
-  no_handler:
-    .return (0)
 .end
 
 
