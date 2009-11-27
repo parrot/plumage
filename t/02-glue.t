@@ -54,7 +54,7 @@ sub test_qx() {
     is(qx(''), '', 'qx("") returns an empty string');
 
     $output := qx('IHOPETHATTHISPATHDOESNOTEXISTANDISEXECUTABLEANDRETURNSTRUE');
-    like($output, ':s not found','qx() on invalid path returns not found error');
+    like($output, ':s not (found|recognized)','qx() on invalid path returns not found error');
     isnt($!, 0, '... and the exit status is non-zero');
 
     $output := qx($*EXECUTABLE_NAME, '-e', '"say(42); pir::exit(0)"');
