@@ -1,21 +1,24 @@
 ###
-### HACKS
+### NQP WORKAROUND HACKS
 ###
 
 
-# NQP bug XXXX: Must redeclare PIR globals because the NQP parser can't
-#               know about variables created at load_bytecode time.
+# Must redeclare PIR globals because the NQP parser doesn't know about
+# variables created at load_bytecode time.
 my $*PROGRAM_NAME;
 my @*ARGS;
 my %*ENV;
 my %*VM;
 my $*OS;
 
-# Need to load helper libraries before even eval() is available
+
+# NQP does not include a setting, so must load helper libraries before
+# even eval() will be available
 load_helper_libraries();
 
-# NQP doesn't support array or hash literals, so parse main structure
-# from JSON and then fix up values that can't be represented in JSON.
+
+# NQP doesn't support hash literals, so parse main structure from JSON
+# and then fix up values that can't be represented in JSON.
 #
 # NOTE: The data_json parser is very strict!  No extra commas, pedantic
 #       quoting, the works.  Whitespace is perhaps your only freedom.
@@ -94,6 +97,7 @@ our %OPT;
 
 my %*CONF;
 my %*BIN;
+
 
 sub load_helper_libraries () {
     # Support OO
