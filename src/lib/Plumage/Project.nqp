@@ -305,7 +305,7 @@ method install () {
         my $success := self."install_{%inst<type>}"();
 
         if $success {
-            mark_projects_installed([$!name]);
+            Plumage::Dependencies.mark_projects_installed([$!name]);
         }
 
         return $success;
