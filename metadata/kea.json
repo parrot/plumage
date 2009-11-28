@@ -1,0 +1,53 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "kea",
+        "abstract" : "Factor on Parrot",
+        "authority": "git://github.com/leto",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "The Perl Foundation",
+        "generated_by"     : "Jonathan 'Duke' Leto <jonathan@leto.net>",
+        "keywords"         : ["kea", "factor", "stack-based", "HLL"],
+        "description"      : "Kea is Factor, a practical stack language, on Parrot"
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["kea", "factor"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "configure": [],
+            "build"    : [],
+            "test"     : [],
+            "install"  : [],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/leto/kea.git",
+             "browser_uri" : "http://github.com/leto/kea",
+             "project_uri" : "http://github.com/leto/kea"
+        }
+    }
+}
