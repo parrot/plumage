@@ -19,8 +19,9 @@ Util.nqp - Utility functions for NQP and Plumage
     @reversed := @array.reverse;
 
     # Basics
-    @mapped  := map( &code, @originals);
-    @matches := grep(&code, @all)
+    @mapped  := map(   &code, @originals);
+    @matches := grep(  &code, @all);
+    $result  := reduce(&code, @array, $initial?);
 
     # General
     %set := set_from_array(@array);
@@ -46,6 +47,7 @@ functionality expected for Perl 6 Hashes.
 
 module Hash {
 
+
 =begin
 
 =over 4
@@ -64,6 +66,7 @@ Return a true value if C<$key> exists in C<%hash>, or a false value otherwise.
         };
     }
 
+
 =begin
 
 =item @keys := %hash.keys
@@ -78,6 +81,7 @@ Return all the C<@keys> in the C<%hash> as an unordered array.
         @keys;
     }
 
+
 =begin
 
 =item @values := %hash.values
@@ -91,6 +95,7 @@ Return all the C<@values> in the C<%hash> as an unordered array.
         for self { @values.push($_.value); }
         @values;
     }
+
 
 =begin
 
@@ -108,6 +113,7 @@ when iterating over key and value simultaneously:
         for self { @kv.push($_.key); @kv.push($_.value); }
         @kv;
     }
+
 
 =begin
 
@@ -129,6 +135,7 @@ functionality expected for Perl 6 Hashes.
 
 module Array {
 
+
 =begin
 
 =over 4
@@ -144,6 +151,7 @@ Return a C<@reversed> copy of the C<@array>.
         for self { @reversed.unshift($_); }
         @reversed;
     }
+
 
 =begin
 
@@ -183,6 +191,7 @@ sub map (&code, @originals) {
     return @mapped;
 }
 
+
 =begin
 
 =item @matches := grep(&code, @all)
@@ -201,6 +210,67 @@ sub grep (&code, @all) {
 
     return @matches;
 }
+
+
+=begin
+
+=item $result := reduce(&code, @array, $initial?)
+
+Loop over the C<@array>, applying the binary function C<&code> to the current
+C<$result> and next element of the C<@array>, each time saving the return
+value of the C<&code> as the new C<$result>.  When all elements of the array
+have been processed, the last C<$result> computed is returned.
+
+If an C<$initial> value is supplied, it is used as the starting value for
+C<$result> when iterating over the C<@array>.  This automatically works with
+any length C<@array>, even an empty one.
+
+Without an C<$initial> value, C<reduce()> applies the C<&code> to the first two
+elements in the C<@array> to determine the inital C<$result> (and skips these
+first two elements when looping).  If the C<@array> has only one element, it
+is returned directly as the final C<$result>.  If the C<@array> is empty, the
+C<$result> is an undefined value.
+
+=end
+
+sub reduce (&code, @array, *@initial) {
+    my    $init_elems := pir::elements(@initial);
+    if    $init_elems >  1 {
+        pir::die("Only one initial value allowed in reduce()");
+    }
+    elsif $init_elems == 1 {
+        return _reduce(&code, @array, @initial[0]);
+    }
+    else {
+        my    $array_elems := pir::elements(@array);
+        if    $array_elems == 0 {
+            return my $undef;
+        }
+        elsif $array_elems == 1 {
+            return @array[0];
+        }
+        else {
+            my $initial := &code(@array[0], @array[1]);
+            my $iter    := pir::iter__PP(@array);
+
+            pir::shift($iter);
+            pir::shift($iter);
+
+            return _reduce(&code, $iter, $initial);
+        }
+    }
+}
+
+sub _reduce(&code, $iter, $initial) {
+    my $result := $initial;
+
+    for $iter {
+        $result := &code($result, $_);
+    }
+
+    return $result;
+}
+
 
 =begin
 
@@ -279,6 +349,7 @@ sub find_program ($program) {
     return '';
 }
 
+
 =begin
 
 =item mkpath($directory_path)
@@ -300,6 +371,7 @@ sub mkpath ($path) {
         }
     }
 }
+
 
 =begin
 
@@ -337,6 +409,7 @@ sub test_dir_writable($dir) {
     }
 }
 
+
 =begin
 
 =item $home := user_home_dir()
@@ -348,6 +421,7 @@ Determine the user's home directory in the proper platform-dependent manner.
 sub user_home_dir() {
     return (%*ENV<HOMEDRIVE> // '') ~ %*ENV<HOME>;
 }
+
 
 =begin
 
@@ -410,6 +484,7 @@ sub config_value ($match) {
 
     return $config;
 }
+
 
 =begin
 
