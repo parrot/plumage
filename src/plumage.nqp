@@ -335,6 +335,10 @@ included in the Parrot Plumage source tree.
 
 sub command_projects () {
     my @projects := Plumage::Metadata.get_project_list();
+       @projects.sort;
+
+    my @lengths  := map(-> $a { pir::length($a) }, @projects);
+    my $max_len  := reduce(-> $a, $b { $a >= $b ?? $a !! $b }, @lengths);
 
     say("\nKnown projects:\n");
 
@@ -348,11 +352,11 @@ sub command_projects () {
             if %general {
                 my $abstract := %general<abstract>;
 
-                $desc := " - $abstract" if $abstract;
+                $desc := "  $abstract" if $abstract;
             }
         }
 
-        say("    $project$desc");
+        say(pir::sprintf__SsP("    %-{$max_len}s%s", [$project, $desc]));
     }
 
     say('');
