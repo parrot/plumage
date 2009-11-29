@@ -1,0 +1,52 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "steme",
+        "abstract" : "Scheme for Parrot",
+        "authority": "http://github.com/tene",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "MIT/X11",
+            "uri"  : "http://www.opensource.org/licenses/mit-license.php"
+        },
+        "copyright_holder" : "Stephen Weeks",
+        "generated_by"     : "distutils",
+        "keywords"         : ["scheme", "lisp"],
+        "description"      : "Scheme for Parrot"
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["steme"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "build"    : [],
+            "test"     : ["perl5"],
+            "install"  : [],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/tene/steme.git",
+             "browser_uri" : "http://github.com/tene/steme",
+             "project_uri" : "http://github.com/tene/steme"
+        }
+    }
+}
