@@ -39,6 +39,9 @@ Metadata:
   * CPAN meta spec trying to avoid this (or at least delay to spec 3.0)
 * Collect all phase-specific metadata into one deeper tree?
   * CPAN metadata spec likely to go this route
+* Error conditions
+  * Everything currently implemented in Plumage::Metadata
+  * 'update' instructions without 'fetch'
 * general
   * Easy way to reference CREDITS file in contributors key?
   * Repo fetches from tip have version 'HEAD'
