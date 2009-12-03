@@ -36,6 +36,10 @@ has $!name;
 has $!metadata;
 has $!source_dir;
 
+method name       () { $!name       }
+method metadata   () { $!metadata   }
+method source_dir () { $!source_dir }
+
 
 # CONSTRUCTION
 
