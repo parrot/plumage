@@ -1,0 +1,71 @@
+=begin
+
+=head1 Adding a New Command
+
+Read on if you would like to add a new command to Plumage, so that the
+user can say C<plumage foo> for some new C<foo>.
+
+
+=head2 Before You Start
+
+Make sure that any new I<functionality> exists in the C<Plumage::*>
+libraries, so that it can be accessed by scripts or any UI.  This document
+only explains how to expose I<existing> library functionality through the
+default CLI interface.
+
+
+=head2 Base Implementation
+
+To add a new command to the C<plumage> command-line tool, you will currently
+need to update F<src/plumage.nqp> in three places:
+
+=over 4
+
+=item * Add a new F<command_> sub implementing the new command at a logical spot in the C<COMMANDS> section.
+
+=item * Add a new entry to C<$_COMMANDS_JSON> near the top of the file to enable the new command.
+
+=item * Update the C<usage_info> sub at the top of the C<COMMANDS> section so that the user can find it.
+
+=back
+
+
+=head2 Tests
+
+You should also add tests for your new command in the F<t/> directory.
+There should be at least four kinds of tests for every command:
+
+=over 4
+
+=item Null tests
+
+The command should do something sane (usually complain to the user) if it
+requires arguments but none were provided.
+
+=item Fuzz tests
+
+The command should behave itself and error out when presented with bad
+arguments.
+
+=item Environment tests
+
+The command should similarly behave itself when presented with a bad
+environment (bad permissions, incorrect settings, invalid state info, etc.).
+This could mean erroring out, or it could mean fixing the problem (with
+appropriate user notification).
+
+=item Correctness tests
+
+Of course, given correct arguments and a valid environment, the command
+should actually do what claims to do.
+
+=back
+
+
+=head2 Documentation
+
+The F<plumage> command line tool does not currently have a full manpage;
+when it does, you will need to add documentation for your command there
+as well.
+
+=end
