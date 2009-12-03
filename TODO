@@ -91,6 +91,8 @@ Plumage:
 * Hosting:
   * allison looking into parrot.org
   * moritz gave access to a Debian Lenny box
+* UIs:
+  * Interactive mode
 * Functionality:
   * Magic local directory project name ('this') -- WIP
   * Read meta from repo after fetch/patch/configure
@@ -109,13 +111,14 @@ Plumage:
     * handle needing to HOMEDRIVE ~ HOME on Win32
   * Official metadata spec validator tool (module?), with test suite
   * Use Plumage's Configure.nqp and test harness for project config/test
-  * Anything proto can do
+  * Anything proto can do, and more
     * Meaningful exit codes
     * Quiet modes: Log, Silent, Verbose
       * If progress bars, use N * Width / (N + Width) to determine length
       * Interaction with sudo?
       * Other prompts?
     * Create new project helper
+    * 'show build dir' command
     * 'showstate' command (show build and install status) (WIP)
     * 'update' command (falls back to default based on fetch or clean/fetch)
     * 'uninstall' or 'remove' command
@@ -128,9 +131,11 @@ Plumage:
       * Configure.p6
       * Configure
     * 'test' action using (recursive) 'prove' directly
+    * 'smoke' action
     * 'all' pseudo-project
       * 'install all' is probably scaling out of reasonable range now
       * But 'update all' is reasonable
+    * Make source tarball and native packages
 * Spec:
   * Add Stakeholders section
   * Add Usage Scenarios section
