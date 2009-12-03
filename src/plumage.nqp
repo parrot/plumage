@@ -44,6 +44,10 @@ my  $_COMMANDS_JSON := '
         "action" : "command_info",
         "args"   : "project"
     },
+    "project-dir" : {
+        "action" : "command_project_dir",
+        "args"   : "project"
+    },
     "showdeps"   : {
         "action" : "command_showdeps",
         "args"   : "project"
@@ -298,19 +302,20 @@ Options:
 
 Commands:
 
-    projects             List all known projects
-    status   [<project>] Show status of projects (defaults to all)
-    info      <project>  Print info about a particular project
-    showdeps  <project>  Show dependency resolution for a project
+    projects                List all known projects
+    status      [<project>] Show status of projects (defaults to all)
+    info         <project>  Print info about a particular project
+    showdeps     <project>  Show dependency resolution for a project
+    project-dir  <project>  Print project's top directory
 
-    fetch     <project>  Download source for a project
-    configure <project>  Configure source for project (fetches first)
-    build     <project>  Build project from source (configures first)
-    test      <project>  Test built project (builds first)
-    install   <project>  Installs built project files (tests first)
+    fetch        <project>  Download source for a project
+    configure    <project>  Configure source for project (fetches first)
+    build        <project>  Build project from source (configures first)
+    test         <project>  Test built project (builds first)
+    install      <project>  Installs built project files (tests first)
 
-    version              Print program version and copyright
-    usage                Print this usage info
+    version                 Print program version and copyright
+    usage                   Print this usage info
 ";
 }
 
@@ -417,6 +422,19 @@ sub command_showdeps (@projects) {
 
     unless $unknown_project {
         show_dependencies(@projects);
+    }
+}
+
+
+sub command_project_dir (@projects) {
+    unless (@projects) {
+        say('Please include the name of the project you wish to find.');
+    }
+
+    for @projects -> $project_name {
+        my $project := Plumage::Project.new($project_name);
+
+        say($project.source_dir) if pir::defined__IP($project);
     }
 }
 
