@@ -6,14 +6,14 @@
     "general"      : {
         "name"     : "decnum-dynpmcs",
         "abstract" : "Set of decimal arithmetic PMCs for the Parrot VM",
-        "authority": "unknown",
+        "authority": "http://code.google.com/u/arbelo/",
         "version"  : "HEAD",
         "license"  : {
             "type" : "MIT",
             "uri"  : "http://www.opensource.org/licenses/mit-license.php"
         },
         "copyright_holder" : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
-        "generated_by"     : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
+        "generated_by"     : "distutils",
         "keywords"         : ["pmc", "decnumber", "dynpmc", "decimal"],
         "description"      : "decNumber-powered BigNum and BigInt dynpmcs for Parrot"
     },
@@ -21,35 +21,31 @@
         "fetch"    : {
             "type" : "repository"
         },
-        "configure": {
-            "type" : "parrot_configure"
-        },
         "build"    : {
-            "type" : "make"
+            "type" : "parrot_setup"
         },
         "test"     : {
-            "type" : "make"
+            "type" : "parrot_setup"
         },
         "install"  : {
-            "type" : "make"
+            "type" : "parrot_setup"
         }
     },
     "dependency-info"  : {
         "provides"     : ["decnum-dynpmcs"],
         "requires"     : {
             "fetch"    : ["svn"],
-            "configure": ["perl5"],
-            "build"    : ["perl5", "make"],
-            "test"     : ["perl5", "make"],
-            "install"  : ["make"],
+            "build"    : [],
+            "test"     : ["perl5"],
+            "install"  : [],
             "runtime"  : []
         }
     },
     "resources"            : {
         "repository"       : {
              "type"        : "svn",
-             "checkout_uri": "http://decnum-dynpmcs.googlecode.com/svn/trunk",
-             "browser_uri" : "http://code.google.com/p/decnum-dynpmcs/source/browse",
+             "checkout_uri": "http://decnum-dynpmcs.googlecode.com/svn/trunk/",
+             "browser_uri" : "http://code.google.com/p/decnum-dynpmcs/source/browse/",
              "project_uri" : "http://code.google.com/p/decnum-dynpmcs/"
         }
     }
