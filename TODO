@@ -150,6 +150,11 @@ Plumage:
       * ExtUtils::PkgConfig exists ...
     * Generate .pc files if module install type does not automatically do so
     * Hmmm, seems to be some fail here WRT standardizing lib names ...
+* Documentation
+  * Hacking docs (WIP)
+  * Manpage
+  * FAQ
+    * Relationship between plumage and distutils/make/etc.
 * Test Suite
   * Figure out how to mock svn/git repos so that build/fetch/test/configure
     steps can be tested
