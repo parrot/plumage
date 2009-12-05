@@ -96,7 +96,6 @@ MAIN();
 ###
 
 
-our %STAGES;
 our %OPT;
 
 my %*CONF;
@@ -224,18 +223,6 @@ sub find_binaries () {
     %*BIN<git>   := find_program('git');
 }
 
-sub build_stages () {
-    my @stages := pir::split(' ', 'install test build configure fetch');
-
-    for @stages -> $stage {
-        %STAGES{$stage} := [];
-
-        for %STAGES {
-            $_.value.unshift($stage);
-        }
-    }
-}
-
 
 ###
 ### MAIN
@@ -246,7 +233,6 @@ sub MAIN () {
     parse_command_line_options();
     read_config_files();
     find_binaries();
-    build_stages();
 
     my $command := parse_command_line();
 
@@ -441,27 +427,27 @@ sub command_project_dir (@projects) {
 
 sub command_fetch (@projects) {
        install_required_projects(@projects)
-    && perform_actions_on_projects(%STAGES<fetch>, @projects);
+    && perform_actions_on_projects(@projects, :up_to('fetch'));
 }
 
 sub command_configure (@projects) {
        install_required_projects(@projects)
-    && perform_actions_on_projects(%STAGES<configure>, @projects);
+    && perform_actions_on_projects(@projects, :up_to('configure'));
 }
 
 sub command_build (@projects) {
        install_required_projects(@projects)
-    && perform_actions_on_projects(%STAGES<build>, @projects);
+    && perform_actions_on_projects(@projects, :up_to('build'));
 }
 
 sub command_test (@projects) {
        install_required_projects(@projects)
-    && perform_actions_on_projects(%STAGES<test>, @projects);
+    && perform_actions_on_projects(@projects, :up_to('test'));
 }
 
 sub command_install (@projects) {
        install_required_projects(@projects)
-    && perform_actions_on_projects(%STAGES<install>, @projects);
+    && perform_actions_on_projects(@projects, :up_to('install'));
 }
 
 
@@ -474,7 +460,7 @@ sub install_required_projects (@projects) {
         say("\nInstalling other projects to satisfy dependencies:\n"
             ~ "    $need_projects\n");
 
-        return perform_actions_on_projects(%STAGES<install>, @need_projects);
+        return perform_actions_on_projects(@need_projects, :up_to('install'));
     }
 
     return 1;
@@ -524,11 +510,7 @@ sub show_dependencies (@projects) {
 }
 
 
-sub perform_actions_on_projects (@actions, @projects) {
-    my $cwd        := cwd();
-    my $build_root := replace_config_strings(%*CONF<plumage_build_root>);
-    mkpath($build_root);
-
+sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
     my $has_ignore_flag := %OPT.exists('ignore-fail');
     my %ignore          := %OPT<ignore-fail>;
     my $ignore_all      := $has_ignore_flag && !%ignore;
@@ -536,13 +518,10 @@ sub perform_actions_on_projects (@actions, @projects) {
     for @projects -> $project_name {
         my $project := Plumage::Project.new($project_name);
         if pir::defined__IP($project) {
-            chdir($build_root);
-            my $success := $project.perform_actions(@actions,
-                                                    :ignore_all($ignore_all),
-                                                    :ignore(%ignore));
-            chdir($cwd);
-
-            return 0 unless $success;
+            return 0 unless $project.perform_actions(:up_to($up_to),
+                                                     :actions(@actions),
+                                                     :ignore_all($ignore_all),
+                                                     :ignore(%ignore));
         }
     }
 

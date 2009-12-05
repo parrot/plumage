@@ -16,7 +16,7 @@ Plumage::Project - A project, its metadata, and its state
     my $project := Plumage::Project.new('this');      # By current directory
 
     # Perform multiple actions on a project in sequence, stopping on failure
-    $project.perform_actions(@actions, :$ignore_all, :%ignore);
+    $project.perform_actions(:$up_to, :@actions, :$ignore_all, :%ignore);
 
     # Perform individual actions on a project
     $project.fetch;
@@ -117,7 +117,34 @@ method _find_source_dir($start_dir?) {
 ### ACTIONS
 ###
 
-method perform_actions (@actions, :$ignore_all, :%ignore) {
+sub _build_stages () {
+    our %STAGES;
+    my @stages := pir::split(' ', 'install test build configure fetch');
+
+    for @stages -> $stage {
+        %STAGES{$stage} := [];
+
+        for %STAGES {
+            $_.value.unshift($stage);
+        }
+    }
+}
+
+method _actions_up_to ($stage) {
+    our %STAGES;
+    _build_stages();
+
+    return %STAGES{$stage};
+}
+
+method perform_actions (:$up_to, :@actions, :$ignore_all, :%ignore) {
+    if $up_to && @actions {
+        die("Cannot specify both up_to and actions in perform_actions()");
+    }
+    elsif $up_to {
+        @actions := self._actions_up_to($up_to);
+    }
+
     for @actions -> $action {
         if self.HOW.can(self, $action) {
            my $cwd    := cwd();
@@ -152,6 +179,11 @@ method perform_actions (@actions, :$ignore_all, :%ignore) {
 method fetch () {
     my %fetch := $!metadata.metadata<instructions><fetch>;
     if %fetch {
+        my $build_root := replace_config_strings(%*CONF<plumage_build_root>);
+
+        mkpath($build_root) if !is_dir($build_root)
+                            && pir::index($!source_dir, $build_root) == 0;
+
         return self."fetch_{%fetch<type>}"();
     }
     else {
@@ -209,6 +241,34 @@ method report_fetch_collision ($type) {
         ~ "Please remove or rename it, then rerun $*PROGRAM_NAME.\n");
 
     return 0;
+}
+
+
+# UPDATE
+
+method update () {
+    my %update := $!metadata.metadata<instructions><update>;
+    if %update {
+        return self."update_{%update<type>}"();
+    }
+    else {
+        # Fall back to standard FETCH semantics
+        return self.fetch;
+    }
+}
+
+method update_repository () {
+    my %repo := $!metadata.metadata<resources><repository>;
+    if %repo {
+        say("Updating $!name ...");
+
+        # Reuse existing FETCH logic
+        return self."fetch_{%repo<type>}"();
+    }
+    else {
+        say("Trying to update from a repository, but no repository info for $!name.");
+        return 0;
+    }
 }
 
 
