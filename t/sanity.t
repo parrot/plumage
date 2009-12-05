@@ -94,7 +94,7 @@ sub test_plumage_no_args() {
 
 sub test_plumage_fetch_no_args() {
     my $output := qx($PLUMAGE, 'fetch');
-    like($output, ':s Please include the name of the project you wish info for', 'plumage fetch no args');
+    like($output, ':s Please specify a project to act on.', 'plumage fetch no args');
 }
 
 
