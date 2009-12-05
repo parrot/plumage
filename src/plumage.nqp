@@ -121,13 +121,9 @@ sub load_helper_libraries () {
     # Data structure dumper for PMCs (used for debugging)
     pir::load_bytecode('dumper.pbc');
 
-    # Plumage metadata module
+    # Plumage modules: metadata, project, dependencies
     pir::load_bytecode('src/lib/Plumage/Metadata.pbc');
-
-    # Plumage project module
     pir::load_bytecode('src/lib/Plumage/Project.pbc');
-
-    # Plumage project module
     pir::load_bytecode('src/lib/Plumage/Dependencies.pbc');
 }
 
@@ -251,7 +247,7 @@ sub execute_command ($command) {
 
     if ($action) {
         if $args eq 'project' && !@*ARGS {
-            say('Please include the name of the project you wish info for.');
+            say('Please specify a project to act on.');
         }
         else {
             $action(@*ARGS);
