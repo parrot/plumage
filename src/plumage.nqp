@@ -53,23 +53,23 @@ my  $_COMMANDS_JSON := '
         "args"   : "project"
     },
     "fetch"      : {
-        "action" : "command_fetch",
+        "action" : "command_project_action",
         "args"   : "project"
     },
     "configure"  : {
-        "action" : "command_configure",
+        "action" : "command_project_action",
         "args"   : "project"
     },
     "build"      : {
-        "action" : "command_build",
+        "action" : "command_project_action",
         "args"   : "project"
     },
     "test"       : {
-        "action" : "command_test",
+        "action" : "command_project_action",
         "args"   : "project"
     },
     "install"    : {
-        "action" : "command_install",
+        "action" : "command_project_action",
         "args"   : "project"
     }
 }
@@ -250,7 +250,7 @@ sub execute_command ($command) {
             say('Please specify a project to act on.');
         }
         else {
-            $action(@*ARGS);
+            $action(@*ARGS, :command($command));
         }
     }
     else {
@@ -421,29 +421,9 @@ sub command_project_dir (@projects) {
 }
 
 
-sub command_fetch (@projects) {
+sub command_project_action (@projects, :$command) {
        install_required_projects(@projects)
-    && perform_actions_on_projects(@projects, :up_to('fetch'));
-}
-
-sub command_configure (@projects) {
-       install_required_projects(@projects)
-    && perform_actions_on_projects(@projects, :up_to('configure'));
-}
-
-sub command_build (@projects) {
-       install_required_projects(@projects)
-    && perform_actions_on_projects(@projects, :up_to('build'));
-}
-
-sub command_test (@projects) {
-       install_required_projects(@projects)
-    && perform_actions_on_projects(@projects, :up_to('test'));
-}
-
-sub command_install (@projects) {
-       install_required_projects(@projects)
-    && perform_actions_on_projects(@projects, :up_to('install'));
+    && perform_actions_on_projects(@projects, :up_to($command));
 }
 
 
