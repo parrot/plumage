@@ -13,6 +13,8 @@ libraries, so that it can be accessed by scripts or any UI.  This document
 only explains how to expose I<existing> library functionality through the
 default CLI interface.
 
+If the new command is a project action, first follow the instructions to
+L<Add a New Project Action|add-action.pod> before coming back here.
 
 =head2 Base Implementation
 
@@ -28,6 +30,11 @@ need to update F<src/plumage.nqp> in three places:
 =item * Update the C<usage_info> sub at the top of the C<COMMANDS> section so that the user can find it.
 
 =back
+
+If the command is a project action, you can skip the first step above and
+simply reuse C<command_project_action()>, which provides default behavior
+for any project action.  You will still need to do the remaining steps above,
+of course.
 
 
 =head2 Tests

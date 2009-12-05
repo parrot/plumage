@@ -64,9 +64,10 @@ one of us will review them and commit or reply with comments.
 With your first patch or commit, please add yourself to the CREDITS file.
 
 To contribute code right now you will want to be familiar with both the
-NQP and PIR languages.  Our metadata is stored as JSON, which should be
-fairly easy to understand, but currently the Parrot JSON parser is rather
-picky, so it helps to be pedantic if it's whining at you.
+NQP and PIR languages, though over time PIR expertise becomes less important
+as we replace old PIR code with NQP.  Our metadata is stored as JSON, which
+should be fairly easy to understand, but currently the Parrot JSON parser is
+rather picky, so it helps to be pedantic if it's whining at you.
 
 Our code layout conventions match those in most common use on the Parrot
 project, and are all relatively common sense.
@@ -77,6 +78,10 @@ Fundamentally, our committer rules boil down to the same ones Parrot uses:
   Rule 2: Increase the awesome.
 
 (chromatic++ for these.)
+
+Several common tasks (such as adding new commands to plumage) have by now
+become sufficiently regular that we have documented the usual workflow.
+Check the docs/hacking/ directory for more details.
 
 
 LICENSE
