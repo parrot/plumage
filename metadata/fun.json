@@ -1,0 +1,52 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "fun",
+        "abstract" : "An even happier Joy",
+        "authority": "http://github.com/TiMBuS",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "GPL 3.0",
+            "uri"  : "http://www.opensource.org/licenses/gpl-3.0.html"
+        },
+        "copyright_holder" : "Jarrod Miller",
+        "generated_by"     : "distutils",
+        "keywords"         : [],
+        "description"      : "An even happier Joy"
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["fun"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "build"    : [],
+            "test"     : ["perl5"],
+            "install"  : [],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/TiMBuS/fun.git",
+             "browser_uri" : "http://github.com/TiMBuS/fun",
+             "project_uri" : "http://github.com/TiMBuS/fun"
+        }
+    }
+}
