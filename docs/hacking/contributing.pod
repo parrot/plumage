@@ -1,0 +1,47 @@
+=begin
+
+=head1 Contributing
+
+=head2 Getting Started
+
+First, read through our short L<Internal Design|design-internals.pod> document
+to get an idea of what things go where.  After that, you might want to take a
+look at some of the more detailed documents in the F<docs/hacking/> directory;
+several tasks (such as adding new commands to F<plumage>) have by now become
+sufficiently regular that we have documented the usual workflow.
+
+To contribute code right now you will want to be familiar with both the
+NQP and PIR languages, though over time PIR expertise becomes less important
+as we replace old PIR code with NQP.  Our metadata is stored as JSON, which
+should be fairly easy to understand, but currently the Parrot JSON parser is
+rather picky, so it helps to be pedantic if it's whining at you.
+
+
+=head2 The Rules
+
+(Don't worry, there aren't many.)
+
+Fundamentally, our committer rules boil down to the same ones Parrot uses:
+
+  Rule 1: Don't break the build.
+  Rule 2: Increase the awesome.
+
+(C<chromatic++> for these.)
+
+Our code layout conventions match those in most common use on the Parrot
+project, and are all relatively common sense.  If you have any questions,
+just ask.
+
+
+=head2 Submitting Your Changes
+
+Commit bits are given freely to those who have sent in a signed CLA to the
+Parrot project; just ping C<japhb> on C<#parrot> at C<irc.parrot.org> and ask.
+If you prefer, you are welcome to clone the git repository and send patches --
+one of us will review them and commit or reply with comments.
+
+With your first patch or commit, please add yourself to the F<CREDITS> file.
+
+And that's it.  Welcome to Plumage, we're happy to have you!
+
+=end

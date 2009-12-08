@@ -1,0 +1,94 @@
+=begin
+
+=head1 Internal Design
+
+Plumage is designed as a set of layered libraries providing the bulk of
+its functionality underneath a thin, replaceable user interface layer.
+At this time, Plumage ships with only one default interface, the F<plumage>
+command line tool.
+
+The Plumage stack currently looks like this:
+
+    ,---------------------------------------------------.
+    |                User Interface                     |
+    |  ,------------------.  ,-----------------------.  |
+    |  | Plumage::Project |  | Plumage::Dependencies |  |
+    |  |  ,---------------+--+--------------------.  |  |
+    |  |  |         Plumage::Metadata             |  |  |
+    +--+--+---------------------------------------+--+--+
+    |                  Util / Glue                      |
+    +---------------------------------------------------+
+    |   Parrot Libraries    | Parrot Languages          |
+    |                       |                           |
+    |   * dumper            | * NQP-rx                  |
+    |   * P6object          | * PIR                     |
+    |   * Getopt::Obj       | * PGE::Perl6Regex         |
+    |   * Config::JSON      | * data_json               |
+    `---------------------------------------------------'
+
+It is intended that as Plumage's functionality grows, more libraries (and
+probably more layers) will be added in the C<Plumage::*> namespace.  There
+has also been some discussion of moving C<Util> and C<Glue> or their
+functional equivalents into NQP-rx as standard available libraries.
+Finally, the C<PGE::Perl6Regex> dependency will eventually go away, once
+the regex libraries in NQP-rx pick up the last couple pieces of missing PGE
+functionality.
+
+
+=head1 Component Overviews
+
+The following sections give a mild overview of each major component,
+from the C<Util / Glue> layer on up.  There are some additional details
+for particular pieces available in other documents; these are noted below.
+For even more detail, read the source or visit C<#parrot> on C<irc.parrot.org>,
+and we'll be happy to help you.
+
+
+=head2 Util and Glue
+
+These two components work together to provide a very simple library of common
+functions to all of the layers above them.  These range from functional
+constructs like C<grep>, C<map>, and C<reduce>, to portable system utilities
+like C<find_program>, C<mkpath>, and C<qx>, to generally useful tools like
+C<eval>, C<slurp>, and C<subst>.
+
+In addition, C<Glue> provides the magic that sets up the "interpreter globals",
+such as C<$*PROGRAM_NAME>, C<@*ARGS>, and C<%*VM>.
+
+
+=head2 Plumage::Metadata
+
+All of the logic to load, parse, and validate Plumage metadata is concentrated
+in this module; it is also responsible for performing searches and queries on
+the metadata collection.
+
+
+=head2 Plumage::Project
+
+This module collects the important information about a project in one place
+-- metadata, project directory, and so on.  It also contains the logic for
+performing actions on a project, such as fetching the source, building binaries,
+and running tests.
+
+Adding a new action to the available project actions is described in the
+L<Adding a New Project Action|add-action.pod> document.
+
+
+=head2 Plumage::Dependencies
+
+Plumage projects can have many interlocking dependencies, both to other Plumage
+projects and to external items such as system binaries and standard build tools.
+This module contains the dependency solver that makes sense of the web of
+dependencies and determines what must be done to resolve all unmet dependencies.
+
+
+=head2 User Interface
+
+The user interface is intended to be as thin as possible, merely containing the
+necessary logic to perform directly user-facing functions such as parsing the
+user's input, showing feedback, displaying query results, and giving help.
+
+Adding a new command to the F<plumage> command line tool is described in the
+L<Adding a New Command|add-command.pod> document.
+
+=end
