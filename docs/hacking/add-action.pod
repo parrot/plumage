@@ -1,6 +1,6 @@
 =begin
 
-=head1 Add a New Project Action
+=head1 Adding a New Project Action
 
 Read on if you want to add a new action that can be performed on a project
 according to instructions found in its metadata.  If you're looking to add
