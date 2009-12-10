@@ -114,8 +114,20 @@ method get_installed_projects () {
 
 
 method mark_projects_installed (@projects) {
-    my $lines := pir::join("\n", @projects) ~ "\n";
-    my $file  := replace_config_strings(%*CONF<installed_list_file>);
+    my $lines     := pir::join("\n", @projects) ~ "\n";
+    my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
 
-    append($file, $lines);
+    append($inst_file, $lines);
+}
+
+
+method mark_projects_uninstalled (@projects) {
+    my %uninst    := set_from_array(@projects);
+    my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
+    my $contents  := slurp($inst_file);
+    my @remaining := grep(-> $_ { ?$_ && !%uninst{$_}},
+                          pir::split("\n", $contents));
+    my $lines     := pir::join("\n", @remaining) ~ "\n";
+
+    spew($inst_file, $lines);
 }
