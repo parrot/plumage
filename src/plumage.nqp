@@ -375,12 +375,16 @@ sub command_projects () {
 }
 
 
-sub command_status () {
-    my @projects  := Plumage::Metadata.get_project_list();
+sub command_status (@projects) {
+    my $showing_all := !@projects;
+
+    unless @projects {
+        @projects := Plumage::Metadata.get_project_list();
+        say("\nKnown projects:\n");
+    }
+
     my @installed := Plumage::Dependencies.get_installed_projects();
     my %installed := set_from_array(@installed);
-
-    say("\nKnown projects:\n");
 
     for @projects -> $project {
         my $status := %installed{$project} ?? 'installed' !! '-';
@@ -388,7 +392,7 @@ sub command_status () {
         say($output);
     }
 
-    say('');
+    say('') if $showing_all;
 }
 
 
