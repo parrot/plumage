@@ -142,7 +142,7 @@ method perform_actions (:$up_to, :@actions, :$ignore_all, :%ignore) {
         die("Cannot specify both up_to and actions in perform_actions()");
     }
     elsif $up_to {
-        @actions := self._actions_up_to($up_to);
+        @actions := self._actions_up_to($up_to) || [$up_to];
     }
 
     for @actions -> $action {
