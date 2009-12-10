@@ -23,8 +23,9 @@ Util.nqp - Utility functions for NQP and Plumage
     @matches := grep(  &code, @all);
     $result  := reduce(&code, @array, $initial?);
 
-    # General
-    %set := set_from_array(@array);
+    # Containers
+    %hash := hash(:key1(value1), :key2(value2), ...);
+    %set  := set_from_array(@array);
 
     # Duct tape
     $binary_path := find_program($program);
@@ -274,13 +275,25 @@ sub _reduce(&code, $iter, $initial) {
 
 =begin
 
-=head2 General Utilities
+=head2 Container Coercions
 
-While these would not exist in the Perl 6 setting, they are still generally
-useful for NQP programs because NQP syntax is considerably more wordy than
-Perl 6.  DRY thus applies.
+These functions create a container of a desired type from one or more
+containers of another type.  While some of these would not exist in the Perl 6
+setting, they are still generally useful for NQP programs because NQP syntax is
+considerably more wordy than Perl 6.  DRY thus applies.
 
 =over 4
+
+=item %hash := hash(:key1(value1), :key2(value2), ...)
+
+Coerce a list of pairs into a hash.
+
+=end
+
+sub hash (*%h) { return %h }
+
+
+=begin
 
 =item %set := set_from_array(@array)
 
