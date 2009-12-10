@@ -27,6 +27,8 @@ Plumage::Project - A project, its metadata, and its state
     $project.smoke;
     $project.install;
     $project.uninstall;
+    $project.clean;
+    $project.realclean;
 
 
 =head1 DESCRIPTION
@@ -472,3 +474,61 @@ method do_with_privs (*@cmd) {
         return do_run(|@cmd);
     }
 }
+
+
+# CLEAN
+
+method clean () {
+    my %clean := $!metadata.metadata<instructions><clean>;
+    if %clean {
+        say("\nCleaning $!name ...");
+
+        chdir($!source_dir);
+
+        return self."clean_{%clean<type>}"();
+    }
+    else {
+        say("\nNo clean method found for $!name.");
+        return 1;
+    }
+}
+
+method clean_make () {
+    return do_run(%*BIN<make>, 'clean');
+}
+
+method clean_rake () {
+    return do_run(%*BIN<rake>, 'clean');
+}
+
+method clean_parrot_setup () {
+    return do_run(%*BIN<parrot>, 'setup.pir', 'clean');
+}
+
+
+
+# REALCLEAN
+
+method realclean () {
+    my %realclean := $!metadata.metadata<instructions><realclean>;
+    if %realclean {
+        say("\nRealcleaning $!name ...");
+
+        chdir($!source_dir);
+
+        return self."realclean_{%realclean<type>}"();
+    }
+    else {
+        say("\nNo realclean method found for $!name.");
+        return 1;
+    }
+}
+
+method realclean_make () {
+    return do_run(%*BIN<make>, 'realclean');
+}
+
+method realclean_rake () {
+    return do_run(%*BIN<rake>, 'clobber');
+}
+
