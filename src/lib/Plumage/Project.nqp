@@ -24,6 +24,7 @@ Plumage::Project - A project, its metadata, and its state
     $project.configure;
     $project.build;
     $project.test;
+    $project.smoke;
     $project.install;
     $project.uninstall;
 
@@ -368,6 +369,32 @@ method test_rake () {
 
 method test_parrot_setup () {
     return do_run(%*BIN<parrot>, 'setup.pir', 'test');
+}
+
+
+# SMOKE
+
+method smoke () {
+    my %smoke := $!metadata.metadata<instructions><smoke>;
+    if %smoke {
+        say("\nSmoke testing $!name ...");
+
+        chdir($!source_dir);
+
+        return self."smoke_{%smoke<type>}"();
+    }
+    else {
+        say("\nNo smoke test method found for $!name.");
+        return 1;
+    }
+}
+
+method smoke_make () {
+    return do_run(%*BIN<make>, 'smoke');
+}
+
+method smoke_parrot_setup () {
+    return do_run(%*BIN<parrot>, 'setup.pir', 'smoke');
 }
 
 
