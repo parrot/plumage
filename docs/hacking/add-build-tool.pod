@@ -1,0 +1,74 @@
+=begin
+
+=head1 Adding a New Build Tool
+
+There are a great many build tools in the wild, from F<make> to F<Build>,
+F<rake> to F<distutils>.  Each of these has its own conventions, command
+structure, and so on.  This document describes the steps necessary to add
+support for a new build tool to Plumage.
+
+
+=head2 System Program Location
+
+If the tool requires a system program not yet known to Plumage, you will need
+to add a line to the C<find_binaries()> sub at the end of the C<INIT> section
+of F<src/plumage.nqp> to cache the location of the new binary.  There are three
+stanzas to choose from, each finding programs using a different technique:
+
+=over 4
+
+=item *
+
+Programs installed with parrot
+
+=item *
+
+Programs used to build parrot
+
+=item *
+
+Miscellaneous programs in the user's search path
+
+=back
+
+
+=head2 Build Tool Type Name
+
+Each build tool is identified in the metadata by a unique type name matching
+C</^[a-z][a-z0-9_]*[a-z0-9]$/>.  For unique or cross-language tools, the type
+name is generally just the lowercase name of the build tool; C<make> and
+C<rake> use this convention.  If this might be ambiguous, or the tool depends
+on an unrelated program, a more specific name can be used; C<perl5_build> and
+C<parrot_setup> are examples of this.
+
+Please discuss your suggested new build type name with the Plumage development
+team before committing to the new name -- we'd prefer not to have to change
+it after users have already started depending on it.
+
+
+=head2 Specific Action Methods
+
+For each project action in F<src/lib/Plumage/Project.nqp> that the new build
+tool supports, you will need to add specific action methods to implement that
+action using the new tool.  These are named with the base action method name
+and the build tool's type name separated by an underscore.  For example, to
+support Parrot's F<setup.pir> tool, with the type name C<parrot_setup>, we
+added new methods named C<build_parrot_setup()>, C<test_parrot_setup()>, and
+so on.  Each of these must return 1 for success and 0 for failure.
+
+
+=head2 Documentation
+
+XXXX: SPECULATIVE
+
+Add a new entry to the list of supported build tools, and describe the tool
+in more detail, along with any special features or limitations of the Plumage
+support in the C<DESCRIPTION> section of F<src/lib/Plumage/Project.nqp>'s POD.
+
+
+=head2 Tests
+
+C<Plumage::Project> does not have a test suite yet.
+
+
+=end
