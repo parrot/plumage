@@ -25,6 +25,7 @@ Plumage::Project - A project, its metadata, and its state
     $project.build;
     $project.test;
     $project.install;
+    $project.uninstall;
 
 
 =head1 DESCRIPTION
@@ -403,6 +404,34 @@ method install_rake () {
 
 method install_parrot_setup () {
     return self.do_with_privs(%*BIN<parrot>, 'setup.pir', 'install');
+}
+
+
+# UNINSTALL
+
+method uninstall () {
+    my %uninst := $!metadata.metadata<instructions><uninstall>;
+    if %uninst {
+        say("\nUninstalling $!name ...");
+
+        chdir($!source_dir);
+
+        my $success := self."uninstall_{%uninst<type>}"();
+
+        if $success {
+            Plumage::Dependencies.mark_projects_uninstalled([$!name]);
+        }
+
+        return $success;
+    }
+    else {
+        say("Don't know how to uninstall $!name.");
+        return 0;
+    }
+}
+
+method uninstall_parrot_setup () {
+    return self.do_with_privs(%*BIN<parrot>, 'setup.pir', 'uninstall');
 }
 
 method do_with_privs (*@cmd) {
