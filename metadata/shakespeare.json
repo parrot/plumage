@@ -1,0 +1,51 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "shakespeare",
+        "abstract" : "The Shakespeare Programming Language, on Parrot",
+        "authority": "http://bitbucket.org/riffraff/",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "BEER-WARE LICENSE",
+        },
+        "copyright_holder" : "Parrot Foundation",
+        "generated_by"     : "distutils",
+        "keywords"         : [],
+        "description"      : "The Shakespeare Programming Language, on Parrot"
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["shakespeare"],
+        "requires"     : {
+            "fetch"    : ["hg"],
+            "build"    : [],
+            "test"     : ["perl5"],
+            "install"  : [],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "hg",
+             "checkout_uri": "http://bitbucket.org/riffraff/shakespeare-parrot/",
+             "browser_uri" : "http://bitbucket.org/riffraff/shakespeare-parrot/src/",
+             "project_uri" : "http://bitbucket.org/riffraff/shakespeare-parrot/"
+        }
+    }
+}
