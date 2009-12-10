@@ -208,13 +208,17 @@ sub find_binaries () {
     my %conf       := %*VM<config>;
     my $parrot_bin := %conf<bindir>;
 
+    # Parrot programs; must be sourced from configured parrot bin directory
     %*BIN<parrot_config> := fscat([$parrot_bin], 'parrot_config');
     %*BIN<parrot-nqp>    := fscat([$parrot_bin], 'parrot-nqp');
     %*BIN<parrot>        := fscat([$parrot_bin], 'parrot');
 
+    # Programs used to build parrot; make sure we use the same ones
     %*BIN<perl5> := %conf<perl>;
     %*BIN<make>  := %conf<make>;
 
+    # Unrelated system programs; look for them in the user's search path
+    %*BIN<rake>  := find_program('rake');
     %*BIN<svn>   := find_program('svn');
     %*BIN<git>   := find_program('git');
 }
