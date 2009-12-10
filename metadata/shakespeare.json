@@ -9,7 +9,7 @@
         "authority": "http://bitbucket.org/riffraff/",
         "version"  : "HEAD",
         "license"  : {
-            "type" : "BEER-WARE LICENSE",
+            "type" : "BEER-WARE LICENSE"
         },
         "copyright_holder" : "Parrot Foundation",
         "generated_by"     : "distutils",
