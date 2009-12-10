@@ -20,6 +20,7 @@ Plumage::Project - A project, its metadata, and its state
 
     # Perform individual actions on a project
     $project.fetch;
+    $project.update;
     $project.configure;
     $project.build;
     $project.test;
@@ -289,6 +290,10 @@ method configure () {
     }
 }
 
+method configure_rake () {
+    return do_run(%*BIN<rake>, 'config');
+}
+
 method configure_perl5_configure () {
     my $extra := $!metadata.metadata<instructions><configure><extra_args>;
     my @extra := map(replace_config_strings, $extra);
@@ -305,7 +310,7 @@ method configure_nqp_configure () {
 }
 
 
-# MAKE
+# BUILD
 
 method build () {
     my %build := $!metadata.metadata<instructions><build>;
@@ -324,6 +329,10 @@ method build () {
 
 method build_make () {
     return do_run(%*BIN<make>);
+}
+
+method build_rake () {
+    return do_run(%*BIN<rake>);
 }
 
 method build_parrot_setup () {
@@ -350,6 +359,10 @@ method test () {
 
 method test_make () {
     return do_run(%*BIN<make>, 'test');
+}
+
+method test_rake () {
+    return do_run(%*BIN<rake>, 'test');
 }
 
 method test_parrot_setup () {
@@ -382,6 +395,10 @@ method install () {
 
 method install_make () {
     return self.do_with_privs(%*BIN<make>, 'install');
+}
+
+method install_rake () {
+    return self.do_with_privs(%*BIN<rake>, 'install');
 }
 
 method install_parrot_setup () {
