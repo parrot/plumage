@@ -226,7 +226,7 @@ method fetch_hg () {
     if path_exists($!source_dir) {
         if path_exists(fscat([$!source_dir, '.hg'])) {
             chdir($!source_dir);
-            return do_run(%*BIN<hg>, 'pull');
+            return do_run(%*BIN<hg>, 'pull', '-u');
         }
         else {
             return self.report_fetch_collision('Mercurial');
