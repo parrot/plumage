@@ -227,6 +227,23 @@ method fetch_git () {
     }
 }
 
+method fetch_hg () {
+    if path_exists($!source_dir) {
+        if path_exists(fscat([$!source_dir, '.hg'])) {
+            chdir($!source_dir);
+            return do_run(%*BIN<hg>, 'pull');
+        }
+        else {
+            return self.report_fetch_collision('Mercurial');
+        }
+    }
+    else {
+        my $uri := $!metadata.metadata<resources><repository><checkout_uri>;
+
+        return do_run(%*BIN<hg>, 'clone', $uri, $!source_dir);
+    }
+}
+
 method fetch_svn () {
     if  path_exists($!source_dir)
     && !path_exists(fscat([$!source_dir, '.svn'])) {

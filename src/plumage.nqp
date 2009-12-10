@@ -56,6 +56,10 @@ my  $_COMMANDS_JSON := '
         "action" : "command_project_action",
         "args"   : "project"
     },
+    "update"     : {
+        "action" : "command_project_action",
+        "args"   : "project"
+    },
     "configure"  : {
         "action" : "command_project_action",
         "args"   : "project"
@@ -68,7 +72,23 @@ my  $_COMMANDS_JSON := '
         "action" : "command_project_action",
         "args"   : "project"
     },
+    "smoke"      : {
+        "action" : "command_project_action",
+        "args"   : "project"
+    },
     "install"    : {
+        "action" : "command_project_action",
+        "args"   : "project"
+    },
+    "uninstall"  : {
+        "action" : "command_project_action",
+        "args"   : "project"
+    },
+    "clean"      : {
+        "action" : "command_project_action",
+        "args"   : "project"
+    },
+    "realclean"  : {
         "action" : "command_project_action",
         "args"   : "project"
     }
@@ -221,6 +241,7 @@ sub find_binaries () {
     %*BIN<rake>  := find_program('rake');
     %*BIN<svn>   := find_program('svn');
     %*BIN<git>   := find_program('git');
+    %*BIN<hg>    := find_program('hg');
 }
 
 
