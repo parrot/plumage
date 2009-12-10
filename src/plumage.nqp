@@ -309,18 +309,26 @@ Options:
 
 Commands:
 
+  Query metadata/project info:
     projects                List all known projects
     status      [<project>] Show status of projects (defaults to all)
     info         <project>  Print info about a particular project
     showdeps     <project>  Show dependency resolution for a project
     project-dir  <project>  Print project's top directory
 
-    fetch        <project>  Download source for a project
-    configure    <project>  Configure source for project (fetches first)
-    build        <project>  Build project from source (configures first)
-    test         <project>  Test built project (builds first)
-    install      <project>  Installs built project files (tests first)
+  Perform actions on a project:
+    fetch        <project>  Download source
+    update       <project>  Update source                (falls back to fetch)
+    configure    <project>  Configure source             (updates first)
+    build        <project>  Build project from source    (configures first)
+    test         <project>  Test built project           (builds first)
+    smoke        <project>  Smoke test project           (builds first)
+    install      <project>  Install built files          (tests first)
+    uninstall    <project>  Uninstalls installed files   (not always available)
+    clean        <project>  Clean source tree
+    realclean    <project>  Clobber/realclean source tree
 
+  Get info about Plumage itself:
     version                 Print program version and copyright
     usage                   Print this usage info
 ";
