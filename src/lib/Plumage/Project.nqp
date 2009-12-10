@@ -119,7 +119,7 @@ method _find_source_dir($start_dir?) {
 
 sub _build_stages () {
     our %STAGES;
-    my @stages := pir::split(' ', 'install test build configure fetch');
+    my @stages := pir::split(' ', 'install test build configure update');
 
     for @stages -> $stage {
         %STAGES{$stage} := [];
@@ -209,7 +209,8 @@ method fetch_git () {
     if path_exists($!source_dir) {
         if path_exists(fscat([$!source_dir, '.git'])) {
             chdir($!source_dir);
-            return do_run(%*BIN<git>, 'pull');
+            return do_run(%*BIN<git>, 'pull')
+                && do_run(%*BIN<git>, < submodule update --init --recursive >);
         }
         else {
             return self.report_fetch_collision('Git');
@@ -218,7 +219,10 @@ method fetch_git () {
     else {
         my $uri := $!metadata.metadata<resources><repository><checkout_uri>;
 
-        return do_run(%*BIN<git>, 'clone', $uri, $!source_dir);
+        return 0 unless do_run(%*BIN<git>, 'clone', $uri, $!source_dir);
+
+        chdir($!source_dir);
+        return do_run(%*BIN<git>, < submodule update --init --recursive >);
     }
 }
 
@@ -265,7 +269,8 @@ method report_fetch_collision ($type) {
 
 method update () {
     my %update := $!metadata.metadata<instructions><update>;
-    if %update {
+
+    if %update && path_exists($!source_dir) {
         return self."update_{%update<type>}"();
     }
     else {
@@ -286,6 +291,10 @@ method update_repository () {
         say("Trying to update from a repository, but no repository info for $!name.");
         return 0;
     }
+}
+
+method update_parrot_setup () {
+    return do_run(%*BIN<parrot>, 'setup.pir', 'update');
 }
 
 
