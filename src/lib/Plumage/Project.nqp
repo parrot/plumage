@@ -80,14 +80,9 @@ method _init($locator) {
     elsif $!metadata.find_by_project_name($locator) {
         $!source_dir := fscat([$build_root], $locator);
     }
-    else {
-        say("I don't know anything about project '$locator'.");
-        return $undef;
-    }
 
     unless $!metadata.is_valid {
-        say("Could not read project metadata for locator '$locator':\n"
-            ~ $!metadata.error);
+        say($!metadata.error);
         return $undef;
     }
 

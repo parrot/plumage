@@ -161,9 +161,16 @@ C<get_project_list>.
 =end
 
 method find_by_project_name ($project_name) {
-    my $meta_dir := replace_config_strings(%*CONF<plumage_metadata_dir>);
+    my $meta_dir  := replace_config_strings(%*CONF<plumage_metadata_dir>);
+    my $meta_file := fscat([$meta_dir], "$project_name.json");
 
-    return self.load_from_file(fscat([$meta_dir], "$project_name.json"));
+    unless path_exists($meta_file) {
+        $!error    := "I don't know anything about project '$project_name'.";
+        %!metadata := 0;
+        return 0;
+    }
+
+    return self.load_from_file($meta_file);
 }
 
 
