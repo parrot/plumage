@@ -117,22 +117,26 @@ method _find_source_dir($start_dir?) {
 ### ACTIONS
 ###
 
-sub _build_stages () {
+sub _build_stage_paths () {
     our %STAGES;
-    my @stages := pir::split(' ', 'install test build configure update');
 
-    for @stages -> $stage {
+    # All stages in install path require their predecessors
+    my  @install_path := pir::split(' ', 'install test build configure update');
+    for @install_path -> $stage {
         %STAGES{$stage} := [];
 
         for %STAGES {
             $_.value.unshift($stage);
         }
     }
+
+    # Smoke test requires same path as regular test
+    %STAGES<smoke> := %STAGES<test>;
 }
 
 method _actions_up_to ($stage) {
     our %STAGES;
-    _build_stages();
+    _build_stage_paths();
 
     return %STAGES{$stage};
 }
@@ -552,4 +556,3 @@ method realclean_make () {
 method realclean_rake () {
     return do_run(%*BIN<rake>, 'clobber');
 }
-
