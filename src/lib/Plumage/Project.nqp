@@ -504,6 +504,11 @@ method do_with_privs (*@cmd) {
 # CLEAN
 
 method clean () {
+    unless path_exists($!source_dir) {
+        say("\nProject source dir '$!source_dir' does not exist; nothing to do.");
+	return 1;
+    }
+
     my %clean := $!metadata.metadata<instructions><clean>;
     if %clean {
         say("\nCleaning $!name ...");
@@ -535,6 +540,11 @@ method clean_parrot_setup () {
 # REALCLEAN
 
 method realclean () {
+    unless path_exists($!source_dir) {
+        say("\nProject source dir '$!source_dir' does not exist; nothing to do.");
+	return 1;
+    }
+
     my %realclean := $!metadata.metadata<instructions><realclean>;
     if %realclean {
         say("\nRealcleaning $!name ...");
