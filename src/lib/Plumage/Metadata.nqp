@@ -279,14 +279,28 @@ method metadata_instruction_types_known () {
         return 0;
     }
 
-    # XXXX: This needs to be stricter, and offer suggestions
-    for %inst.keys -> $stage {
-        my $type   := %inst{$stage}<type>;
-        my $exists := Plumage::Project.HOW.can(Plumage::Project,
-                                               "{$stage}_$type");
+    my @known_actions := Plumage::Project.known_actions;
+    my %valid_action  := set_from_array(@known_actions);
 
+    for %inst.keys -> $action {
+        unless %valid_action{$action} {
+            $!error := "I don't understand project action '$action'."
+                       ~ "  I only know about these actions:\n    "
+                       ~ pir::join(' ', @known_actions);
+            return 0;
+        }
+
+        my $type := %inst{$action}<type>;
+        unless $type {
+            $!error := "This project's '$action' action has no type.";
+            return 0;
+        }
+
+        my $exists := Plumage::Project.HOW.can(Plumage::Project,
+                                               "{$action}_$type");
         unless $exists {
-            $!error := "I don't understand $stage type '$type'.";
+            # XXXX: It would be useful if this listed known types also.
+            $!error := "I don't understand $action type '$type'.";
             return 0;
         }
     }

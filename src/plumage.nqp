@@ -417,7 +417,7 @@ sub command_info (@projects) {
             _dumper($meta.metadata, 'INFO');
         }
         else {
-            say("I don't know anything about project '$project'.");
+            report_metadata_error($project, $meta);
         }
     }
 }
@@ -434,7 +434,7 @@ sub command_showdeps (@projects) {
         my $valid := $meta.find_by_project_name($project);
 
         unless $valid {
-            say("I don't know anything about project '$project'.");
+            report_metadata_error($project, $meta);
             $unknown_project := 1;
         }
     }
@@ -442,6 +442,10 @@ sub command_showdeps (@projects) {
     unless $unknown_project {
         show_dependencies(@projects);
     }
+}
+
+sub report_metadata_error ($project_name, $meta) {
+    say("Metadata error for project '$project_name':\n" ~ $meta.error);
 }
 
 

@@ -15,6 +15,9 @@ Plumage::Project - A project, its metadata, and its state
     my $project := Plumage::Project.new('git/foo');   # By specific directory
     my $project := Plumage::Project.new('this');      # By current directory
 
+    # Get list of valid actions
+    my @actions := Plumage::Project.known_actions;
+
     # Perform multiple actions on a project in sequence, stopping on failure
     $project.perform_actions(:$up_to, :@actions, :$ignore_all, :%ignore);
 
@@ -113,9 +116,16 @@ method _find_source_dir($start_dir?) {
     return $source_dir;
 }
 
+
 ###
 ### ACTIONS
 ###
+
+method known_actions () {
+    return grep(-> $_ {self.HOW.can(self, $_)},
+                < fetch update configure build test smoke
+                  install uninstall clean realclean >);
+}
 
 sub _build_stage_paths () {
     our %STAGES;
@@ -149,8 +159,10 @@ method perform_actions (:$up_to, :@actions, :$ignore_all, :%ignore) {
         @actions := self._actions_up_to($up_to) || [$up_to];
     }
 
+    my %valid := set_from_array(self.known_actions);
+
     for @actions -> $action {
-        if self.HOW.can(self, $action) {
+        if %valid{$action} {
            my $cwd    := cwd();
            my $result := self."$action"();
            chdir($cwd);
@@ -506,7 +518,7 @@ method do_with_privs (*@cmd) {
 method clean () {
     unless path_exists($!source_dir) {
         say("\nProject source dir '$!source_dir' does not exist; nothing to do.");
-	return 1;
+        return 1;
     }
 
     my %clean := $!metadata.metadata<instructions><clean>;
@@ -542,7 +554,7 @@ method clean_parrot_setup () {
 method realclean () {
     unless path_exists($!source_dir) {
         say("\nProject source dir '$!source_dir' does not exist; nothing to do.");
-	return 1;
+        return 1;
     }
 
     my %realclean := $!metadata.metadata<instructions><realclean>;
