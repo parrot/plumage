@@ -5,7 +5,7 @@
     },
     "general"      : {
         "name"     : "parrot-linear-algebra",
-        "abstract" : "Linear Algebra Package for Parrot VM.",
+        "abstract" : "Linear Algebra Package for Parrot VM",
         "authority": "http://github.com/Whiteknight",
         "version"  : "HEAD",
         "license"  : {
@@ -13,37 +13,44 @@
             "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
         },
         "copyright_holder" : "Blair Sutton and Andrew Whitworth",
-        "generated_by"     : "Daniel Arbelo Arrocha <arbelo@gmail.com>",
-        "keywords"         : ["matrix", "linear", "algebra", "gsl", 
-                              "atlas", "blas", "cblas"],
+        "generated_by"     : "distutils",
+        "keywords"         : ["matrix", "linear", "algebra", "gsl", "atlas", "blas", "cblas"],
         "description"      : "Linear Algebra Package for Parrot VM."
     },
     "instructions" : {
         "fetch"    : {
             "type" : "repository"
         },
-        "configure": {
-            "type" : "nqp_configure"
+        "update"    : {
+            "type" : "parrot_setup"
         },
         "build"    : {
-            "type" : "make"
+            "type" : "parrot_setup"
+        },
+        "clean"    : {
+            "type" : "parrot_setup"
         },
         "test"     : {
-            "type" : "make"
+            "type" : "parrot_setup"
+        },
+        "smoke"     : {
+            "type" : "parrot_setup"
         },
         "install"  : {
-            "type" : "make"
+            "type" : "parrot_setup"
+        },
+        "uninstall"  : {
+            "type" : "parrot_setup"
         }
     },
     "dependency-info"  : {
-        "provides"     : ["matrixy", "m"],
+        "provides"     : ["parrot-linear-algebra"],
         "requires"     : {
             "fetch"    : ["git"],
-            "configure": ["perl5"],
-            "build"    : ["perl5", "make"],
-            "test"     : ["perl5", "make"],
-            "install"  : ["make"],
-            "runtime"  : [""]
+            "build"    : [],
+            "test"     : ["perl5"],
+            "install"  : [],
+            "runtime"  : []
         }
     },
     "resources"            : {
