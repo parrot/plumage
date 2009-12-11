@@ -49,11 +49,20 @@ failure (0) as appropriate.
 =back
 
 
+=head2 Known Actions List
+
+Before the new action is considered valid, it must be added to the known
+actions list in the C<known_actions()> method at the top of the C<ACTIONS>
+section.  Before this is done, metadata referring to the new action will
+be considered invalid, and C<perform_actions()> will not recognize new
+action.
+
+
 =head2 Documentation
 
-Add an entry for the new action to the C<SYNOPSIS>, and then add a section
-for the new action with more details in the C<DESCRIPTION> section of the
-POD.
+Add an entry for the new action to the C<SYNOPSIS> (in the same order you
+used when creating the new code section), and then add a section for the
+new action with more details in the C<DESCRIPTION> section of the POD.
 
 
 =head2 Tests
