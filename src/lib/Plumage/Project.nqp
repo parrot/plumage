@@ -226,7 +226,8 @@ method fetch_git () {
         if path_exists(fscat([$!source_dir, '.git'])) {
             chdir($!source_dir);
             return do_run(%*BIN<git>, 'pull')
-                && do_run(%*BIN<git>, < submodule update --init --recursive >);
+                && do_run(%*BIN<git>, 'submodule', 'update',
+		                      '--init', '--recursive');
         }
         else {
             return self.report_fetch_collision('Git');
