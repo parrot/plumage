@@ -226,8 +226,7 @@ method fetch_git () {
         if path_exists(fscat([$!source_dir, '.git'])) {
             chdir($!source_dir);
             return do_run(%*BIN<git>, 'pull')
-                && do_run(%*BIN<git>, 'submodule', 'update',
-		                      '--init', '--recursive');
+                && do_run(%*BIN<git>, 'submodule', 'update', '--init');
         }
         else {
             return self.report_fetch_collision('Git');
@@ -239,7 +238,7 @@ method fetch_git () {
         return 0 unless do_run(%*BIN<git>, 'clone', $uri, $!source_dir);
 
         chdir($!source_dir);
-        return do_run(%*BIN<git>, < submodule update --init --recursive >);
+        return do_run(%*BIN<git>, 'submodule', 'update', '--init');
     }
 }
 
@@ -311,6 +310,8 @@ method update_repository () {
 }
 
 method update_parrot_setup () {
+    chdir($!source_dir);
+
     return do_run(%*BIN<parrot>, 'setup.pir', 'update');
 }
 
