@@ -450,6 +450,7 @@ method install () {
         my $success := self."install_{%inst<type>}"();
 
         if $success {
+	    $!metadata.save_install_copy;
             Plumage::Dependencies.mark_projects_installed([$!name]);
         }
 
@@ -486,6 +487,7 @@ method uninstall () {
         my $success := self."uninstall_{%uninst<type>}"();
 
         if $success {
+	    $!metadata.remove_install_copy;
             Plumage::Dependencies.mark_projects_uninstalled([$!name]);
         }
 

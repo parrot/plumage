@@ -26,6 +26,11 @@ Plumage::Metadata - Project metadata: find it, parse it, query it
     my $valid := $meta.load_from_file($metadata_file_path);
     my $valid := $meta.load_from_string($serialized_metadata);
 
+    # Saved Copy (written after install)
+    my $save_file := $meta.install_copy_path;
+    $meta.save_install_copy;
+    $meta.remove_install_copy;
+
 
 =head1 DESCRIPTION
 
@@ -307,3 +312,68 @@ method metadata_instruction_types_known () {
 
     return 1;
 }
+
+
+=begin
+
+=head2 Saved Copy
+
+=over 4
+
+=item $save_file := $meta.install_copy_path()
+
+Return the file path for the metadata copy saved after install.
+
+=end
+
+method saved_copy_path () {
+    my $meta_root := _saved_copy_root();
+    my $copy_path := fscat([$meta_root],
+                           pir::downcase(%!metadata<general><name>) ~ '.json');
+
+    return $copy_path;
+}
+
+sub _saved_copy_root () {
+    return replace_config_strings(%*CONF<saved_metadata_root>);
+}
+
+
+=begin
+
+=item $meta.save_install_copy()
+
+Save a copy of the metadata as a JSON file in the location specified by
+C<$meta.install_copy_path()>, usually because the project was successfully
+installed.
+
+=end
+
+method save_install_copy () {
+    mkpath(_saved_copy_root());
+
+    Config::JSON::WriteConfig(%!metadata, self.saved_copy_path);
+}
+
+
+=begin
+
+=item $meta.remove_install_copy()
+
+Remove the metadata copy created by C<$meta.save_install_copy()>, usually
+because the associated project was successfully uninstalled.
+
+=end
+
+method remove_install_copy () {
+    my $path := self.saved_copy_path;
+
+    unlink($path) if path_exists($path);
+}
+
+
+=begin
+
+=back
+
+=end
