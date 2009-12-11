@@ -28,7 +28,7 @@ Metadata:
 * Formalize experimental metadata 'namespace'
   * Ignored by validators (except still syntactically valid JSON)
   * Ignored by clients that don't recognize them
-  * Guaranteed never to class with future official metadata
+  * Guaranteed never to clash with future official metadata
   * Keys beginning with x- or X-
 * Define recognized version number strings, and how to compare them
   * Including wildcards, subsets, and ranges
@@ -97,9 +97,7 @@ Plumage:
 * UIs:
   * Interactive mode
 * Functionality:
-  * Magic local directory project name ('this') -- WIP
   * Read meta from repo after fetch/patch/configure
-  * Cache copy of final meta at install time for later query
   * Help
     * Real manpage
     * help command
@@ -121,10 +119,7 @@ Plumage:
       * Interaction with sudo?
       * Other prompts?
     * Create new project helper
-    * 'show build dir' command
     * 'showstate' command (show build and install status) (WIP)
-    * 'update' command (falls back to default based on fetch or clean/fetch)
-    * 'uninstall' or 'remove' command
     * 'wipeout' or 'purge' command -- uninstall and uncache
     * 'fetch' able to do owner-clone for git repos
       * User able to specify list of authorities they have commitbits for?
@@ -134,7 +129,6 @@ Plumage:
       * Configure.p6
       * Configure
     * 'test' action using (recursive) 'prove' directly
-    * 'smoke' action
     * 'all' pseudo-project
       * 'install all' is probably scaling out of reasonable range now
       * But 'update all' is reasonable
@@ -168,8 +162,6 @@ Plumage:
   * Recommendations ("optional dependencies") should not abort top-level
     install if they fail to install
   * rake madness (from Cardinal):
-    * rake clobber
-    * git pull
     * PARROT_CONFIG={{parrot_dir whatever}}/parrot_config rake cardinal
     * rake test:all
 * Suggestions from proto-ng team
