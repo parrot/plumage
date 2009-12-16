@@ -158,7 +158,7 @@ sub fixup_commands ($commands) {
 }
 
 sub parse_command_line_options () {
-    my $getopts := Q:PIR{ %r = root_new ['parrot';'Getopt';'Obj'] };
+    my $getopts := Q:PIR{ %r = root_new ['parrot';'Getopt::Obj'] };
 
     $getopts.push_string('config-file=s');
     $getopts.push_string('ignore-fail:%');
