@@ -66,7 +66,7 @@ clean: FORCE
 	        src/lib/Plumage/Dependencies.pir \
 	        "src/*.c" "src/*$(O)" src/plumage$(EXE) plumage$(EXE) Makefile
 
-test: FORCE
+test: FORCE all
 	$(PARROT_NQP) t/harness t/*.t
 
 # Local variables:
