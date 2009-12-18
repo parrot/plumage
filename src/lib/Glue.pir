@@ -11,13 +11,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     # Other languages
     $result := eval($source_code, $language);
 
-    # I/O
-    print('things', ' to ', 'print', ...);
-    say(  'things', ' to ', 'say',   ...);
-    $contents := slurp($filename);
-    spew(  $filename, $contents);
-    append($filename, $contents);
-
     # Regular expressions
     $regex_object := rx($regex_source);
     @matches := all_matches($regex, $text);
@@ -60,88 +53,6 @@ returning the C<$result> of executing the compiled code.
     $P0      = compiled()
 
     .return ($P0)
-.end
-
-
-=item print('things', ' to ', 'print', ...)
-
-Print a list of strings to standard output.
-
-=cut
-
-.sub 'print'
-    .param pmc strings :slurpy
-
-    .local pmc it
-    it = iter strings
-  print_loop:
-    unless it goto print_end
-    $P0 = shift it
-    print $P0
-    goto print_loop
-  print_end:
-.end
-
-
-=item say('things', ' to ', 'say', ...)
-
-Print a list of strings to standard output, followed by a newline.
-
-=cut
-
-.sub 'say'
-    .param pmc strings :slurpy
-
-    .tailcall 'print'(strings :flat, "\n")
-.end
-
-
-=item $contents := slurp($filename)
-
-Read the C<$contents> of a file as a single string.
-
-=cut
-
-.sub 'slurp'
-    .param string filename
-    .local string contents
-
-    $P0 = open filename, 'r'
-    contents = $P0.'readall'()
-    close $P0
-    .return(contents)
-.end
-
-
-=item spew($filename, $contents)
-
-Write the string C<$contents> to a file.
-
-=cut
-
-.sub 'spew'
-    .param string filename
-    .param string contents
-
-    $P0 = open filename, 'w'
-    $P0.'print'(contents)
-    close $P0
-.end
-
-
-=item append($filename, $contents)
-
-Append the string C<$contents> to a file.
-
-=cut
-
-.sub 'append'
-    .param string filename
-    .param string contents
-
-    $P0 = open filename, 'a'
-    $P0.'print'(contents)
-    close $P0
 .end
 
 
