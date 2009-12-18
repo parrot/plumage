@@ -23,12 +23,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     @matches := all_matches($regex, $text);
     $edited := subst($original, $regex, $replacement);
 
-    # Filesystems and paths
-    @info   := stat($path);
-    $found  := path_exists($path);
-    $is_dir := is_dir($path);
-    $path   := fscat(@path_parts [, $filename]);
-
 =cut
 
 .namespace []
@@ -257,102 +251,6 @@ for that match.
   done_replacing:
 
     .return(edited)
-.end
-
-
-=item @info := stat($path)
-
-Returns a 13-item list of information about the given C<$path>, as in Perl 5.
-(See C<perldoc -f stat> for more details.)
-
-=cut
-
-.sub 'stat'
-    .param string path
-
-    .local pmc os, stat_list
-    os = root_new [ 'parrot' ; 'OS' ]
-    stat_list = os.'stat'(path)
-
-    .return (stat_list)
-.end
-
-
-=item $found := path_exists($path);
-
-Return a true value if the C<$path> exists on the filesystem, or a false
-value if not.
-
-=cut
-
-.sub 'path_exists'
-    .param string path
-
-    push_eh stat_failed
-    .local pmc stat_list
-    stat_list = 'stat'(path)
-    pop_eh
-    .return (1)
-
-  stat_failed:
-    pop_eh
-    .return (0)
-.end
-
-
-=item $is_dir := is_dir($path);
-
-Return a true value if the C<$path> exists on the filesystem and is a
-directory, or a false value if not.
-
-=cut
-
-.sub 'is_dir'
-    .param string path
-
-    push_eh stat_failed
-    .local pmc stat_list
-    stat_list = 'stat'(path)
-    pop_eh
-
-    .local int is_dir
-    is_dir = stat path, .STAT_ISDIR
-    .return (is_dir)
-
-  stat_failed:
-    pop_eh
-    .return (0)
-.end
-
-
-=item $path := fscat(@path_parts [, $filename])
-
-Join C<@path_parts> and C<$filename> strings together with the appropriate
-OS separator.  If no C<$filename> is supplied, C<fscat()> will I<not> add a
-trailing slash (though slashes inside the C<@path_parts> will not be removed,
-so don't do that).
-
-=cut
-
-.sub 'fscat'
-    .param pmc    parts
-    .param string filename     :optional
-    .param int    has_filename :opt_flag
-
-    .local string sep
-    $P0 = getinterp
-    $P1 = $P0[.IGLOBALS_CONFIG_HASH]
-    sep = $P1['slash']
-
-    .local string joined
-    joined = join sep, parts
-
-    unless has_filename goto no_filename
-    joined .= sep
-    joined .= filename
-  no_filename:
-
-    .return (joined)
 .end
 
 

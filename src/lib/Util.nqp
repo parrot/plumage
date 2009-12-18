@@ -27,11 +27,14 @@ Util.nqp - Utility functions for NQP and Plumage
     %hash := hash(:key1(value1), :key2(value2), ...);
     %set  := set_from_array(@array);
 
-    # Duct tape
+    # Filesystems and paths
+    $path        := fscat(@path_parts [, $filename]);
+    $home        := user_home_dir();
+    $found       := path_exists($path);
+    $is_dir      := is_dir($path);
+    $writable    := test_dir_writable($directory_path);
     $binary_path := find_program($program);
     mkpath($directory_path);
-    $writable := test_dir_writable($directory_path);
-    $home := user_home_dir();
 
     # External programs
     $status_code := run(   $command, $and, $args, ...);
@@ -255,7 +258,7 @@ C<$result> is an undefined value.
 sub reduce (&code, @array, *@initial) {
     my    $init_elems := pir::elements(@initial);
     if    $init_elems >  1 {
-        pir::die("Only one initial value allowed in reduce()");
+        pir::die('Only one initial value allowed in reduce()');
     }
     elsif $init_elems == 1 {
         return _reduce(&code, @array, @initial[0]);
@@ -337,12 +340,73 @@ sub set_from_array (@array) {
 =back
 
 
-=head2 Duct Tape Functions
+=head2 Filesystem and Path Functions
 
 These functions provide convenient ways to interact with the file system,
-other processes, and similar operating system constructs.
+user PATH, and similar operating system constructs.
 
 =over 4
+
+=item $found := path_exists($path);
+
+Return a true value if the C<$path> exists on the filesystem, or a false
+value if not.
+
+=end
+
+sub path_exists ($path) {
+    my @stat := $*OS.stat($path);
+    return 1;
+
+    CATCH {
+        return 0;
+    }
+}
+
+
+=begin
+
+=item $is_dir := is_dir($path);
+
+Return a true value if the C<$path> exists on the filesystem and is a
+directory, or a false value if not.
+
+=end
+
+sub is_dir($path) {
+    my @stat := $*OS.stat($path);
+    return pir::stat($path, 2);   # STAT_ISDIR
+
+    CATCH {
+        return 0;
+    }
+}
+
+
+=begin
+
+=item $path := fscat(@path_parts [, $filename])
+
+Join C<@path_parts> and C<$filename> strings together with the appropriate
+OS separator.  If no C<$filename> is supplied, C<fscat()> will I<not> add a
+trailing slash (though slashes inside the C<@path_parts> will not be removed,
+so don't do that).
+
+=cut
+
+sub fscat(@path_parts, *@filename) {
+    pir::die('Only one filename allowed in fscat()')
+        if @filename > 1;
+
+    my $sep    := $*VM<config><slash>;
+    my $joined := pir::join($sep, @path_parts);
+       $joined := $joined ~ $sep ~ @filename[0] if @filename;
+
+    return $joined;
+}
+
+
+=begin
 
 =item $binary_path := find_program($program)
 
