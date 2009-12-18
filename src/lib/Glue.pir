@@ -24,10 +24,7 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     $edited := subst($original, $regex, $replacement);
 
     # Filesystems and paths
-    chdir($path);
-    $path  := cwd();
     mkdir($path [, $mode]);
-    unlink($path);
     @info   := stat($path);
     $found  := path_exists($path);
     $is_dir := is_dir($path);
@@ -265,38 +262,6 @@ for that match.
 .end
 
 
-=item chdir($path)
-
-Change the current working directory to the specified C<$path>.
-
-=cut
-
-.sub 'chdir'
-    .param string path
-
-    .local pmc os
-    os = root_new [ 'parrot' ; 'OS' ]
-    os.'chdir'(path)
-.end
-
-
-=item $path := cwd()
-
-Return the current working directory.
-
-=cut
-
-.sub 'cwd'
-    .local pmc os
-    os = root_new [ 'parrot' ; 'OS' ]
-
-    .local string path
-    path = os.'cwd'()
-
-    .return(path)
-.end
-
-
 =item mkdir($path [, $mode])
 
 Create a directory specified by C<$path> with mode C<$mode>.  C<$mode> is
@@ -317,21 +282,6 @@ is modified by the user's current C<umask> as usual.
     .local pmc os
     os = root_new [ 'parrot' ; 'OS' ]
     os.'mkdir'(path, mode)
-.end
-
-
-=item unlink($path)
-
-Unlink (delete) a file or empty directory named C<$path> in the filesystem.
-
-=cut
-
-.sub 'unlink'
-    .param string path
-
-    .local pmc os
-    os = root_new [ 'parrot' ; 'OS' ]
-    os.'rm'(path)
 .end
 
 

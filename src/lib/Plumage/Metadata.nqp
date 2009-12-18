@@ -368,7 +368,7 @@ because the associated project was successfully uninstalled.
 method remove_install_copy () {
     my $path := self.saved_copy_path;
 
-    unlink($path) if path_exists($path);
+    $*OS.rm($path) if path_exists($path);
 }
 
 

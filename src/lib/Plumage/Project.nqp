@@ -98,20 +98,20 @@ method _init($locator) {
 
 
 method _find_source_dir($start_dir?) {
-    my $orig_dir := cwd();
+    my $orig_dir := $*OS.cwd;
 
-    chdir($start_dir) if pir::length($start_dir);
+    $*OS.chdir($start_dir) if pir::length($start_dir);
 
     my $old_dir  := '';
 
-    until $old_dir eq cwd() || $!metadata.exists {
-        $old_dir := cwd();
-        chdir('..');
+    until $old_dir eq $*OS.cwd || $!metadata.exists {
+        $old_dir := $*OS.cwd;
+        $*OS.chdir('..');
     }
 
-    my $source_dir := $!metadata.exists ?? cwd() !! '';
+    my $source_dir := $!metadata.exists ?? $*OS.cwd !! '';
 
-    chdir($orig_dir);
+    $*OS.chdir($orig_dir);
 
     return $source_dir;
 }
@@ -163,9 +163,9 @@ method perform_actions (:$up_to, :@actions, :$ignore_all, :%ignore) {
 
     for @actions -> $action {
         if %valid{$action} {
-           my $cwd    := cwd();
+           my $cwd    := $*OS.cwd;
            my $result := self."$action"();
-           chdir($cwd);
+           $*OS.chdir($cwd);
 
            if $result {
                say("Successful.\n");
@@ -224,7 +224,7 @@ method fetch_repository () {
 method fetch_git () {
     if path_exists($!source_dir) {
         if path_exists(fscat([$!source_dir, '.git'])) {
-            chdir($!source_dir);
+            $*OS.chdir($!source_dir);
             return do_run(%*BIN<git>, 'pull')
                 && do_run(%*BIN<git>, 'submodule', 'update', '--init');
         }
@@ -237,7 +237,7 @@ method fetch_git () {
 
         return 0 unless do_run(%*BIN<git>, 'clone', $uri, $!source_dir);
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
         return do_run(%*BIN<git>, 'submodule', 'update', '--init');
     }
 }
@@ -245,7 +245,7 @@ method fetch_git () {
 method fetch_hg () {
     if path_exists($!source_dir) {
         if path_exists(fscat([$!source_dir, '.hg'])) {
-            chdir($!source_dir);
+            $*OS.chdir($!source_dir);
             return do_run(%*BIN<hg>, 'pull', '-u');
         }
         else {
@@ -310,7 +310,7 @@ method update_repository () {
 }
 
 method update_parrot_setup () {
-    chdir($!source_dir);
+    $*OS.chdir($!source_dir);
 
     return do_run(%*BIN<parrot>, 'setup.pir', 'update');
 }
@@ -323,7 +323,7 @@ method configure () {
     if %conf {
         say("\nConfiguring $!name ...");
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
 
         return self."configure_{%conf<type>}"();
     }
@@ -360,7 +360,7 @@ method build () {
     if %build {
         say("\nBuilding $!name ...");
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
 
         return self."build_{%build<type>}"();
     }
@@ -390,7 +390,7 @@ method test () {
     if %test {
         say("\nTesting $!name ...");
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
 
         return self."test_{%test<type>}"();
     }
@@ -420,7 +420,7 @@ method smoke () {
     if %smoke {
         say("\nSmoke testing $!name ...");
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
 
         return self."smoke_{%smoke<type>}"();
     }
@@ -446,7 +446,7 @@ method install () {
     if %inst {
         say("\nInstalling $!name ...");
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
 
         my $success := self."install_{%inst<type>}"();
 
@@ -483,7 +483,7 @@ method uninstall () {
     if %uninst {
         say("\nUninstalling $!name ...");
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
 
         my $success := self."uninstall_{%uninst<type>}"();
 
@@ -529,7 +529,7 @@ method clean () {
     if %clean {
         say("\nCleaning $!name ...");
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
 
         return self."clean_{%clean<type>}"();
     }
@@ -565,7 +565,7 @@ method realclean () {
     if %realclean {
         say("\nRealcleaning $!name ...");
 
-        chdir($!source_dir);
+        $*OS.chdir($!source_dir);
 
         return self."realclean_{%realclean<type>}"();
     }

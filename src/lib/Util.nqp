@@ -410,8 +410,8 @@ sub mkpath ($path) {
 
 Sadly there is no portable, guaranteed way to check if a directory is writable
 (with create permission, on platforms that separate it) except to actually try
-to create a file within it.  This function does just that, and then unlinks the
-file afterwards.
+to create a file within it.  This function does just that, and then removes the
+test file afterwards.
 
 This function should only be considered helpful from a usability sense, allowing
 the program to detect a likely failure case early, before wasting the user's
@@ -432,7 +432,7 @@ sub test_dir_writable($dir) {
     };
 
     if path_exists($test_file) {
-        unlink($test_file);
+        $*OS.rm($test_file);
         return 1;
     }
     else {
