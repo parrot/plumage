@@ -54,7 +54,7 @@ passing to C<$meta.find_by_project_name()> to obtain more details.
 =end
 
 method get_project_list () {
-    my @files := readdir(replace_config_strings(%*CONF<plumage_metadata_dir>));
+    my @files := $*OS.readdir(replace_config_strings(%*CONF<plumage_metadata_dir>));
     my $regex := rx('\.json$');
     my @projects;
 

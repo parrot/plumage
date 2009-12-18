@@ -28,7 +28,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     @info   := stat($path);
     $found  := path_exists($path);
     $is_dir := is_dir($path);
-    @names  := readdir($directory);
     $path   := fscat(@path_parts [, $filename]);
 
 =cut
@@ -347,23 +346,6 @@ directory, or a false value if not.
   stat_failed:
     pop_eh
     .return (0)
-.end
-
-
-=item @names := readdir($directory)
-
-List the names of all entries in the C<$directory>.
-
-=cut
-
-.sub 'readdir'
-    .param string dir
-
-    .local pmc os, names
-    os = root_new [ 'parrot' ; 'OS' ]
-    names = os.'readdir'(dir)
-
-    .return (names)
 .end
 
 
