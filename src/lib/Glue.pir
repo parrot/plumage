@@ -24,7 +24,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     $edited := subst($original, $regex, $replacement);
 
     # Filesystems and paths
-    mkdir($path [, $mode]);
     @info   := stat($path);
     $found  := path_exists($path);
     $is_dir := is_dir($path);
@@ -258,29 +257,6 @@ for that match.
   done_replacing:
 
     .return(edited)
-.end
-
-
-=item mkdir($path [, $mode])
-
-Create a directory specified by C<$path> with mode C<$mode>.  C<$mode> is
-optional and defaults to octal C<777> (full permissions) if absent.  C<$mode>
-is modified by the user's current C<umask> as usual.
-
-=cut
-
-.sub 'mkdir'
-    .param string path
-    .param int    mode     :optional
-    .param int    has_mode :opt_flag
-
-    if has_mode goto have_mode
-    mode = 0o777
-  have_mode:
-
-    .local pmc os
-    os = root_new [ 'parrot' ; 'OS' ]
-    os.'mkdir'(path, mode)
 .end
 
 

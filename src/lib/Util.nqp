@@ -398,7 +398,7 @@ sub mkpath ($path) {
         $cur := fscat([$cur, $dir]);
 
         unless path_exists($cur) {
-            mkdir($cur);
+            $*OS.mkdir($cur, 0o777);
         }
     }
 }
