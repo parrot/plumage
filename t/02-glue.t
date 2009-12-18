@@ -1,7 +1,5 @@
 #! parrot-nqp
 
-my $*EXECUTABLE_NAME;
-
 MAIN();
 
 sub MAIN () {
@@ -17,11 +15,10 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(13);
+    plan(6);
 
     test_subst();
     test_path_exists();
-    test_qx();
 }
 
 sub test_path_exists() {
@@ -45,23 +42,4 @@ sub replacement($match) {
     my $orig := ~$match;
 
     return $orig ~ $orig;
-}
-
-sub test_qx() {
-    my $output;
-    my $!;
-
-    is(qx(''), '', 'qx("") returns an empty string');
-
-    $output := qx('IHOPETHATTHISPATHDOESNOTEXISTANDISEXECUTABLEANDRETURNSTRUE');
-    like($output, ':s not (found|recognized)','qx() on invalid path returns not found error');
-    isnt($!, 0, '... and the exit status is non-zero');
-
-    $output := qx($*EXECUTABLE_NAME, '-e', '"say(42); pir::exit(0)"');
-    is($output, "42\n", 'qx() captures output of exit(0) program, retaining line endings');
-    is($!,      0,      '... and the exit status is correct');
-
-    $output := qx($*EXECUTABLE_NAME, '-e', '"say(21); pir::exit(1)"');
-    is($output, "21\n", 'qx() captures output of exit(1) program, retaining line endings');
-    is($!,      1,      '... and the exit status is correct');
 }

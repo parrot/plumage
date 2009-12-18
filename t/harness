@@ -18,6 +18,8 @@ pir::exit(MAIN());
 
 sub MAIN () {
     pir::load_bytecode('src/lib/Glue.pbc');
+    pir::load_bytecode('src/lib/Util.pbc');
+
     my $total_passed:= 0;
     my $total_failed:= 0;
     my $total_files := 0;

@@ -8,11 +8,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     # Load this library
     pir::load_bytecode('src/lib/Glue.pbc');
 
-    # External programs
-    $status_code := run(   $command, $and, $args, ...);
-    $success     := do_run($command, $and, $args, ...);
-    $output      := qx(    $command, $and, $args, ...);
-
     # Other languages
     $result := eval($source_code, $language);
 
@@ -63,112 +58,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 =head2 Functions
 
 =over 4
-
-=item $status_code := run($command, $and, $args, ...)
-
-Spawn the command with the given arguments as a new process; returns
-the status code of the spawned process, which is equal the the result
-of the waitpid system call, right bitshifted by 8.  Throws an exception
-if the process could not be spawned at all.
-
-=cut
-
-.sub 'run'
-    .param pmc command_and_args :slurpy
-    .local int status
-
-    # returns the result of waitpid
-    status = spawnw command_and_args
-
-    # return code is waitpid >> 8
-    shr status, status, 8
-
-    .return (status)
-.end
-
-
-=item $success := do_run($command, $and, $args, ...)
-
-Print out the command and arguments, then spawn the command with the given
-arguments as a new process; return 1 if the process exited successfully, or
-0 if not.  Unlike C<run()> and C<qx()>, will I<not> throw an exception if
-the process cannot be spawned.  Since this is a convenience function, it will
-instead return 0 on spawn failure, just as if the child process had spawned
-successfully but itself exited with failure.
-
-=cut
-
-.sub 'do_run'
-    .param pmc command_and_args :slurpy
-
-    .local string cmd
-    cmd = join ' ', command_and_args
-    say cmd
-
-    .local int status
-    push_eh spawn_failed
-    status = spawnw command_and_args
-    pop_eh
-    goto check_status
-
-  spawn_failed:
-    .local pmc ex
-    .get_results (ex)
-    pop_eh
-    status = -1
-
-  check_status:
-    if status goto failed
-    .return (1)
-  failed:
-    .return (0)
-.end
-
-
-=item $output := qx($command, $and, $args, ...)
-
-Spawn the command with the given arguments as a read only pipe;
-return the output of the command as a single string.  Throws an
-exception if the pipe cannot be opened.  Sets the caller's C<$!>
-to the exit value of the child process.
-
-B<WARNING>: Parrot currently implements the pipe open B<INSECURELY>!
-
-=cut
-
-.sub 'qx'
-    .param pmc command_and_args :slurpy
-
-    .local string cmd
-    cmd = join ' ', command_and_args
-
-    .local pmc pipe
-    pipe = open cmd, 'rp'
-    unless pipe goto pipe_open_error
-
-    .local pmc output
-    pipe.'encoding'('utf8')
-    output = pipe.'readall'()
-    pipe.'close'()
-
-    .local pmc exit_status
-    $I0 = pipe.'exit_status'()
-    exit_status = box $I0
-
-    find_dynamic_lex $P0, '$!'
-    if null $P0 goto skip_exit_status
-    store_dynamic_lex '$!', exit_status
-  skip_exit_status:
-
-    .return (output)
-
-  pipe_open_error:
-    $S0  = 'Unable to execute "'
-    $S0 .= cmd
-    $S0 .= '"'
-    die $S0
-.end
-
 
 =item $result := eval($source_code, $language)
 

@@ -9,8 +9,9 @@ sub MAIN () {
     pir::load_language('parrot');
     pir::compreg__PS('parrot').import('Test::More');
 
-    # Load glue library to get qx()
+    # Load glue and util libraries
     pir::load_bytecode('src/lib/Glue.pbc');
+    pir::load_bytecode('src/lib/Util.pbc');
 
     # Set correct path for plumage binary
     $PLUMAGE := fscat(['.'], 'plumage');

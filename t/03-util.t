@@ -1,11 +1,16 @@
 #! parrot-nqp
 
+my $*EXECUTABLE_NAME;
+
 MAIN();
 
 sub MAIN () {
     # Load testing tools
     pir::load_language('parrot');
     pir::compreg__PS('parrot').import('Test::More');
+
+    # Load library to set $*EXECUTABLE_NAME
+    pir::load_bytecode('src/lib/Glue.pbc');
 
     # Load library to be tested
     pir::load_bytecode('src/lib/Util.pbc');
@@ -15,13 +20,15 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(26);
+    plan(33);
 
     test_hash_exists();
     test_hash_keys();
     test_hash_kv();
 
     test_set_from_array();
+
+    test_qx();
 }
 
 sub test_hash_exists() {
@@ -114,4 +121,23 @@ sub test_set_from_array() {
     is(%set<two>, 1, '... and second key is in set');
     is(%set<3>,   1, '... and third key is in set');
     nok(%set.exists('four'), '... and non-existant key is not in set');
+}
+
+sub test_qx() {
+    my $output;
+    my $!;
+
+    is(qx(''), '', 'qx("") returns an empty string');
+
+    $output := qx('IHOPETHATTHISPATHDOESNOTEXISTANDISEXECUTABLEANDRETURNSTRUE');
+    like($output, ':s not (found|recognized)','qx() on invalid path returns not found error');
+    isnt($!, 0, '... and the exit status is non-zero');
+
+    $output := qx($*EXECUTABLE_NAME, '-e', '"say(42); pir::exit(0)"');
+    is($output, "42\n", 'qx() captures output of exit(0) program, retaining line endings');
+    is($!,      0,      '... and the exit status is correct');
+
+    $output := qx($*EXECUTABLE_NAME, '-e', '"say(21); pir::exit(1)"');
+    is($output, "21\n", 'qx() captures output of exit(1) program, retaining line endings');
+    is($!,      1,      '... and the exit status is correct');
 }

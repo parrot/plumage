@@ -33,6 +33,14 @@ Util.nqp - Utility functions for NQP and Plumage
     $writable := test_dir_writable($directory_path);
     $home := user_home_dir();
 
+    # External programs
+    $status_code := run(   $command, $and, $args, ...);
+    $success     := do_run($command, $and, $args, ...);
+    $output      := qx(    $command, $and, $args, ...);
+
+    # Deep Magic
+    store_dynlex_safely($var_name, $value);
+
     # Plumage-specific
     $replaced := replace_config_strings($original);
 
@@ -433,6 +441,110 @@ Determine the user's home directory in the proper platform-dependent manner.
 
 sub user_home_dir() {
     return (%*ENV<HOMEDRIVE> // '') ~ %*ENV<HOME>;
+}
+
+
+=begin
+
+=back
+
+
+=head2 Program Spawning Functions
+
+These functions provide several variations on the "spawn a child program
+and wait for the results" theme.
+
+=over 4
+
+=item $status_code := run($command, $and, $args, ...)
+
+Spawn the command with the given arguments as a new process; returns
+the status code of the spawned process, which is equal the the result
+of the waitpid system call, right bitshifted by 8.  Throws an exception
+if the process could not be spawned at all.
+
+=end
+
+sub run (*@command_and_args) {
+    return pir::shr(pir::spawnw__iP(@command_and_args), 8);
+}
+
+
+=begin
+
+=item $success := do_run($command, $and, $args, ...)
+
+Print out the command and arguments, then spawn the command with the given
+arguments as a new process; return 1 if the process exited successfully, or
+0 if not.  Unlike C<run()> and C<qx()>, will I<not> throw an exception if
+the process cannot be spawned.  Since this is a convenience function, it will
+instead return 0 on spawn failure, just as if the child process had spawned
+successfully but itself exited with failure.
+
+=end
+
+sub do_run (*@command_and_args) {
+    say(pir::join(' ', @command_and_args));
+
+    return pir::spawnw__iP(@command_and_args) ?? 0 !! 1;
+
+    CATCH {
+        return -1;
+    }
+}
+
+
+=begin
+
+=item $output := qx($command, $and, $args, ...)
+
+Spawn the command with the given arguments as a read only pipe;
+return the output of the command as a single string.  Throws an
+exception if the pipe cannot be opened.  Sets the caller's C<$!>
+to the exit value of the child process.
+
+B<WARNING>: Parrot currently implements the pipe open B<INSECURELY>!
+
+=end
+
+sub qx (*@command_and_args) {
+    my $cmd  := pir::join(' ', @command_and_args);
+    my $pipe := pir::open__Pss($cmd, 'rp');
+    pir::die("Unable to execute '$cmd'") unless $pipe;
+
+    $pipe.encoding('utf8');
+    my $output := $pipe.readall;
+    $pipe.close;
+
+    store_dynlex_safely('$!', $pipe.exit_status);
+
+    return $output;
+}
+
+
+=begin
+
+=head2 Deep Magic
+
+These functions reach into the guts of NQP, PIR, or Parrot and shuffle them.
+Use with care.
+
+=over 4
+
+=item store_dynlex_safely($var_name, $value)
+
+Set a dynamic lexical ("contextual") variable named C<$var_name> to C<$value>
+if such a variable has been declared in some calling scope, or do nothing if
+the variable has not been declared.  This allows library code to
+unconditionally set well-known contextual variables such as C<$!> and C<$*VM>
+without worrying about an exception being thrown because the calling code
+doesn't care about the value of that contextual and thus has not declared it.
+
+=end
+
+sub store_dynlex_safely($var_name, $value) {
+    pir::store_dynamic_lex__vsP($var_name, $value)
+        unless pir::isnull(pir::find_dynamic_lex($var_name));
 }
 
 
