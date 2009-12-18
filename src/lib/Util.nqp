@@ -347,6 +347,42 @@ user PATH, and similar operating system constructs.
 
 =over 4
 
+=item $path := fscat(@path_parts [, $filename])
+
+Join C<@path_parts> and C<$filename> strings together with the appropriate
+OS separator.  If no C<$filename> is supplied, C<fscat()> will I<not> add a
+trailing slash (though slashes inside the C<@path_parts> will not be removed,
+so don't do that).
+
+=end
+
+sub fscat(@path_parts, *@filename) {
+    pir::die('Only one filename allowed in fscat()')
+        if @filename > 1;
+
+    my $sep    := $*VM<config><slash>;
+    my $joined := pir::join($sep, @path_parts);
+       $joined := $joined ~ $sep ~ @filename[0] if @filename;
+
+    return $joined;
+}
+
+
+=begin
+
+=item $home := user_home_dir()
+
+Determine the user's home directory in the proper platform-dependent manner.
+
+=end
+
+sub user_home_dir() {
+    return (%*ENV<HOMEDRIVE> // '') ~ %*ENV<HOME>;
+}
+
+
+=begin
+
 =item $found := path_exists($path);
 
 Return a true value if the C<$path> exists on the filesystem, or a false
@@ -385,24 +421,38 @@ sub is_dir($path) {
 
 =begin
 
-=item $path := fscat(@path_parts [, $filename])
+=item $writable := test_dir_writable($directory_path)
 
-Join C<@path_parts> and C<$filename> strings together with the appropriate
-OS separator.  If no C<$filename> is supplied, C<fscat()> will I<not> add a
-trailing slash (though slashes inside the C<@path_parts> will not be removed,
-so don't do that).
+Sadly there is no portable, guaranteed way to check if a directory is writable
+(with create permission, on platforms that separate it) except to actually try
+to create a file within it.  This function does just that, and then removes the
+test file afterwards.
 
-=cut
+This function should only be considered helpful from a usability sense, allowing
+the program to detect a likely failure case early, before wasting the user's
+time.  In no circumstance should it be considered a security function; only
+checking for errors on every real operation can avoid security holes due to
+race conditions between test and action.
 
-sub fscat(@path_parts, *@filename) {
-    pir::die('Only one filename allowed in fscat()')
-        if @filename > 1;
+=end
 
-    my $sep    := $*VM<config><slash>;
-    my $joined := pir::join($sep, @path_parts);
-       $joined := $joined ~ $sep ~ @filename[0] if @filename;
+sub test_dir_writable($dir) {
+    my $test_file := fscat([$dir], 'WrItAbLe.UtL');
 
-    return $joined;
+    pir::die("Test file '$test_file'\nthat should never exist already does.")
+        if path_exists($test_file);
+
+    try {
+       spew($test_file, "test_dir_writable() test file.\n");
+    };
+
+    if path_exists($test_file) {
+        $*OS.rm($test_file);
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 
@@ -465,56 +515,6 @@ sub mkpath ($path) {
             $*OS.mkdir($cur, 0o777);
         }
     }
-}
-
-
-=begin
-
-=item $writable := test_dir_writable($directory_path)
-
-Sadly there is no portable, guaranteed way to check if a directory is writable
-(with create permission, on platforms that separate it) except to actually try
-to create a file within it.  This function does just that, and then removes the
-test file afterwards.
-
-This function should only be considered helpful from a usability sense, allowing
-the program to detect a likely failure case early, before wasting the user's
-time.  In no circumstance should it be considered a security function; only
-checking for errors on every real operation can avoid security holes due to
-race conditions between test and action.
-
-=end
-
-sub test_dir_writable($dir) {
-    my $test_file := fscat([$dir], 'WrItAbLe.UtL');
-
-    pir::die("Test file '$test_file'\nthat should never exist already does.")
-        if path_exists($test_file);
-
-    try {
-       spew($test_file, "test_dir_writable() test file.\n");
-    };
-
-    if path_exists($test_file) {
-        $*OS.rm($test_file);
-        return 1;
-    }
-    else {
-        return 0;
-    }
-}
-
-
-=begin
-
-=item $home := user_home_dir()
-
-Determine the user's home directory in the proper platform-dependent manner.
-
-=end
-
-sub user_home_dir() {
-    return (%*ENV<HOMEDRIVE> // '') ~ %*ENV<HOME>;
 }
 
 
