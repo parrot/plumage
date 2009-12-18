@@ -20,13 +20,16 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(33);
+    plan(38);
 
     test_hash_exists();
     test_hash_keys();
     test_hash_kv();
 
     test_set_from_array();
+
+    test_path_exists();
+    test_is_dir();
 
     test_qx();
 }
@@ -121,6 +124,17 @@ sub test_set_from_array() {
     is(%set<two>, 1, '... and second key is in set');
     is(%set<3>,   1, '... and third key is in set');
     nok(%set.exists('four'), '... and non-existant key is not in set');
+}
+
+sub test_path_exists() {
+    ok( path_exists('.'),            'path_exists finds .');
+    nok(path_exists('DOESNOTEXIST'), 'path_exists returns false for nonexistent files');
+}
+
+sub test_is_dir() {
+    ok( is_dir('.'),            '. is a directory');
+    nok(is_dir('DOESNOTEXIST'), 'is_dir returns false for nonexistent dirs');
+    nok(is_dir('harness'),      'is_dir returns false for normal files');
 }
 
 sub test_qx() {

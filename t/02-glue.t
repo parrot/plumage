@@ -15,15 +15,9 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(6);
+    plan(4);
 
     test_subst();
-    test_path_exists();
-}
-
-sub test_path_exists() {
-    ok( path_exists('.'),            'path_exists finds .');
-    nok(path_exists('DOESNOTEXIST'), 'path_exists returns false for nonexistent files');
 }
 
 sub test_subst() {

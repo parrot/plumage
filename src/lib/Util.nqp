@@ -360,7 +360,7 @@ sub fscat(@path_parts, *@filename) {
     pir::die('Only one filename allowed in fscat()')
         if @filename > 1;
 
-    my $sep    := $*VM<config><slash>;
+    my $sep    := pir::getinterp__P()[6]<slash>;
     my $joined := pir::join($sep, @path_parts);
        $joined := $joined ~ $sep ~ @filename[0] if @filename;
 
@@ -377,7 +377,8 @@ Determine the user's home directory in the proper platform-dependent manner.
 =end
 
 sub user_home_dir() {
-    return (%*ENV<HOMEDRIVE> // '') ~ %*ENV<HOME>;
+    my %env := pir::root_new__PP(< parrot Env >);
+    return (%env<HOMEDRIVE> // '') ~ %env<HOME>;
 }
 
 
@@ -391,7 +392,7 @@ value if not.
 =end
 
 sub path_exists ($path) {
-    my @stat := $*OS.stat($path);
+    my @stat := pir::root_new__PP(< parrot OS >).stat($path);
     return 1;
 
     CATCH {
@@ -410,8 +411,8 @@ directory, or a false value if not.
 =end
 
 sub is_dir($path) {
-    my @stat := $*OS.stat($path);
-    return pir::stat($path, 2);   # STAT_ISDIR
+    my @stat := pir::root_new__PP(< parrot OS >).stat($path);
+    return pir::stat__isi($path, 2);   # STAT_ISDIR
 
     CATCH {
         return 0;
@@ -447,7 +448,7 @@ sub test_dir_writable($dir) {
     };
 
     if path_exists($test_file) {
-        $*OS.rm($test_file);
+        pir::root_new__PP(< parrot OS >).rm($test_file);
         return 1;
     }
     else {
@@ -476,9 +477,10 @@ following way:
 =end
 
 sub find_program ($program) {
-    my $path_sep := $*OSNAME eq 'MSWin32' ?? ';' !! ':';
-    my @paths    := pir::split($path_sep, %*ENV<PATH>);
-    my @exts     := pir::split($path_sep, %*ENV<PATHEXT>);
+    my $path_sep := pir::sysinfo__si(4) eq 'MSWin32' ?? ';' !! ':';
+    my %env      := pir::root_new__PP(< parrot Env >);
+    my @paths    := pir::split($path_sep, %env<PATH>);
+    my @exts     := pir::split($path_sep, %env<PATHEXT>);
 
     @exts.unshift('');
 
@@ -512,7 +514,7 @@ sub mkpath ($path) {
         $cur := fscat([$cur, $dir]);
 
         unless path_exists($cur) {
-            $*OS.mkdir($cur, 0o777);
+            pir::root_new__PP(< parrot OS >).mkdir($cur, 0o777);
         }
     }
 }
@@ -610,7 +612,7 @@ Use with care.
 Set a dynamic lexical ("contextual") variable named C<$var_name> to C<$value>
 if such a variable has been declared in some calling scope, or do nothing if
 the variable has not been declared.  This allows library code to
-unconditionally set well-known contextual variables such as C<$!> and C<$*VM>
+unconditionally set well-known contextual variables such as C<$!> and C<%*VM>
 without worrying about an exception being thrown because the calling code
 doesn't care about the value of that contextual and thus has not declared it.
 
@@ -678,9 +680,9 @@ INIT {
     my $config  := $interp[6];   # IGLOBALS_CONFIG_HASH
 
     # Only fill the config portion of %*VM for now
-    my %VM;
-    %VM<config> := $config;
-    store_dynlex_safely('%*VM', %VM);
+    my %vm;
+    %vm<config> := $config;
+    store_dynlex_safely('%*VM', %vm);
 
     # Handle argv properly even for -e one-liners
     @argv.unshift('<anonymous>')   unless @argv;
