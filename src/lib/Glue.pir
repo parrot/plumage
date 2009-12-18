@@ -8,9 +8,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     # Load this library
     pir::load_bytecode('src/lib/Glue.pbc');
 
-    # Other languages
-    $result := eval($source_code, $language);
-
     # Regular expressions
     $regex_object := rx($regex_source);
     @matches := all_matches($regex, $text);
@@ -20,41 +17,12 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
 
 .namespace []
 
-.include 'interpinfo.pasm'
-.include 'sysinfo.pasm'
-.include 'iglobals.pasm'
-.include 'stat.pasm'
-
 
 =head1 DESCRIPTION
 
 =head2 Functions
 
 =over 4
-
-=item $result := eval($source_code, $language)
-
-Evaluate a string of C<$source_code> in a known Parrot C<$language>,
-returning the C<$result> of executing the compiled code.
-
-=cut
-
-.sub 'eval'
-    .param string source_code
-    .param string language
-
-    .local pmc compiler
-    language = downcase language
-    load_language language
-    compiler = compreg language
-
-    .local pmc compiled
-    compiled = compiler.'compile'(source_code)
-    $P0      = compiled()
-
-    .return ($P0)
-.end
-
 
 =item $regex_object := rx($regex_source)
 

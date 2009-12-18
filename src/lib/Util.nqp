@@ -48,6 +48,9 @@ Util.nqp - Utility functions for NQP and Plumage
     $success     := do_run($command, $and, $args, ...);
     $output      := qx(    $command, $and, $args, ...);
 
+    # HLL Interop
+    $result := eval($source_code, $language);
+
     # Deep Magic
     store_dynlex_safely($var_name, $value);
 
@@ -686,6 +689,35 @@ sub qx (*@command_and_args) {
     store_dynlex_safely('$!', $pipe.exit_status);
 
     return $output;
+}
+
+
+=begin
+
+=back
+
+
+=head2 HLL Interop Functions
+
+These functions allow code in other languages to be evaluated and the
+results returned.
+
+=over 4
+
+=item $result := eval($source_code, $language)
+
+Evaluate a string of C<$source_code> in a known Parrot C<$language>,
+returning the C<$result> of executing the compiled code.
+
+=end
+
+sub eval ($source_code, $language) {
+    $language := pir::downcase($language);
+
+    pir::load_language($language);
+    my $compiler := pir::compreg__Ps($language);
+
+    return $compiler.compile($source_code)();
 }
 
 
