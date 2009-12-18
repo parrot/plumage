@@ -41,6 +41,16 @@ Util.nqp - Utility functions for NQP and Plumage
     # Deep Magic
     store_dynlex_safely($var_name, $value);
 
+    # Global variables
+    my $*EXECUTABLE_NAME;
+    my $*PROGRAM_NAME;
+    my $*OSNAME;
+    my $*OSVER;
+    my @*ARGS;
+    my %*ENV;
+    my %*VM;
+    my $*OS;
+
     # Plumage-specific
     $replaced := replace_config_strings($original);
 
@@ -352,7 +362,7 @@ following way:
 =end
 
 sub find_program ($program) {
-    my $path_sep := $*OS eq 'MSWin32' ?? ';' !! ':';
+    my $path_sep := $*OSNAME eq 'MSWin32' ?? ';' !! ':';
     my @paths    := pir::split($path_sep, %*ENV<PATH>);
     my @exts     := pir::split($path_sep, %*ENV<PATHEXT>);
 
@@ -552,6 +562,81 @@ sub store_dynlex_safely($var_name, $value) {
 
 =back
 
+
+=head2 Global Variables
+
+Standard variables available in Perl 6, variously known as "core globals",
+"setting contextuals", and "predefined dynamic lexicals".
+
+=over 4
+
+=item $*EXECUTABLE_NAME
+
+Full path of interpreter executable
+
+=item $*PROGRAM_NAME
+
+Name of running program (argv[0] in C)
+
+=item $*OSNAME
+
+Operating system generic name
+
+=item $*OSVER
+
+Operating system version
+
+=item @*ARGS
+
+Program's command line arguments (including options, which are NOT parsed)
+
+=item %*ENV
+
+Process-wide environment variables
+
+=item %*VM
+
+Parrot configuration (in the %*VM<config> subhash)
+
+=item $*OS
+
+Parrot operating system control object
+
+=back
+
+=end
+
+INIT {
+    pir::load_bytecode('config.pbc');
+
+    my $interp  := pir::getinterp__P();
+    my @argv    := $interp[2];   # IGLOBALS_ARGV_LIST
+    my $config  := $interp[6];   # IGLOBALS_CONFIG_HASH
+
+    # Only fill the config portion of %*VM for now
+    my %VM;
+    %VM<config> := $config;
+    store_dynlex_safely('%*VM', %VM);
+
+    # Handle argv properly even for -e one-liners
+    @argv.unshift('<anonymous>')   unless @argv;
+    store_dynlex_safely('$*PROGRAM_NAME', @argv.shift);
+    store_dynlex_safely('@*ARGS',         @argv);
+
+    # INTERPINFO_EXECUTABLE_FULLNAME
+    store_dynlex_safely('$*EXECUTABLE_NAME', pir::interpinfo__si(19));
+
+    # SYSINFO_PARROT_OS / SYSINFO_PARROT_VERSION
+    store_dynlex_safely('$*OSNAME', pir::sysinfo__si(4));
+    store_dynlex_safely('%*OSVER',  pir::sysinfo__si(5));
+
+    # Magic objects
+    store_dynlex_safely('%*ENV', pir::root_new__PP(< parrot Env >));
+    store_dynlex_safely('$*OS',  pir::root_new__PP(< parrot OS  >));
+}
+
+
+=begin
 
 =head2 Plumage Specific Functions
 

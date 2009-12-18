@@ -61,7 +61,7 @@ realclean: clean
 clean: FORCE
 	$(RM_F) "*~" "src/*~" "src/lib/*~" "src/lib/Plumage/*~" \
 	        "*.pbc" "src/*.pbc" "src/lib/*.pbc" "src/lib/Plumage/*.pbc" \
-	        src/plumage.pir src/lib/Util.pir src/lib/Metadata.pir \
+	        src/plumage.pir src/lib/Metadata.pir \
 	        src/lib/Plumage/Metadata.pir src/lib/Plumage/Project.pir \
 	        src/lib/Plumage/Dependencies.pir \
 	        "src/*.c" "src/*$(O)" src/plumage$(EXE) plumage$(EXE) Makefile

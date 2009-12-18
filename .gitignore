@@ -9,5 +9,4 @@ Makefile
 *.pbc
 plumage.pir
 plumage
-src/lib/Util.pir
 src/lib/Metadata.pir

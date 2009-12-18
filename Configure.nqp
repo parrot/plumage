@@ -6,9 +6,9 @@
 # input_makefile  defaults to 'src/Makefile.in';
 # output_makefile defaults to 'Makefile'.
 
+my $*OSNAME;
 my @*ARGS;
 my %*VM;
-my $*OS;
 
 MAIN();
 
@@ -19,6 +19,7 @@ sub MAIN () {
     # Load Parrot config and glue functions
     pir::load_bytecode('PGE.pbc');
     pir::load_bytecode('src/lib/Glue.pir');
+    pir::load_bytecode('src/lib/Util.pir');
 
     # Slurp in the unconfigured Makefile text
     my $unconfigured := slurp(@*ARGS[0] || 'src/Makefile.in');
@@ -27,7 +28,7 @@ sub MAIN () {
     my $replaced := subst($unconfigured, rx('\@<ident>\@'), replacement);
 
     # Fix paths on Windows
-    if ($*OS eq 'MSWin32') {
+    if ($*OSNAME eq 'MSWin32') {
         $replaced := subst($replaced, rx('\/'),     '\\'   );
         $replaced := subst($replaced, rx('\\\\\*'), '\\\\*');
     }
@@ -37,7 +38,7 @@ sub MAIN () {
 
     # Give the user a hint of next action
     my $make := %*VM<config><make>;
-    say("Configure completed for platform '$*OS'.");
+    say("Configure completed for platform '$*OSNAME'.");
     say("You can now type '$make' to build Plumage.\n");
     say("You may also type '$make test' to run the Plumage test suite.\n");
     say("Happy Hacking,\n\tThe Plumage Team");

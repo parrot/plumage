@@ -6,10 +6,10 @@
 # Must redeclare PIR globals because the NQP parser doesn't know about
 # variables created at load_bytecode time.
 my $*PROGRAM_NAME;
+my $*OSNAME;
 my @*ARGS;
 my %*ENV;
 my %*VM;
-my $*OS;
 
 
 # NQP does not include a setting, so must load helper libraries before

@@ -34,15 +34,6 @@ Glue.pir - Rakudo "glue" builtins (functions/globals) converted for NQP
     @names  := readdir($directory);
     $path   := fscat(@path_parts [, $filename]);
 
-    # Global variables;
-    my $*EXECUTABLE_NAME;
-    my $*PROGRAM_NAME;
-    my @*ARGS;
-    my %*ENV;
-    my %*VM;
-    my $*OS;
-    my $*OSVER;
-
 =cut
 
 .namespace []
@@ -459,83 +450,7 @@ so don't do that).
 
 =back
 
-
-=head2 Global Variables
-
-=over 4
-
-=item $*EXECUTABLE_NAME
-
-Full path of interpreter executable
-
-=item $*PROGRAM_NAME
-
-Name of running program (argv[0] in C)
-
-=item @*ARGS
-
-Program's command line arguments (including options, which are NOT parsed)
-
-=item %*VM
-
-Parrot configuration
-
-=item %*ENV
-
-Process-wide environment variables
-
-=item $*OS
-
-Operating system generic name
-
-=item $*OSVER
-
-Operating system version
-
-=back
-
 =cut
-
-# Properly ignore undeclared lexicals
-.macro dynlex(name, reg)
-    find_dynamic_lex $P3, .name
-    if null $P3 goto .$skip
-    store_dynamic_lex .name, .reg
-.label $skip:
-.endm
-
-.sub 'onload' :anon :load :init
-    load_bytecode 'config.pbc'
-    $P0 = getinterp
-    $P1 = $P0[.IGLOBALS_CONFIG_HASH]
-    $P2 = new ['Hash']
-    $P2['config'] = $P1
-    .dynlex('%*VM', $P2)
-
-    $P1 = $P0[.IGLOBALS_ARGV_LIST]
-    if $P1 goto have_args
-    unshift $P1, '<anonymous>'
-  have_args:
-    $S0 = shift $P1
-    $P2 = box $S0
-    .dynlex('%*PROGRAM_NAME', $P2)
-    .dynlex('@*ARGS', $P1)
-
-    $S0 = interpinfo .INTERPINFO_EXECUTABLE_FULLNAME
-    $P0 = box $S0
-    .dynlex('$*EXECUTABLE_NAME', $P0)
-
-    $P0 = root_new ['parrot';'Env']
-    .dynlex('%*ENV', $P0)
-
-    $S0 = sysinfo .SYSINFO_PARROT_OS
-    $P0 = box $S0
-    .dynlex('$*OS', $P0)
-
-    $S0 = sysinfo .SYSINFO_PARROT_OS_VERSION
-    $P0 = box $S0
-    .dynlex('$*OSVER', $P0)
-.end
 
 
 # Local Variables:
