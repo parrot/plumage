@@ -67,7 +67,11 @@ clean: FORCE
 	        "src/*.c" "src/*$(O)" src/plumage$(EXE) plumage$(EXE) Makefile
 
 test: FORCE all
-	$(PARROT_NQP) t/harness t/*.t
+	$(PARROT) t/harness.pir --exec=$(PARROT_NQP) t/*.t
+
+testv: FORCE all
+	$(PARROT) t/harness.pir --verbose --exec=$(PARROT_NQP) t/*.t
+
 
 # Local variables:
 #   mode: makefile
