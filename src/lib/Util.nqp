@@ -737,7 +737,7 @@ sub do_run (*@command_and_args) {
     return pir::spawnw__iP(@command_and_args) ?? 0 !! 1;
 
     CATCH {
-        return -1;
+        return 0;
     }
 }
 
