@@ -6,9 +6,15 @@
 #   $ parrot-nqp cap-test.nqp
 
 
-# First, load the "glue builtins" borrowed from Rakudo.
-pir::load_bytecode('src/lib/Glue.pir');
-say("Glue loaded.\n");
+# First, declare the builtin "globals" we'd like to access
+my $*OSNAME;
+my $*OSVER;
+my %*ENV;
+my %*VM;
+
+# Next, load the utility functions and fill in the "globals"
+pir::load_bytecode('src/lib/Util.pir');
+say("Util loaded.\n");
 
 # Inline PIR
 print("Inline PIR says:  ");
@@ -28,12 +34,11 @@ sub test_inline_pir ($name) {
 }
 
 # Binding only, no assignment.  At least we have simple interpolation now.
-our %VM;
 our $libdir := get_versioned_libdir();
 say("\nVersioned libdir: $libdir");
 
 sub get_versioned_libdir () {
-    my $config := %VM<config>;
+    my $config := %*VM<config>;
     my $libdir := $config<libdir>;
     my $verdir := $config<versiondir>;
 
@@ -42,11 +47,8 @@ sub get_versioned_libdir () {
 
 # The NQP parser complains about PIR-created globals
 # unless they are (redundantly) declared in NQP.
-our $OS;
-our $OSVER;
-our %ENV;
-say("Operating system: $OS $OSVER");
-say('%ENV<PATH>:       ' ~ %ENV<PATH>);
+say("Operating system: $*OSNAME $*OSVER");
+say('%*ENV<PATH>:       ' ~ %*ENV<PATH>);
 
 # Class declaration is ... suboptimal ... at the moment
 my $bar := BarFly.new(:flea('bag'));
@@ -72,15 +74,15 @@ say("\nEnvironment variables:");
 my $output := qx('env');
 print($output);
 
-# Test that %ENV is writable
+# Test that %*ENV is writable
 say("\nSetting environment variables:");
-say('%ENV<PATH> before: ' ~ %ENV<PATH>);
+say('%*ENV<PATH> before: ' ~ %*ENV<PATH>);
 say('echo $PATH before: ' ~ qx('echo $PATH'));
 
 # XXXX: Need system-dependent path separator
-%ENV<PATH> := '/foo/bar:' ~ %ENV<PATH>;
+%*ENV<PATH> := '/foo/bar:' ~ %*ENV<PATH>;
 
-say('%ENV<PATH> after:  ' ~ %ENV<PATH>);
+say('%*ENV<PATH> after:  ' ~ %*ENV<PATH>);
 say('echo $PATH after:  ' ~ qx('echo $PATH'));
 
 # Load JSON

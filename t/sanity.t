@@ -9,8 +9,7 @@ sub MAIN () {
     pir::load_language('parrot');
     pir::compreg__PS('parrot').import('Test::More');
 
-    # Load glue and util libraries
-    pir::load_bytecode('src/lib/Glue.pbc');
+    # Load Util library
     pir::load_bytecode('src/lib/Util.pbc');
 
     # Set correct path for plumage binary
@@ -59,27 +58,32 @@ sub test_plumage_invalid() {
 
 sub test_plumage_info_invalid() {
     my $output := qx($PLUMAGE, 'info', 'coboloncogs');
-    like($output, ':s I don.t know anything about project .coboloncogs.');
+    ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
+       "command 'info' errors properly for unknown project name");
 }
 
 sub test_plumage_configure_invalid() {
     my $output := qx($PLUMAGE, 'configure', 'coboloncogs');
-    like($output, ':s I don.t know anything about project .coboloncogs.');
+    ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
+       "command 'configure' errors properly for unknown project name");
 }
 
 sub test_plumage_build_invalid() {
     my $output := qx($PLUMAGE, 'build', 'coboloncogs');
-    like($output, ':s I don.t know anything about project .coboloncogs.');
+    ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
+       "command 'build' errors properly for unknown project name");
 }
 
 sub test_plumage_test_invalid() {
     my $output := qx($PLUMAGE, 'test', 'coboloncogs');
-    like($output, ':s I don.t know anything about project .coboloncogs.');
+    ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
+       "command 'test' errors properly for unknown project name");
 }
 
 sub test_plumage_install_invalid() {
     my $output := qx($PLUMAGE, 'install', 'coboloncogs');
-    like($output, ':s I don.t know anything about project .coboloncogs.');
+    ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
+       "command 'install' errors properly for unknown project name");
 }
 
 
@@ -89,13 +93,13 @@ sub test_plumage_install_invalid() {
 
 sub test_plumage_no_args() {
     my $output := qx($PLUMAGE);
-    like($output, ':s Print program version and copyright',   'no args give usage');
-    like($output, ':s Print info about a particular project', 'no args give usage');
+    ok($output ~~ /:s Print program version and copyright/,   'no args give usage');
+    ok($output ~~ /:s Print info about a particular project/, 'no args give usage');
 }
 
 sub test_plumage_fetch_no_args() {
     my $output := qx($PLUMAGE, 'fetch');
-    like($output, ':s Please specify a project to act on.', 'plumage fetch no args');
+    ok($output ~~ /:s Please specify a project to act on./, 'fetch without args asks for project name');
 }
 
 
@@ -105,8 +109,8 @@ sub test_plumage_fetch_no_args() {
 
 sub test_plumage_usage() {
     my $output := qx($PLUMAGE, 'usage');
-    like($output, ':s Print program version and copyright');
-    like($output, ':s Print info about a particular project');
+    ok($output ~~ /:s Print program version and copyright/,   'usage explains how to view version and copyright');
+    ok($output ~~ /:s Print info about a particular project/, 'usage explains how to get info on a project');
 }
 
 sub test_plumage_version() {
@@ -114,13 +118,13 @@ sub test_plumage_version() {
     ok($success, 'plumage version returns success');
 
     my $output := qx($PLUMAGE, 'version');
-    like($output, ':s Parrot Plumage',    'plumage version knows its name');
-    like($output, ':s Parrot Foundation', 'version mentions Parrot Foundation');
-    like($output, ':s Artistic License',  'version mentions Artistic License');
+    ok($output ~~ /:s Parrot Plumage/,    'plumage version knows its name');
+    ok($output ~~ /:s Parrot Foundation/, 'version mentions Parrot Foundation');
+    ok($output ~~ /:s Artistic License/,  'version mentions Artistic License');
 }
 
 sub test_plumage_info() {
     my $output := qx($PLUMAGE, 'info', 'rakudo');
-    like($output, ':s Perl 6 on Parrot', 'info rakudo');
-    like($output, 'dependency\-info',    'info rakudo');
+    ok($output ~~ /:s Perl 6 on Parrot/, 'info rakudo');
+    ok($output ~~ /dependency\-info/,    'info rakudo');
 }

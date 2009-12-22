@@ -44,7 +44,7 @@ plumage$(EXE): src/plumage$(EXE)
 	$(CP) src/plumage$(EXE) plumage$(EXE)
 	$(CHMOD) 0755 plumage$(EXE)
 
-src/plumage$(EXE): Makefile src/lib/Glue.pbc src/lib/Util.pbc src/lib/Plumage/Metadata.pbc src/lib/Plumage/Project.pbc src/lib/Plumage/Dependencies.pbc src/plumage.pbc
+src/plumage$(EXE): Makefile src/lib/Util.pbc src/lib/Plumage/Metadata.pbc src/lib/Plumage/Project.pbc src/lib/Plumage/Dependencies.pbc src/plumage.pbc
 	$(PBC_TO_EXE) src/plumage.pbc
 
 .SUFFIXES: .nqp .pir .pbc

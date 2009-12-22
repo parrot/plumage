@@ -127,10 +127,7 @@ sub load_helper_libraries () {
     # Support OO
     pir::load_bytecode('P6object.pbc');
 
-    # Globals, common functions, system access, etc.
-    pir::load_bytecode('src/lib/Glue.pbc');
-
-    # Utility functions written in NQP
+    # Utility functions and standard "globals"
     pir::load_bytecode('src/lib/Util.pbc');
 
     # Process command line options

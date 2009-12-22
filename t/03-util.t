@@ -9,9 +9,6 @@ sub MAIN () {
     pir::load_language('parrot');
     pir::compreg__PS('parrot').import('Test::More');
 
-    # Load library to set $*EXECUTABLE_NAME
-    pir::load_bytecode('src/lib/Glue.pbc');
-
     # Load library to be tested
     pir::load_bytecode('src/lib/Util.pbc');
 
@@ -20,13 +17,15 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(38);
+    plan(42);
 
     test_hash_exists();
     test_hash_keys();
     test_hash_kv();
 
     test_set_from_array();
+
+    test_subst();
 
     test_path_exists();
     test_is_dir();
@@ -124,6 +123,24 @@ sub test_set_from_array() {
     is(%set<two>, 1, '... and second key is in set');
     is(%set<3>,   1, '... and third key is in set');
     nok(%set.exists('four'), '... and non-existant key is not in set');
+}
+
+sub test_subst() {
+    my $string := 'chewbacca';
+    my $subst  := subst($string, /a/, 'x');
+    is($subst,  'chewbxccx', 'subst works with plain string replacement');
+    is($string, 'chewbacca', 'plain string subst edits a clone');
+
+    my $text  := 'wookie';
+    my $fixed := subst($text, /w|k/, replacement);
+    is($fixed, 'wwookkie', 'subst works with code replacement');
+    is($text,  'wookie',   'code replacement subst edits a clone');
+}
+
+sub replacement($match) {
+    my $orig := ~$match;
+
+    return $orig ~ $orig;
 }
 
 sub test_path_exists() {

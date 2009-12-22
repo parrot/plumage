@@ -77,7 +77,7 @@ method _init($locator) {
        && pir::substr($locator, -5, 5) eq '.json' {
         $!metadata.load_from_file($locator);
 
-        my $file_dir := subst($locator, rx('<-[/]>+$'), '');
+        my $file_dir := subst($locator, /<-[\/]>+$/, '');
         $!source_dir := self._find_source_dir($file_dir);
     }
     elsif $!metadata.find_by_project_name($locator) {

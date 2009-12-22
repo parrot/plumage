@@ -16,43 +16,40 @@ The Plumage stack currently looks like this:
     |  |  ,---------------+--+--------------------.  |  |
     |  |  |         Plumage::Metadata             |  |  |
     +--+--+---------------------------------------+--+--+
-    |                  Util / Glue                      |
+    |                     Util                          |
     +---------------------------------------------------+
     |   Parrot Libraries    | Parrot Languages          |
     |                       |                           |
     |   * dumper            | * NQP-rx                  |
     |   * P6object          | * PIR                     |
-    |   * Getopt::Obj       | * PGE::Perl6Regex         |
-    |   * Config::JSON      | * data_json               |
+    |   * Getopt::Obj       | * data_json               |
+    |   * Config::JSON      |                           |
     `---------------------------------------------------'
 
 It is intended that as Plumage's functionality grows, more libraries (and
 probably more layers) will be added in the C<Plumage::*> namespace.  There
-has also been some discussion of moving C<Util> and C<Glue> or their
-functional equivalents into NQP-rx as standard available libraries.
-Finally, the C<PGE::Perl6Regex> dependency will eventually go away, once
-the regex libraries in NQP-rx pick up the last couple pieces of missing PGE
-functionality.
+has also been some discussion of moving C<Util> or its functional equivalent
+into NQP-rx as an optional utility library.
 
 
 =head1 Component Overviews
 
-The following sections give a mild overview of each major component,
-from the C<Util / Glue> layer on up.  There are some additional details
-for particular pieces available in other documents; these are noted below.
-For even more detail, read the source or visit C<#parrot> on C<irc.parrot.org>,
-and we'll be happy to help you.
+The following sections give a mild overview of each major component, from the
+C<Util> layer on up.  There are some additional details for particular pieces
+available in other documents; these are noted below.  For even more detail,
+read the source or visit C<#parrot> on C<irc.parrot.org>, and we'll be happy
+to help you.
 
 
-=head2 Util and Glue
+=head2 Util
 
-These two components work together to provide a very simple library of common
-functions to all of the layers above them.  These range from functional
-constructs like C<grep>, C<map>, and C<reduce>, to portable system utilities
-like C<find_program>, C<mkpath>, and C<qx>, to generally useful tools like
-C<eval>, C<slurp>, and C<subst>.
+This component provides a very simple library of common functions to all of
+the layers above it.  These range from functional constructs like C<grep>,
+C<map>, and C<reduce>, to portable system utilities like C<find_program>,
+C<mkpath>, and C<qx>, to generally useful tools like C<eval>, C<slurp>, and
+C<subst>.
 
-In addition, C<Glue> provides the magic that sets up the "interpreter globals",
+In addition, C<Util> provides the magic that sets up the "interpreter globals",
 such as C<$*PROGRAM_NAME>, C<@*ARGS>, and C<%*VM>.
 
 
@@ -67,8 +64,8 @@ the metadata collection.
 
 This module collects the important information about a project in one place
 -- metadata, project directory, and so on.  It also contains the logic for
-performing actions on a project, such as fetching the source, building binaries,
-and running tests.
+performing actions on a project, such as fetching the source, building
+binaries, and running tests.
 
 Adding a new action to the available project actions is described in the
 L<Adding a New Project Action|add-action.pod> document.
@@ -77,9 +74,10 @@ L<Adding a New Project Action|add-action.pod> document.
 =head2 Plumage::Dependencies
 
 Plumage projects can have many interlocking dependencies, both to other Plumage
-projects and to external items such as system binaries and standard build tools.
-This module contains the dependency solver that makes sense of the web of
-dependencies and determines what must be done to resolve all unmet dependencies.
+projects and to external items such as system binaries and standard build
+tools.  This module contains the dependency solver that makes sense of the web
+of dependencies and determines what must be done to resolve all unmet
+dependencies.
 
 
 =head2 User Interface

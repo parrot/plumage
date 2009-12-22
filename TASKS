@@ -72,7 +72,7 @@ project itself requires unavailable credentials or the project won't build
 with missing submodules, but that can probably be put off for now.
 
 --------
-Adding more "builtins" to Glue.pir:
+Adding more "builtins" to Util.nqp:
 
 The guiding principles are:
 

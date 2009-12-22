@@ -16,21 +16,19 @@ sub MAIN () {
     # Wave to the friendly users
     say("Hello, I'm Configure. My job is to poke and prod\nyour system to figure out how to build Plumage.\n");
 
-    # Load Parrot config and glue functions
-    pir::load_bytecode('PGE.pbc');
-    pir::load_bytecode('src/lib/Glue.pir');
+    # Load utility functions
     pir::load_bytecode('src/lib/Util.pir');
 
     # Slurp in the unconfigured Makefile text
     my $unconfigured := slurp(@*ARGS[0] || 'src/Makefile.in');
 
     # Replace all of the @foo@ markers
-    my $replaced := subst($unconfigured, rx('\@<ident>\@'), replacement);
+    my $replaced := subst($unconfigured, /\@<ident>\@/, replacement);
 
     # Fix paths on Windows
     if ($*OSNAME eq 'MSWin32') {
-        $replaced := subst($replaced, rx('\/'),     '\\'   );
-        $replaced := subst($replaced, rx('\\\\\*'), '\\\\*');
+        $replaced := subst($replaced, /'\/'/,     '\\'   );
+        $replaced := subst($replaced, /'\\\\\*'/, '\\\\*');
     }
 
     # Spew out the final makefile
