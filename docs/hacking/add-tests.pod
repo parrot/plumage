@@ -1,0 +1,59 @@
+=begin
+
+=head1 Adding Tests
+
+For now, this just lists a few general conventions that will make it easier
+for everyone to work together to fill out the test suite.
+
+
+=head2 Test File Name
+
+Test files should be named as follows:
+
+    (01-09)-foo.t              Basic tests of low-level infrastructure
+    (10-49)-lib-plumage-foo.t  Tests for Plumage::Foo libraries, in layer order
+    (50-99)-plumage-type.t     Various types of tests for the plumage CLI tool
+
+
+=head2 Test File Layout
+
+Each new test file should follow the same basic layout as seen in the
+F<t/03-util.t> test file -- a standard C<MAIN()> sub that loads the Parrot
+C<Test::More> implementation and the library (if any) that will be tested,
+and then hands off to a basic C<run_tests()> sub that just sets the C<plan>
+and calls each actual testing function in sequence.
+
+These testing functions should be named C<test_>I<whatever>C<()>, where
+I<whatever> is the name of the function, variable, command, etc. that is
+being tested, and they should follow right after C<run_tests()>, with any
+helper functions right after the functions they help.
+
+Testing functions should appear in the same order in C<run_tests()> that
+they appear in the rest of the file, and this order should also roughly match
+the order the tested items appear in the library or program source; of course,
+sometimes it will make more sense to test things slightly out of order
+(testing a file write function before a file read function, for instance,
+even though the read function appears first in the library source).
+
+
+=head2 Testing Tools
+
+We use Parrot's C<Test::More> implementation, but in a few cases its
+PIR-centric design shows through, and NQP provides better native tools.
+
+In particular:
+
+=over 4
+
+=item * Instead of C<like()>, please use C<ok()> with native NQP-rx C<$string ~~ /regex/> match.
+
+=item * Instead of C<lives_ok()>, C<dies_ok()>, or C<throws_like()>, please use native NQP-rx C<try {}> and/or C<CATCH {}>.
+
+=back
+
+If you do end up using a C<Test::More> function not already sanity-checked
+in t/01-sanity.t, please add a quick test there as well, just to make sure we
+know what happened if a future Parrot refactor breaks our test suite.
+
+
+=end
