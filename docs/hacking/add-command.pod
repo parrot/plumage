@@ -25,7 +25,7 @@ need to update F<src/plumage.nqp> in three places:
 
 =item * Add a new F<command_> sub implementing the new command at a logical spot in the C<COMMANDS> section.
 
-=item * Add a new entry to C<$_COMMANDS_JSON> near the top of the file to enable the new command.
+=item * Add a new entry to C<%COMMANDS> near the top of the file to enable the new command.
 
 =item * Update the C<usage_info> sub at the top of the C<COMMANDS> section so that the user can find it.
 

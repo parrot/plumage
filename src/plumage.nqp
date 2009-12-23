@@ -12,101 +12,97 @@ my %*VM;
 my $*OS;
 
 
-# NQP does not include a setting, so must load helper libraries before
-# even eval() will be available
+# NQP does not include a setting, so must load helper libraries first
 load_helper_libraries();
 
 
-# NQP doesn't support hash literals, so parse main structure from JSON
-# and then fix up values that can't be represented in JSON.
-#
-# NOTE: The data_json parser is very strict!  No extra commas, pedantic
-#       quoting, the works.  Whitespace is perhaps your only freedom.
-my  $_COMMANDS_JSON := '
-{
-    "usage"      : {
-        "action" : "command_usage",
-        "args"   : "none"
-    },
-    "version"    : {
-        "action" : "command_version",
-        "args"   : "none"
-    },
-    "projects"   : {
-        "action" : "command_projects",
-        "args"   : "none"
-    },
-    "status"   : {
-        "action" : "command_status",
-        "args"   : "opt_project"
-    },
-    "info"       : {
-        "action" : "command_info",
-        "args"   : "project"
-    },
-    "project-dir" : {
-        "action" : "command_project_dir",
-        "args"   : "project"
-    },
-    "showdeps"   : {
-        "action" : "command_showdeps",
-        "args"   : "project"
-    },
-    "fetch"      : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "update"     : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "configure"  : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "build"      : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "test"       : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "smoke"      : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "install"    : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "uninstall"  : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "clean"      : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    },
-    "realclean"  : {
-        "action" : "command_project_action",
-        "args"   : "project"
-    }
-}
-';
-our %COMMANDS := fixup_commands(eval($_COMMANDS_JSON, 'data_json'));
+# NQP does not have full {...} hash syntax, so use hash() and named args
+my  %COMMANDS  := hash(
+    usage       => hash(
+        action  => command_usage,
+        args    => 'none'
+    ),
+    version     => hash(
+        action  => command_version,
+        args    => 'none'
+    ),
+    projects    => hash(
+        action  => command_projects,
+        args    => 'none'
+    ),
+    status      => hash(
+        action  => command_status,
+        args    => 'opt_project'
+    ),
+    info        => hash(
+        action  => command_info,
+        args    => 'project'
+    ),
+    project_dir => hash(
+        action  => command_project_dir,
+        args    => 'project'
+    ),
+    showdeps    => hash(
+        action  => command_showdeps,
+        args    => 'project'
+    ),
+    fetch       => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    update      => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    configure   => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    build       => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    test        => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    smoke       => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    install     => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    uninstall   => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    clean       => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+    realclean   => hash(
+        action  => command_project_action,
+        args    => 'project'
+    ),
+);
 
-my $_DEFAULT_CONF_JSON := '
-{
-    "parrot_user_root"     : "#user_home_dir#/.parrot",
-    "plumage_user_root"    : "#parrot_user_root#/plumage",
-    "plumage_build_root"   : "#plumage_user_root#/build",
-    "saved_metadata_root"  : "#plumage_user_root#/saved_metadata",
-    "plumage_metadata_dir" : "metadata",
-    "installed_list_file"  : "#plumage_user_root#/installed_projects.list",
-    "root_command"         : "sudo"
-}
-';
+# Work around NQP limitation with key names on the left of =>
+# (and as a side benefit, support both spellings)
+%COMMANDS<project-dir> := %COMMANDS<project_dir>;
+
+
+my %DEFAULT_CONF := hash(
+    parrot_user_root     => '#user_home_dir#/.parrot',
+    plumage_user_root    => '#parrot_user_root#/plumage',
+    plumage_build_root   => '#plumage_user_root#/build',
+    saved_metadata_root  => '#plumage_user_root#/saved_metadata',
+    plumage_metadata_dir => 'metadata',
+    installed_list_file  => '#plumage_user_root#/installed_projects.list',
+    root_command         => 'sudo',
+);
+
 
 # NQP does not automatically call MAIN()
 MAIN();
@@ -146,15 +142,6 @@ sub load_helper_libraries () {
     pir::load_bytecode('src/lib/Plumage/Dependencies.pbc');
 }
 
-sub fixup_commands ($commands) {
-    # Convert action sub *names* into actual action subs
-    for $commands.kv -> $cmd, $opts {
-        $opts<action> := pir::get_hll_global__Ps($opts<action>);
-    }
-
-    return $commands;
-}
-
 sub parse_command_line_options () {
     my $getopts := Q:PIR{ %r = root_new ['parrot';'Getopt::Obj'] };
 
@@ -189,8 +176,7 @@ sub read_config_files () {
     }
 
     # Merge together default, system, user, and option configs
-    my %default := eval($_DEFAULT_CONF_JSON, 'data_json');
-    %*CONF := merge_tree_structures(%*CONF, %default);
+    %*CONF := merge_tree_structures(%*CONF, %DEFAULT_CONF);
 
     for @configs -> $config {
         if path_exists($config) {
