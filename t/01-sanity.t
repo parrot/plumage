@@ -12,7 +12,7 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(7);
+    plan(6);
 
     test_testing();
 }
@@ -24,5 +24,4 @@ sub test_testing() {
     is(  'z',   'z',  'is works for strings');
     isnt( 8,    -8,   'isnt works for ints');
     isnt('q',   'rs', 'isnt works for strings');
-    like('bar', 'ar', 'like works for simple substrings');
 }
