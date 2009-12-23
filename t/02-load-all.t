@@ -12,7 +12,7 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(10);
+    plan(11);
 
     test_load_pbcs();
 }
@@ -26,6 +26,7 @@ sub test_load_pbcs() {
 		  P6object.pbc
 		  P6Regex.pbc
 		  src/lib/Util.pbc
+		  src/lib/Plumage/Util.pbc
 		  src/lib/Plumage/Metadata.pbc
 		  src/lib/Plumage/Dependencies.pbc
 		  src/lib/Plumage/Project.pbc

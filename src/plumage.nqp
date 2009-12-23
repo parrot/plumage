@@ -139,7 +139,8 @@ sub load_helper_libraries () {
     # Data structure dumper for PMCs (used for debugging)
     pir::load_bytecode('dumper.pbc');
 
-    # Plumage modules: metadata, project, dependencies
+    # Plumage modules: util, metadata, project, dependencies
+    pir::load_bytecode('src/lib/Plumage/Util.pbc');
     pir::load_bytecode('src/lib/Plumage/Metadata.pbc');
     pir::load_bytecode('src/lib/Plumage/Project.pbc');
     pir::load_bytecode('src/lib/Plumage/Dependencies.pbc');
