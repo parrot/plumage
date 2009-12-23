@@ -5,6 +5,18 @@ Take one and run with it.  Please.
 
 
 --------
+Work on a Trac ticket
+
+We're beginning to use Parrot's Trac system to keep track of Plumage tasks.
+Check one of the canned searches to find a Plumage ticket to work on:
+
+    All    Plumage tickets: http://trac.parrot.org/parrot/report/21
+    Active Plumage tickets: http://trac.parrot.org/parrot/report/22
+
+You do NOT need to be able to complete the ticket all at once.  Any progress
+helps.
+
+--------
 Filter dependency list against local system
 
 Given a set of dependencies, some of which might be satisfied via locally
