@@ -8,16 +8,26 @@ Written and maintained by Jonathan "Duke" Leto C<< jonathan@leto.net >>.
 
 .namespace [ 'Tapir'; 'Parser' ]
 
+.sub bail_if_necessary :method
+    .param string line
+    $S0 = substr line, 0, 9
+    if $S0 == 'Bail out!' goto bail_out
+    .return(0)
+  bail_out:
+    .return(1)
+.end
+
 .sub parse_tapstream :method
     .param string tap
     .param int exit_code :optional
     .local string curr_line
     .local pmc plan, pass, fail, skip, todo
-    .local int i, curr_test, reported_test
+    .local int i, curr_test, reported_test, ordered, num_lines
     .local pmc tap_lines, parts, klass, stream
 
     i         = 0
     curr_test = 1
+    ordered   = 1
     fail      = new 'Integer'
     skip      = new 'Integer'
     todo      = new 'Integer'
@@ -27,7 +37,7 @@ Written and maintained by Jonathan "Duke" Leto C<< jonathan@leto.net >>.
     parts     = new 'ResizablePMCArray'
 
     split tap_lines, "\n", tap
-    $I0 = tap_lines
+    num_lines = tap_lines
 
     .local string plan_line
     plan_line = tap_lines[0]
@@ -35,8 +45,16 @@ Written and maintained by Jonathan "Duke" Leto C<< jonathan@leto.net >>.
 
     .local string prefix
   loop:
-    if i >= $I0 goto done
+    if i >= num_lines goto done
     curr_line = tap_lines[i]
+
+    .local int need_to_bail
+    need_to_bail = self.'bail_if_necessary'(curr_line)
+    if need_to_bail goto done
+
+    .local int is_tap
+    is_tap = self.'is_tap'(curr_line)
+    unless is_tap goto unrecognized
 
     split parts, "ok ", curr_line
 
@@ -46,10 +64,15 @@ Written and maintained by Jonathan "Duke" Leto C<< jonathan@leto.net >>.
     if prefix == 'not ' goto fail_or_todo
 
     if reported_test == curr_test goto pass_or_skip
+    # out of order test
+    ordered = 0
 
-    # it was an unrecognized line
+    goto pass_or_skip
+
+  unrecognized: # doesn't look like TAP, just ignore
     inc i
     goto loop
+
   pass_or_skip:
     split parts, "# ", curr_line
     $S0 = parts[1]
@@ -85,6 +108,7 @@ Written and maintained by Jonathan "Duke" Leto C<< jonathan@leto.net >>.
 
   done:
     stream = new [ 'Tapir'; 'Stream' ]
+    stream.'set_ordered'(ordered)
     stream.'set_pass'(pass)
     stream.'set_fail'(fail)
     stream.'set_todo'(todo)
@@ -94,7 +118,21 @@ Written and maintained by Jonathan "Duke" Leto C<< jonathan@leto.net >>.
     .return (stream)
 .end
 
-# parse_plan returns the expected number of test given a TAP stream as a string
+.sub is_tap :method
+    .param string tapline
+    $S0 = substr tapline, 0, 3
+    if $S0 == "ok " goto yes
+
+    $S0 = substr tapline, 0, 7
+    if $S0 == "not ok " goto yes
+
+    no:
+        .return( 0 )
+    yes:
+        .return( 1 )
+.end
+
+# parse_plan returns the expected number of tests given a plan line as a string
 
 .sub parse_plan :method
     .param string plan_line
