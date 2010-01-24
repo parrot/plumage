@@ -17,10 +17,11 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(42);
+    plan(46);
 
     test_hash_exists();
     test_hash_keys();
+    test_hash_values();
     test_hash_kv();
 
     test_set_from_array();
@@ -39,6 +40,21 @@ sub test_hash_exists() {
 
     ok( %opt.exists('foobar'),   'exists works for existing keys');
     nok(%opt.exists('zanzibar'), 'exists works for non-existent keys');
+}
+
+sub test_hash_values() {
+    my %hash;
+    my @values := %hash.values;
+
+    is(@values, 0, 'values on empty hash is empty');
+    %hash<GreatJob> := 42;
+
+    @values := %hash.values;
+    is(@values,    1,  'values on hash with one entry has one element');
+    is(@values[0], 42, '... and that element is correct');
+
+    %hash<pigdog> := 99;
+    is( %hash.values, 2, 'values on hash with two entries has two elements');
 }
 
 sub test_hash_keys() {
