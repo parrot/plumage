@@ -17,12 +17,14 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(46);
+    plan(49);
 
     test_hash_exists();
     test_hash_keys();
     test_hash_values();
     test_hash_kv();
+
+    test_array_reverse();
 
     test_set_from_array();
 
@@ -32,6 +34,14 @@ sub run_tests () {
     test_is_dir();
 
     test_qx();
+}
+
+sub test_array_reverse() {
+    my @array    := (42,69,314);
+    my @reversed := @array.reverse;
+    is(@reversed[0],314,'reverse of an array is correct');
+    is(@reversed[1],69,'reverse of an array is correct');
+    is(@reversed[2],42,'reverse of an array is correct');
 }
 
 sub test_hash_exists() {
