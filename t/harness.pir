@@ -39,7 +39,7 @@ HELP
     .param pmc argv
     .local pmc getopts, opts
     load_bytecode "Getopt/Obj.pbc"
-    getopts = new 'Getopt::Obj'
+    getopts = new ['Getopt';'Obj']
     getopts."notOptStop"(1)
     push getopts, "exec|e:s"
     push getopts, "verbose|v"
