@@ -140,8 +140,9 @@ sub _build_stage_paths () {
         }
     }
 
-    # Smoke test requires same path as regular test
-    %STAGES<smoke> := %STAGES<test>;
+    # Smoke test requires same prereq path as regular test
+    %STAGES<smoke>     := %STAGES<test>;
+    %STAGES<smoke>[-1] := 'smoke';
 }
 
 method _actions_up_to ($stage) {
