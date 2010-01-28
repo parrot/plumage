@@ -1,0 +1,61 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "pynie",
+        "abstract" : "A Python implementation targeting the Parrot VM",
+        "authority": "http://code.google.com/u/allisonrandal/",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Parrot Foundation",
+        "generated_by"     : "distutils",
+        "keywords"         : ["python"],
+        "description"      : "Pynie is an implementation of the Python 3.1 specification that runs on the Parrot virtual machine."
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "update"   : {
+            "type" : "parrot_setup"
+        },
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        },
+        "uninstall": {
+            "type" : "parrot_setup"
+        },
+        "clean"    : {
+            "type" : "parrot_setup"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["pynie"],
+        "requires"     : {
+            "fetch"    : ["svn"],
+            "build"    : [],
+            "test"     : ["python"],
+            "install"  : [],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "svn",
+             "checkout_uri": "http://pynie.googlecode.com/svn/trunk",
+             "browser_uri" : "http://code.google.com/p/pynie/source/browse/",
+             "project_uri" : "http://code.google.com/p/pynie/"
+        }
+    }
+}
