@@ -17,12 +17,14 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(46);
+    plan(49);
 
     test_hash_exists();
     test_hash_keys();
     test_hash_values();
     test_hash_kv();
+
+    test_all_matches();
 
     test_set_from_array();
 
@@ -32,6 +34,14 @@ sub run_tests () {
     test_is_dir();
 
     test_qx();
+}
+
+sub test_all_matches() {
+    my @matches;
+    @matches := all_matches(/ab?d?x?c/,"abc y adcef x axcfoo twiddle");
+    is(@matches[0],'abc','all_matches found abc');
+    is(@matches[1],'adc','all_matches found adc');
+    is(@matches[2],'axc','all_matches found axc');
 }
 
 sub test_hash_exists() {
