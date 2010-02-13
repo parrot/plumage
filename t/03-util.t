@@ -17,12 +17,13 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(49);
+    plan(51);
 
     test_hash_exists();
     test_hash_keys();
     test_hash_values();
     test_hash_kv();
+    test_hash();
 
     test_all_matches();
 
@@ -42,6 +43,15 @@ sub test_all_matches() {
     is(@matches[0],'abc','all_matches found abc');
     is(@matches[1],'adc','all_matches found adc');
     is(@matches[2],'axc','all_matches found axc');
+}
+
+sub test_hash() {
+    my %hash := hash( monkey => 'see');
+    my @kv   := %hash.kv;
+
+    is(@kv[0],'monkey', 'has() creates the monkey key');
+    is(@kv[1],'see', 'hash() set the value of monkey correctly');
+
 }
 
 sub test_hash_exists() {
