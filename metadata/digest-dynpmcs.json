@@ -1,0 +1,64 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "digest-dynpmcs",
+        "abstract" : "Set of message-digest dynpmcs for the Parrot VM.",
+        "authority": "http://gitorious.org/digest-dynpmcs",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Parrot Foundation",
+        "generated_by"     : "distutils",
+        "keywords"         : ["digest", "dypmc", "md2", "md4", "md5", "ripemd160", "sha", "sha1", "sha256", "sha512"],
+        "description"      : "libssl-powered md2, md4, md5, ripemd160, sha, sha1, sha256 and sha512 dynpmcs for Parrot."
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "update"   : {
+            "type" : "parrot_setup"
+        },
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
+        "smoke"    : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        },
+        "uninstall": {
+            "type" : "parrot_setup"
+        },
+        "clean"    : {
+            "type" : "parrot_setup"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["digest-dynpmcs"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "build"    : [],
+            "test"     : ["perl5"],
+            "install"  : [],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://gitorious.org/digest-dynpmcs/digest-dynpmcs.git",
+             "browser_uri" : "http://gitorious.org/digest-dynpmcs",
+             "project_uri" : "http://gitorious.org/digest-dynpmcs"
+        }
+    }
+}
