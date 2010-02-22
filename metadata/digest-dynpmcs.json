@@ -6,7 +6,7 @@
     "general"      : {
         "name"     : "digest-dynpmcs",
         "abstract" : "Set of message-digest dynpmcs for the Parrot VM.",
-        "authority": "http://gitorious.org/digest-dynpmcs",
+        "authority": "http://github.com/fperrad",
         "version"  : "HEAD",
         "license"  : {
             "type" : "Artistic License 2.0",
@@ -14,7 +14,7 @@
         },
         "copyright_holder" : "Parrot Foundation",
         "generated_by"     : "distutils",
-        "keywords"         : ["digest", "dypmc", "md2", "md4", "md5", "ripemd160", "sha", "sha1", "sha256", "sha512"],
+        "keywords"         : ["digest", "dynpmc", "md2", "md4", "md5", "ripemd160", "sha", "sha1", "sha256", "sha512"],
         "description"      : "libssl-powered md2, md4, md5, ripemd160, sha, sha1, sha256 and sha512 dynpmcs for Parrot."
     },
     "instructions" : {
@@ -56,9 +56,9 @@
     "resources"            : {
         "repository"       : {
              "type"        : "git",
-             "checkout_uri": "git://gitorious.org/digest-dynpmcs/digest-dynpmcs.git",
-             "browser_uri" : "http://gitorious.org/digest-dynpmcs",
-             "project_uri" : "http://gitorious.org/digest-dynpmcs"
+             "checkout_uri": "git://github.com/fperrad/digest-dynpmcs.git",
+             "browser_uri" : "http://github.com/fperrad/digest-dynpmcs",
+             "project_uri" : "http://github.com/fperrad/digest-dynpmcs"
         }
     }
 }
