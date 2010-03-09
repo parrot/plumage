@@ -1,63 +1,64 @@
 {
-    "meta-spec" : {
+    "meta-spec"    : {
         "version"  : 1,
         "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
     },
-    "general" : {
-        "name"     : "Kakapo",
-        "abstract" : "Run-time library of tests and utility code for NQP",
+    "general"      : {
+        "name"     : "kakapo",
+        "abstract" : "Run-time library for NQP programs on the Parrot VM",
         "authority": "http://gitorious.org/austin",
         "version"  : "HEAD",
-        "license" : {
+        "license"  : {
             "type" : "Artistic License 2.0",
             "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
         },
         "copyright_holder" : "Austin Hastings",
-        "generated_by"     : "Austin Hastings <Austin_Hastings@yahoo.com>",
-        "keywords"         : [
-	"library",
-	"nqp",
-	"parrot",
-	"runtime",
-	"testing",
-	"utility"
-	],
-        "description"      : "Utility library for NQP programs on the Parrot VM."
+        "generated_by"     : "distutils",
+        "keywords"         : ["library", "nqp", "parrot", "runtime", "stand", "alone", "xunit", "unit", "testing", "matcher", "pmc", "methods"],
+        "description"      : "DESCRIPTION"
     },
     "instructions" : {
-        "fetch" : {
+        "fetch"    : {
             "type" : "repository"
         },
-        "configure": {
-            "type" : "perl5_configure"
+        "update"   : {
+            "type" : "nqp_setup"
         },
-        "build" : {
-            "type" : "make"
+        "build"    : {
+            "type" : "nqp_setup"
         },
-        "test" : {
-            "type" : "make"
+        "test"     : {
+            "type" : "nqp_setup"
         },
-        "install" : {
-            "type" : "make"
+        "smoke"    : {
+            "type" : "nqp_setup"
+        },
+        "install"  : {
+            "type" : "nqp_setup"
+        },
+        "uninstall": {
+            "type" : "nqp_setup"
+        },
+        "clean"    : {
+            "type" : "nqp_setup"
         }
     },
-    "dependency-info" : {
-        "provides"     : [ "kakapo", "kakapo_base", "kakapo_test" ],
-        "requires" : {
+    "dependency-info"  : {
+        "provides"     : ["kakapo"],
+        "requires"     : {
             "fetch"    : ["git"],
-            "configure": ["perl5"],
-            "build"    : ["perl5", "make"],
-            "test"     : ["perl5", "make"],
-            "install"  : ["make"],
-            "runtime"  : [ ]
+            "build"    : [],
+            "test"     : ["perl5"],
+            "install"  : [],
+            "runtime"  : []
         }
     },
-    "resources" : {
-        "repository" : {
+    "resources"            : {
+        "repository"       : {
              "type"        : "git",
              "checkout_uri": "git://gitorious.org/kakapo/kakapo.git",
-             "browser_uri" : "http://gitorious.org/kakapo",
-             "project_uri" : "http://gitorious.org/kakapo"
+             "browser_uri" : "http://code.google.com/p/kakapo-parrot/",
+             "project_uri" : "git://gitorious.org/kakapo/kakapo.git"
         }
     }
 }
