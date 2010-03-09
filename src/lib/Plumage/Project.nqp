@@ -316,6 +316,12 @@ method update_parrot_setup () {
     return do_run(%*BIN<parrot>, 'setup.pir', 'update');
 }
 
+method update_nqp_setup () {
+    $*OS.chdir($!source_dir);
+
+    return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'update');
+}
+
 
 # CONFIGURE
 
@@ -383,6 +389,10 @@ method build_parrot_setup () {
     return do_run(%*BIN<parrot>, 'setup.pir');
 }
 
+method build_nqp_setup () {
+    return do_run(%*BIN<parrot-nqp>, 'setup.nqp');
+}
+
 
 # TEST
 
@@ -413,6 +423,10 @@ method test_parrot_setup () {
     return do_run(%*BIN<parrot>, 'setup.pir', 'test');
 }
 
+method test_nqp_setup () {
+    return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'test');
+}
+
 
 # SMOKE
 
@@ -437,6 +451,10 @@ method smoke_make () {
 
 method smoke_parrot_setup () {
     return do_run(%*BIN<parrot>, 'setup.pir', 'smoke');
+}
+
+method smoke_nqp_setup () {
+    return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'smoke');
 }
 
 
@@ -476,6 +494,10 @@ method install_parrot_setup () {
     return self.do_with_privs(%*BIN<parrot>, 'setup.pir', 'install');
 }
 
+method install_nqp_setup () {
+    return self.do_with_privs(%*BIN<parrot-nqp>, 'setup.nqp', 'install');
+}
+
 
 # UNINSTALL
 
@@ -503,6 +525,10 @@ method uninstall () {
 
 method uninstall_parrot_setup () {
     return self.do_with_privs(%*BIN<parrot>, 'setup.pir', 'uninstall');
+}
+
+method uninstall_nqp_setup () {
+    return self.do_with_privs(%*BIN<parrot-nqp>, 'setup.nqp', 'uninstall');
 }
 
 method do_with_privs (*@cmd) {
@@ -552,6 +578,9 @@ method clean_parrot_setup () {
     return do_run(%*BIN<parrot>, 'setup.pir', 'clean');
 }
 
+method clean_nqp_setup () {
+    return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'clean');
+}
 
 
 # REALCLEAN
