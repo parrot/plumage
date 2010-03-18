@@ -7,7 +7,7 @@ Plumage::Project - A project, its metadata, and its state
 =head1 SYNOPSIS
 
     # Load this library
-    pir::load_bytecode('src/lib/Plumage/Project.pbc');
+    pir::load_bytecode('Plumage/Project.pbc');
 
     # Instantiate a project, given name, metadata file, directory, or 'this'
     my $project := Plumage::Project.new('foo');       # By name

@@ -120,11 +120,14 @@ my %*BIN;
 
 
 sub load_helper_libraries () {
+    # Add source tree to Parrot's library loading path
+    pir::getinterp__P()[7][1].unshift('src/lib/');
+
     # Support OO
     pir::load_bytecode('P6object.pbc');
 
     # Utility functions and standard "globals"
-    pir::load_bytecode('src/lib/Util.pbc');
+    pir::load_bytecode('Util.pbc');
 
     # Process command line options
     pir::load_bytecode('Getopt/Obj.pbc');
@@ -136,10 +139,10 @@ sub load_helper_libraries () {
     pir::load_bytecode('dumper.pbc');
 
     # Plumage modules: util, metadata, project, dependencies
-    pir::load_bytecode('src/lib/Plumage/Util.pbc');
-    pir::load_bytecode('src/lib/Plumage/Metadata.pbc');
-    pir::load_bytecode('src/lib/Plumage/Project.pbc');
-    pir::load_bytecode('src/lib/Plumage/Dependencies.pbc');
+    pir::load_bytecode('Plumage/Util.pbc');
+    pir::load_bytecode('Plumage/Metadata.pbc');
+    pir::load_bytecode('Plumage/Project.pbc');
+    pir::load_bytecode('Plumage/Dependencies.pbc');
 }
 
 sub parse_command_line_options () {

@@ -7,7 +7,7 @@ Pluamge::Util - Plumage-specific utility functions
 =head1 SYNOPSIS
 
     # Load this library
-    pir::load_bytecode('src/lib/Plumage/Util.pbc');
+    pir::load_bytecode('Plumage/Util.pbc');
 
     # Plumage-specific
     $replaced := replace_config_strings($original);

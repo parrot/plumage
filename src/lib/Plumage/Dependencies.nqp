@@ -7,7 +7,7 @@ Plumage::Dependencies - Resolve dependency relationships
 =head1 SYNOPSIS
 
     # Load this library
-    pir::load_bytecode('src/lib/Plumage/Dependencies.pbc');
+    pir::load_bytecode('Plumage/Dependencies.pbc');
 
 
 

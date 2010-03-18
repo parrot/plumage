@@ -7,7 +7,7 @@ Util.nqp - Utility functions for NQP
 =head1 SYNOPSIS
 
     # Load this library
-    pir::load_bytecode('src/lib/Util.pbc');
+    pir::load_bytecode('Util.pbc');
 
     # Hash methods
     $found     := %hash.exists($key);

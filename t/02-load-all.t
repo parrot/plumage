@@ -18,6 +18,9 @@ sub run_tests () {
 }
 
 sub test_load_pbcs() {
+    # Add source tree to Parrot's library loading path
+    pir::getinterp__P()[7][1].unshift('src/lib/');
+
     my @pbcs := <
                   config.pbc
 		  dumper.pbc
@@ -25,11 +28,11 @@ sub test_load_pbcs() {
 		  Getopt/Obj.pbc
 		  P6object.pbc
 		  P6Regex.pbc
-		  src/lib/Util.pbc
-		  src/lib/Plumage/Util.pbc
-		  src/lib/Plumage/Metadata.pbc
-		  src/lib/Plumage/Dependencies.pbc
-		  src/lib/Plumage/Project.pbc
+		  Util.pbc
+		  Plumage/Util.pbc
+		  Plumage/Metadata.pbc
+		  Plumage/Dependencies.pbc
+		  Plumage/Project.pbc
 		>;
 
     for @pbcs -> $pbc {

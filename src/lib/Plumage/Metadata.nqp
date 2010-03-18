@@ -7,7 +7,7 @@ Plumage::Metadata - Project metadata: find it, parse it, query it
 =head1 SYNOPSIS
 
     # Load this library
-    pir::load_bytecode('src/lib/Plumage/Metadata.pbc');
+    pir::load_bytecode('Plumage/Metadata.pbc');
 
     # Class Methods
     my @projects := Plumage::Metadata.get_project_list;
