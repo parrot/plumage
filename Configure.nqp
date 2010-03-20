@@ -39,7 +39,7 @@ sub MAIN () {
     say("Configure completed for platform '$*OSNAME'.");
     say("You can now type '$make' to build Plumage.\n");
     say("You may also type '$make test' to run the Plumage test suite.\n");
-    say("Happy Hacking,\n\tThe Plumage Team");
+    say("Happy Hacking,\n\tThe Plumage Team\n");
 }
 
 sub replacement ($match) {
