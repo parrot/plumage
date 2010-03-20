@@ -126,9 +126,6 @@ sub load_helper_libraries () {
     # Support OO
     pir::load_bytecode('P6object.pbc');
 
-    # Utility functions and standard "globals"
-    pir::load_bytecode('Util.pbc');
-
     # Process command line options
     pir::load_bytecode('Getopt/Obj.pbc');
 
@@ -137,6 +134,9 @@ sub load_helper_libraries () {
 
     # Data structure dumper for PMCs (used for debugging)
     pir::load_bytecode('dumper.pbc');
+
+    # Utility functions and standard "globals"
+    pir::load_bytecode('Plumage/NQPUtil.pbc');
 
     # Plumage modules: util, metadata, project, dependencies
     pir::load_bytecode('Plumage/Util.pbc');

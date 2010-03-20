@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Pluamge::Util - Plumage-specific utility functions
+Plumage::Util - Plumage-specific utility functions
 
 =head1 SYNOPSIS
 
@@ -17,7 +17,7 @@ Pluamge::Util - Plumage-specific utility functions
 
 These utility functions are likely only directly useful to Plumage-related
 programs, unlike the more general utility functions provided by
-F<src/lib/Util.nqp>.
+F<src/lib/Plumage/NQPUtil.nqp>.
 
 =over 4
 

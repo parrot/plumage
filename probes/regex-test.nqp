@@ -6,8 +6,8 @@
 #   $ parrot-nqp regex-test.nqp
 
 
-# Load Util module, which includes the regex helper functions
-pir::load_bytecode('src/lib/Util.pir');
+# Load Plumage::NQPUtil module, which includes the regex helper functions
+pir::load_bytecode('src/lib/Plumage/NQPUtil.pir');
 
 # Load data structure dumper
 pir::load_bytecode('dumper.pbc');

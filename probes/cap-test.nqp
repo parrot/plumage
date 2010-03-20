@@ -13,8 +13,8 @@ my %*ENV;
 my %*VM;
 
 # Next, load the utility functions and fill in the "globals"
-pir::load_bytecode('src/lib/Util.pir');
-say("Util loaded.\n");
+pir::load_bytecode('src/lib/Plumage/NQPUtil.pir');
+say("Plumage::NQPUtil loaded.\n");
 
 # Inline PIR
 print("Inline PIR says:  ");
