@@ -21,12 +21,13 @@ sub MAIN() {
         project_uri      => 'http://gitorious.org/parrot-plumage/parrot-plumage',
 
         # Build
-	# XXX: Doesn't actually work; need distutils to make any
+        # XXX: Doesn't actually work; need distutils to make any
         #      missing directories before performing compiles
         pir_nqprx        => unflatten(
             'build/Plumage/Dependencies.pir', 'src/lib/Plumage/Dependencies.nqp',
             'build/Plumage/Metadata.pir'    , 'src/lib/Plumage/Metadata.nqp',
             'build/Plumage/Project.pir'     , 'src/lib/Plumage/Project.nqp',
+            'build/Plumage/NQPUtil.pir'     , 'src/lib/Plumage/NQPUtil.nqp',
             'build/Plumage/Util.pir'        , 'src/lib/Plumage/Util.nqp',
             'build/plumage.pir'             , 'src/plumage.nqp',
         ),
@@ -34,31 +35,30 @@ sub MAIN() {
             'build/Plumage/Dependencies.pbc', 'build/Plumage/Dependencies.pir',
             'build/Plumage/Metadata.pbc'    , 'build/Plumage/Metadata.pir',
             'build/Plumage/Project.pbc'     , 'build/Plumage/Project.pir',
+            'build/Plumage/NQPUtil.pbc'     , 'build/Plumage/NQPUtil.pir',
             'build/Plumage/Util.pbc'        , 'build/Plumage/Util.pir',
-            'build/Util.pbc'                , 'build/Util.pir',
             'build/plumage.pbc'             , 'build/plumage.pir',
         ),
         exe_pbc          => unflatten(
+            'build/plumage'                 , 'build/plumage.pbc',
+        ),
+        installable_pbc  => unflatten(
             'build/plumage'                 , 'build/plumage.pbc',
         ),
 
         # Test
         prove_exec       => get_nqp(),
 
-        # Install
-        # XXX: Doesn't actually work; need distutils to strip
-        #      the build/ prefix from paths during install
-        inst_bin         => 'plumage',
+        # Dist/Install
         inst_lib         => <
                               Plumage/Dependencies.pbc
                               Plumage/Metadata.pbc
                               Plumage/Project.pbc
+                              Plumage/NQPUtil.pbc
                               Plumage/Util.pbc
-                              Util.pbc
                             >,
-
-        # Dist
-        doc_files        => < CREDITS README TASKS TODO >,
+        inst_data        => glob('metadata/*.json'),
+        doc_files        => glob('CREDITS README TASKS TODO docs/*/*.pod'),
     );
 
 
