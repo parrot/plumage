@@ -10,7 +10,7 @@ sub MAIN () {
     pir::compreg__PS('parrot').import('Test::More');
 
     # Load library to be tested
-    pir::load_bytecode('src/lib/Util.pbc');
+    pir::load_bytecode('src/lib/Plumage/NQPUtil.pbc');
 
     # Run all tests for this library
     run_tests();

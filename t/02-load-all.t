@@ -28,7 +28,7 @@ sub test_load_pbcs() {
 		  Getopt/Obj.pbc
 		  P6object.pbc
 		  P6Regex.pbc
-		  Util.pbc
+		  Plumage/NQPUtil.pbc
 		  Plumage/Util.pbc
 		  Plumage/Metadata.pbc
 		  Plumage/Dependencies.pbc

@@ -2,12 +2,12 @@
 
 =head1 NAME
 
-Util.nqp - Utility functions for NQP
+Plumage::NQPUtil.nqp - Utility functions for NQP
 
 =head1 SYNOPSIS
 
     # Load this library
-    pir::load_bytecode('Util.pbc');
+    pir::load_bytecode('Plumage/NQPUtil.pbc');
 
     # Hash methods
     $found     := %hash.exists($key);

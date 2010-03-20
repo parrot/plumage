@@ -84,7 +84,7 @@ project itself requires unavailable credentials or the project won't build
 with missing submodules, but that can probably be put off for now.
 
 --------
-Adding more "builtins" to Util.nqp:
+Adding more "builtins" to src/lib/Plumage/NQPUtil.nqp:
 
 The guiding principles are:
 

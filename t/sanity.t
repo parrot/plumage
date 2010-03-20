@@ -9,8 +9,8 @@ sub MAIN () {
     pir::load_language('parrot');
     pir::compreg__PS('parrot').import('Test::More');
 
-    # Load Util library
-    pir::load_bytecode('src/lib/Util.pbc');
+    # Load NQP utilities library
+    pir::load_bytecode('src/lib/Plumage/NQPUtil.pbc');
 
     # Set correct path for plumage binary
     $PLUMAGE := fscat(['.'], 'plumage');
