@@ -157,7 +157,7 @@ sub parse_command_line_options () {
 sub read_config_files () {
     # Find config files for this system and user (ignored if missing).
     my $etc      := %*VM<conf><sysconfdir>;
-    my $home     := user_home_dir();
+    my $home     := %*ENV<PLUMAGE_HOME> || user_home_dir();
     my $base     := 'plumage.json';
     my $sysconf  := fscat([$etc,  'parrot', 'plumage'], $base);
     my $userconf := fscat([$home, 'parrot', 'plumage'], $base);
