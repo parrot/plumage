@@ -15,9 +15,9 @@ MAIN();
 sub MAIN () {
     # Wave to the friendly users
     say("Hello, I'm Configure. My job is to poke and prod\nyour system to figure out how to build Plumage.\n");
-
     # Load utility functions
     pir::load_bytecode('src/lib/Plumage/NQPUtil.pir');
+    %*VM<config> := (pir::getinterp__P())[8];
 
     # Slurp in the unconfigured Makefile text
     my $unconfigured := slurp(@*ARGS[0] || 'src/Makefile.in');
