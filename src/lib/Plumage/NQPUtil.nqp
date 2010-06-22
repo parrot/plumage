@@ -532,7 +532,7 @@ sub fscat(@path_parts, *@filename) {
     pir::die('Only one filename allowed in fscat()')
         if @filename > 1;
 
-    my $sep    := pir::getinterp__P()[6]<slash>;
+    my $sep    := pir::getinterp__P()[8]<slash>;
     my $joined := pir::join($sep, @path_parts);
        $joined := $joined ~ $sep ~ @filename[0] if @filename;
 
@@ -889,7 +889,7 @@ INIT {
 
     my $interp  := pir::getinterp__P();
     my @argv    := $interp[2];   # IGLOBALS_ARGV_LIST
-    my $config  := $interp[6];   # IGLOBALS_CONFIG_HASH
+    my $config  := $interp[8];   # IGLOBALS_CONFIG_HASH
     my $os      := pir::loadlib__PS('os');
 
     # Only fill the config portion of %*VM for now
@@ -905,8 +905,8 @@ INIT {
     # INTERPINFO_EXECUTABLE_FULLNAME
     store_dynlex_safely('$*EXECUTABLE_NAME', pir::interpinfo__si(19));
 
-    store_dynlex_safely('$*OSNAME', $interp[8]["osname"]);
-    store_dynlex_safely('%*OSVER', $interp[8]["VERSION"]);
+    store_dynlex_safely('$*OSNAME', $config<osname>);
+    store_dynlex_safely('%*OSVER', $config<VERSION>);
 
     # Magic objects
     store_dynlex_safely('%*ENV', pir::root_new__PP(< parrot Env >));
