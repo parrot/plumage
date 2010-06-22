@@ -409,7 +409,7 @@ sub subst($original, $regex, $replacement) {
 	     $I1 = $P2
 	     $P3 = find_lex '$replace_string'
 	     $S1 = $P3
-	     substr $S0, $I0, $I1, $S1
+	     replace $S0, $S0, $I0, $I1, $S1
 	     $P0 = $S0
 	};
 
@@ -466,9 +466,10 @@ Read the C<$contents> of a file as a single string.
 =end
 
 sub slurp ($filename) {
-    my $fh       := pir::open__Pss($filename, 'r');
+    my $fh := pir::new__Ps('FileHandle');
+    $fh.open($filename, 'r');
     my $contents := $fh.readall;
-    pir::close($fh);
+    $fh.close();
 
     return $contents;
 }
@@ -483,9 +484,10 @@ Write the string C<$contents> to a file.
 =end
 
 sub spew ($filename, $contents) {
-    my $fh := pir::open__Pss($filename, 'w');
+    my $fh := pir::new__Ps('FileHandle');
+    $fh.open($filename, 'w');
     $fh.print($contents);
-    pir::close($fh);
+    $fh.close();
 }
 
 
@@ -498,9 +500,10 @@ Append the string C<$contents> to a file.
 =end
 
 sub append ($filename, $contents) {
-    my $fh := pir::open__Pss($filename, 'a');
+    my $fh := pir::new__Ps('FileHandle');
+    $fh.open($filename, 'a');
     $fh.print($contents);
-    pir::close($fh);
+    $fh.close();
 }
 
 
@@ -581,7 +584,7 @@ directory, or a false value if not.
 
 sub is_dir($path) {
     my @stat := pir::root_new__PP(< parrot OS >).stat($path);
-    return pir::stat__isi($path, 2);   # STAT_ISDIR
+    return @stat[2];   # STAT_ISDIR
 
     CATCH {
         return 0;
@@ -646,7 +649,8 @@ following way:
 =end
 
 sub find_program ($program) {
-    my $path_sep := pir::sysinfo__si(4) eq 'MSWin32' ?? ';' !! ':';
+    my $interp  := pir::getinterp__P();
+    my $path_sep := interp[8]["osname"] eq 'MSWin32' ?? ';' !! ':';
     my %env      := pir::root_new__PP(< parrot Env >);
     my @paths    := pir::split($path_sep, %env<PATH>);
     my @exts     := pir::split($path_sep, %env<PATHEXT>);
@@ -711,7 +715,14 @@ if the process could not be spawned at all.
 =end
 
 sub run (*@command_and_args) {
-    return pir::shr(pir::spawnw__iP(@command_and_args), 8);
+    my $aux := pir::spawnw__iP(@command_and_args);
+    my $ret := Q:PIR<
+        $P0 = find_lex '$aux'
+        $I0 = $P0
+        $I1 = shr $I0, 8
+        %r = box $I1
+    >;
+    return $ret;
 }
 
 
@@ -754,12 +765,13 @@ B<WARNING>: Parrot currently implements the pipe open B<INSECURELY>!
 
 sub qx (*@command_and_args) {
     my $cmd  := pir::join(' ', @command_and_args);
-    my $pipe := pir::open__Pss($cmd, 'rp');
+    my $pipe := pir::new__Ps('FileHandle');
+    $pipe.open($cmd, 'rp');
     pir::die("Unable to execute '$cmd'") unless $pipe;
 
     $pipe.encoding('utf8');
     my $output := $pipe.readall;
-    $pipe.close;
+    $pipe.close();
 
     store_dynlex_safely('$!', $pipe.exit_status);
 
@@ -878,6 +890,7 @@ INIT {
     my $interp  := pir::getinterp__P();
     my @argv    := $interp[2];   # IGLOBALS_ARGV_LIST
     my $config  := $interp[6];   # IGLOBALS_CONFIG_HASH
+    my $os      := pir::loadlib__PS('os');
 
     # Only fill the config portion of %*VM for now
     my %vm;
@@ -892,9 +905,8 @@ INIT {
     # INTERPINFO_EXECUTABLE_FULLNAME
     store_dynlex_safely('$*EXECUTABLE_NAME', pir::interpinfo__si(19));
 
-    # SYSINFO_PARROT_OS / SYSINFO_PARROT_VERSION
-    store_dynlex_safely('$*OSNAME', pir::sysinfo__si(4));
-    store_dynlex_safely('%*OSVER',  pir::sysinfo__si(5));
+    store_dynlex_safely('$*OSNAME', $interp[8]["osname"]);
+    store_dynlex_safely('%*OSVER', $interp[8]["VERSION"]);
 
     # Magic objects
     store_dynlex_safely('%*ENV', pir::root_new__PP(< parrot Env >));
