@@ -227,7 +227,8 @@ HELP
     cmd = join ' ', command_and_args
 
     .local pmc pipe
-    pipe = open cmd, 'rp'
+    pipe = new ['FileHandle']
+    pipe.'open'(cmd, 'rp')
     unless pipe goto pipe_open_error
 
     .local pmc output
