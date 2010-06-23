@@ -1,0 +1,39 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "parrot-mysql",
+        "abstract" : "A NCI module to access mysql client library",
+        "authority": "unknown",
+        "version"  : "0.1.1",
+        "license"  : {
+            "type" : "Artistic or GPL",
+            "uri"  : "http://dev.perl.org/licenses/"
+        },
+        "copyright_holder" : "The Parrot Foundation",
+        "description"      : "A NCI module to access mysql client library"
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "install"    : {
+            "type" : "make"
+        }
+    },
+    "dependency-info" : {
+        "provides"    : "parrot-mysql",
+        "requires"    : {
+            "fetch"   : ["svn"],
+            "install" : ["parrot", "make"]
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "svn",
+             "checkout_uri": "http://parrot-mysql.googlecode.com/svn/trunk/"
+        }
+    }
+}
