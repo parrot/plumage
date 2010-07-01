@@ -6,7 +6,7 @@
     "general"      : {
         "name"     : "pynie",
         "abstract" : "A Python implementation targeting the Parrot VM",
-        "authority": "http://code.google.com/u/allisonrandal/",
+        "authority": "http://bitbucket.org/allison",
         "version"  : "HEAD",
         "license"  : {
             "type" : "Artistic License 2.0",
@@ -43,7 +43,7 @@
     "dependency-info"  : {
         "provides"     : ["pynie"],
         "requires"     : {
-            "fetch"    : ["svn"],
+            "fetch"    : ["hg"],
             "build"    : [],
             "test"     : ["python"],
             "install"  : [],
@@ -52,10 +52,10 @@
     },
     "resources"            : {
         "repository"       : {
-             "type"        : "svn",
-             "checkout_uri": "http://pynie.googlecode.com/svn/trunk",
-             "browser_uri" : "http://code.google.com/p/pynie/source/browse/",
-             "project_uri" : "http://code.google.com/p/pynie/"
+             "type"        : "hg",
+             "checkout_uri": "http://bitbucket.org/allison/pynie",
+             "browser_uri" : "http://bitbucket.org/allison/pynie/src",
+             "project_uri" : "http://bitbucket.org/allison/pynie"
         }
     }
 }
