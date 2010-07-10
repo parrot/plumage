@@ -1,61 +1,64 @@
 {
     "meta-spec"    : {
-	"version"  : 1,
-	"uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
     },
     "general"      : {
-	"name"     : "Tree Optimization",
-	"abstract" : "Library for analysis, pattern-matching, and transformation of trees.",
-	"authority": "http://github.com/ekiru",
-	"version"  : "HEAD",
-	"license"  : {
-	    "type" : "Artistic License 2.0",
-	    "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
-	},
-	"copyright_holder" : "Tyler L. Curtis",
-	"generated_by"     : "Tyler L. Curtis",
-	"keywords"         : ["Parrot", "Optimization", "Pattern", "PCT"],
-	"description"      : "A library for analysis, pattern-matching, and transformation of trees."
+        "name"     : "tree-optimization",
+        "abstract" : "Library for analysis, pattern-matching, and transformation of Trees.",
+        "authority": "http://github.com/ekiru",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Tyler L. Curtis",
+        "generated_by"     : "distutils",
+        "keywords"         : ["parrot", "optimization", "pattern", "pct"],
+        "description"      : "A library for analysis, pattern-matching, and transformation of trees."
     },
     "instructions" : {
-	"fetch"    : {
-	    "type" : "repository"
-	},
-	"update"   : {
-	    "type" : "nqp_setup"
-	},
-	"build"    : {
-	    "type" : "nqp_setup"
-	},
-	"test"     : {
-	    "type" : "nqp_setup"
-	},
-	"install"  : {
-	    "type" : "nqp_setup"
-	},
-	"uninstall": {
-	    "type" : "nqp_setup"
-	},
-	"clean"    : {
-	    "type" : "nqp_setup"
-	}
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "update"   : {
+            "type" : "nqp_setup"
+        },
+        "build"    : {
+            "type" : "nqp_setup"
+        },
+        "test"     : {
+            "type" : "nqp_setup"
+        },
+        "smoke"    : {
+            "type" : "nqp_setup"
+        },
+        "install"  : {
+            "type" : "nqp_setup"
+        },
+        "uninstall": {
+            "type" : "nqp_setup"
+        },
+        "clean"    : {
+            "type" : "nqp_setup"
+        }
     },
     "dependency-info"  : {
-	"provides"     : ["tree-optimization"],
-	"requires"     : {
-	    "fetch"    : ["git"],
-	    "build"    : ["NQP"],
-	    "test"     : ["NQP"],
-	    "install"  : [],
-	    "runtime"  : []
-	}
+        "provides"     : ["tree-optimization"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "build"    : [],
+            "test"     : [],
+            "install"  : [],
+            "runtime"  : []
+        }
     },
     "resources"            : {
-	"repository"       : {
-	    "type"         : "git",
-	    "checkout_uri" : "git://github.com/ekiru/tree-optimization.git",
-	    "browser_uri"  : "http://github.com/ekiru/tree-optimization",
-	    "project_uri"  : "http://github.com/ekiru/tree-optimization"
-	}
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/ekiru/tree-optimization.git",
+             "browser_uri" : "http://github.com/ekiru/tree-optimization",
+             "project_uri" : "http://github.com/ekiru/tree-optimization"
+        }
     }
 }
