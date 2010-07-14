@@ -1,0 +1,48 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "Winxed",
+        "abstract" : "JavaScript-like language with easy access to most Parrot features",
+        "authority": "http://code.google.com/p/winxed/",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Julián Albo",
+        "generated_by"     : "Geoffrey Broadwell",
+        "keywords"         : [],
+        "description"      : ""
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "build"    : {
+            "type" : "make"
+        },
+        "test"     : {
+            "type" : "make"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["winxed"],
+        "requires"     : {
+            "fetch"    : ["svn"],
+            "build"    : ["make", "g++"],
+            "test"     : ["make"],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "svn",
+             "checkout_uri": "http://winxed.googlecode.com/svn/trunk/",
+             "browser_uri" : "http://code.google.com/p/winxed/source/browse/",
+             "project_uri" : "http://code.google.com/p/winxed/"
+        }
+    }
+}
