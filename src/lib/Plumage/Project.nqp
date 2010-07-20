@@ -141,7 +141,7 @@ sub _build_stage_paths () {
     }
 
     # Smoke test requires same prereq path as regular test
-    %STAGES<smoke>     := %STAGES<test>;
+    %STAGES<smoke>     := pir::clone__PP(%STAGES<test>);
     %STAGES<smoke>[-1] := 'smoke';
 }
 
