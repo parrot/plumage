@@ -13,27 +13,32 @@
             "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
         },
         "copyright_holder" : "Julián Albo",
-        "generated_by"     : "Geoffrey Broadwell",
-        "keywords"         : [],
-        "description"      : ""
+        "generated_by"     : "Geoffrey Broadwell - Julián Albo",
+        "keywords"         : ["winxed"],
+        "description"      : "winxed installed as parrot language only"
     },
     "instructions" : {
         "fetch"    : {
             "type" : "repository"
         },
-        "build"    : {
-            "type" : "make"
+        "update"    : {
+            "type" : "parrot_setup"
         },
-        "test"     : {
-            "type" : "make"
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        },
+        "uninstall"  : {
+            "type" : "parrot_setup"
         }
     },
     "dependency-info"  : {
         "provides"     : ["winxed"],
         "requires"     : {
             "fetch"    : ["svn"],
-            "build"    : ["make", "g++"],
-            "test"     : ["make"],
+            "build"    : [],
             "runtime"  : []
         }
     },
