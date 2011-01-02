@@ -1,6 +1,7 @@
 #! parrot-nqp
 
 our $PLUMAGE;
+my $!;
 
 MAIN();
 
@@ -47,13 +48,13 @@ sub run_tests () {
 #
 
 sub test_invalid() {
-    my $success := do_run('invalidjunkdoesnotexist');
-    nok($success, 'do_run()ing invalidjunk returns false');
+    qx('invalidjunkdoesnotexist');
+    nok($! == 0, 'do_run()ing invalidjunk returns false');
 }
 
 sub test_plumage_invalid() {
-    my $success := do_run($PLUMAGE, 'asdfversion');
-    nok($success, 'plumage returns failure for invalid commands');
+    qx($PLUMAGE, 'asdfversion');
+    nok($! == 0, 'plumage returns failure for invalid commands');
 }
 
 sub test_plumage_info_invalid() {
@@ -114,10 +115,8 @@ sub test_plumage_usage() {
 }
 
 sub test_plumage_version() {
-    my $success := do_run($PLUMAGE, 'version');
-    ok($success, 'plumage version returns success');
-
     my $output := qx($PLUMAGE, 'version');
+    ok($! == 0, 'plumage version returns success');
     ok($output ~~ /:s Parrot Plumage/,    'plumage version knows its name');
     ok($output ~~ /:s Parrot Foundation/, 'version mentions Parrot Foundation');
     ok($output ~~ /:s Artistic License/,  'version mentions Artistic License');
