@@ -4,7 +4,6 @@
 
 # Generated files
 MANIFEST
-Makefile
 *.c
 *.o
 *.pbc
