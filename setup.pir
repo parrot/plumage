@@ -57,7 +57,6 @@ No Configure step, no Makefile generated.
 
     $P4 = new 'Hash'
     $P4['plumage'] = 'plumage.pbc'
-    $P0['exe_pbc'] = $P4
     $P0['installable_pbc'] = $P4
 
     # test
