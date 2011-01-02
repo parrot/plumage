@@ -45,7 +45,7 @@
     "dependency-info"  : {
         "provides"     : ["pheme"],
         "requires"     : {
-            "fetch"    : ["svn"],
+            "fetch"    : ["git"],
             "build"    : [],
             "test"     : ["perl5"],
             "install"  : [],
@@ -54,9 +54,9 @@
     },
     "resources"            : {
         "repository"       : {
-             "type"        : "svn",
-             "checkout_uri": "https://svn.parrot.org/languages/pheme/trunk",
-             "browser_uri" : "https://trac.parrot.org/languages/browser/pheme",
+             "type"        : "git",
+             "checkout_uri": "git://github.com/parrot/pheme.git",
+             "browser_uri" : "http://github.com/parrot/pheme",
              "project_uri" : "https://trac.parrot.org/parrot/wiki/Languages"
         }
     }
