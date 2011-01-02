@@ -65,7 +65,10 @@ method _init($locator) {
     my $build_root := replace_config_strings(%*CONF<plumage_build_root>);
     my $undef;
 
-    if $locator eq 'this' {
+    if $!metadata.find_by_project_name($locator) {
+        $!source_dir := fscat([$build_root], $locator);
+    }
+    elsif $locator eq 'this' {
         $!source_dir := self._find_source_dir();
         $!metadata.load_from_project_dir($!source_dir);
     }
@@ -79,9 +82,6 @@ method _init($locator) {
 
         my $file_dir := subst($locator, /<-[\/]>+$/, '');
         $!source_dir := self._find_source_dir($file_dir);
-    }
-    elsif $!metadata.find_by_project_name($locator) {
-        $!source_dir := fscat([$build_root], $locator);
     }
 
     unless $!metadata.is_valid {

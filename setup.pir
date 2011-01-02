@@ -22,6 +22,9 @@ No Configure step, no Makefile generated.
     $S0 = shift args
     load_bytecode 'distutils.pbc'
 
+    .const 'Sub' selfinstall = 'selfinstall'
+    register_step('selfinstall', selfinstall)
+
     $P0 = new 'Hash'
     $P0['name']                 = 'Plumage'
     $P0['abstract']             = 'Parrot Plumage is the Parrot module ecosystem'
@@ -90,9 +93,15 @@ LIBS
     .tailcall setup(args :flat, $P0 :flat :named)
 .end
 
+.sub 'selfinstall' :anon
+    .param pmc kv :slurpy :named
+    system('parrot plumage.pbc install plumage', 1 :named('verbose'))
+.end
+
 .sub 'get_tags'
     .return ('plumage')
 .end
+
 
 # Local Variables:
 #   mode: pir
