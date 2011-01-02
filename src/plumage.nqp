@@ -103,6 +103,10 @@ my %DEFAULT_CONF := hash(
     root_command         => 'sudo',
 );
 
+unless path_exists(%DEFAULT_CONF<plumage_metadata_dir>) {
+    %DEFAULT_CONF<plumage_metadata_dir> := %*VM<config><datadir> ~ '/plumage/metadata';
+}
+
 
 # NQP does not automatically call MAIN()
 MAIN();
