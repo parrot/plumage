@@ -24,10 +24,10 @@ sub test_inline_pir ($name) {
     my $string := Q:PIR{
         $S0  = 'Hello, '
         $P0  = find_lex '$name'
-	$S1  = $P0
-	$S0 .= $S1
-	$S0 .= '!'
-	%r   = box $S0
+        $S1  = $P0
+        $S0 .= $S1
+        $S0 .= '!'
+        %r   = box $S0
     };
 
     say($string);

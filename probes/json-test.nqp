@@ -16,21 +16,21 @@ my @tests := (
               '[1,2,3]',
               '{"a":1,"b":2}',
 
-	      # Null becomes undef by itself,
-	      # but null in an array or object
-	      'null',
-	      '[null]',
-	      '{"a":null}',
+              # Null becomes undef by itself,
+              # but null in an array or object
+              'null',
+              '[null]',
+              '{"a":null}',
 
-	      # Booleans get converted to 1/0
-	      '{"true": true, "false": false}',
+              # Booleans get converted to 1/0
+              '{"true": true, "false": false}',
 
-	      # Duplicate keys silently overwrite!
-	      '{"a":1, "a":"bar"}',
+              # Duplicate keys silently overwrite!
+              '{"a":1, "a":"bar"}',
 
-	      # Complex test
-	      '{"config":{"a":1,"b":2.4e-2,"c":"foo","d":{"1":11,"2":22},"e":[4,5,6],"f":true,"g":false,"h":null}}'
-	     );
+              # Complex test
+              '{"config":{"a":1,"b":2.4e-2,"c":"foo","d":{"1":11,"2":22},"e":[4,5,6],"f":true,"g":false,"h":null}}'
+             );
 
 # Iterate over test strings, showing original and roundtripped version
 for @tests {

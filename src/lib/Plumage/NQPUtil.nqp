@@ -396,24 +396,24 @@ sub subst($original, $regex, $replacement) {
 
     for @matches -> $match {
         my $replace_string := $is_sub ?? $replacement($match) !! $replacement;
-	my $replace_len    := pir::length($replace_string);
-	my $match_len      := $match.to - $match.from;
-	my $real_from      := $match.from + $offset;
+        my $replace_len    := pir::length($replace_string);
+        my $match_len      := $match.to - $match.from;
+        my $real_from      := $match.from + $offset;
 
-	Q:PIR{
-             $P0 = find_lex '$edited'
-	     $S0 = $P0
-	     $P1 = find_lex '$real_from'
-	     $I0 = $P1
-	     $P2 = find_lex '$match_len'
-	     $I1 = $P2
-	     $P3 = find_lex '$replace_string'
-	     $S1 = $P3
-	     replace $S0, $S0, $I0, $I1, $S1
-	     $P0 = $S0
-	};
+        Q:PIR{
+            $P0 = find_lex '$edited'
+            $S0 = $P0
+            $P1 = find_lex '$real_from'
+            $I0 = $P1
+            $P2 = find_lex '$match_len'
+            $I1 = $P2
+            $P3 = find_lex '$replace_string'
+            $S1 = $P3
+            replace $S0, $S0, $I0, $I1, $S1
+            $P0 = $S0
+        };
 
-	$offset := $offset - $match_len + $replace_len;
+        $offset := $offset - $match_len + $replace_len;
     }
 
     return $edited;
