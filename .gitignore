@@ -6,6 +6,8 @@
 MANIFEST
 *.c
 *.o
+*.obj
+*.exe
 *.pbc
 *.tar.gz
 *.pir
