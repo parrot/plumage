@@ -34,7 +34,7 @@ No Configure step, no Makefile generated.
     $P0['copyright_holder']     = 'Parrot Foundation'
     $P0['checkout_uri']         =  'git://github.com/parrot/plumage.git'
     $P0['browser_uri']          = 'http://github.com/parrot/plumage'
-    $P0['project_uri']          = 'http://github.com/parrot/plumage'
+    $P0['project_uri']          = 'https://trac.parrot.org/parrot/wiki/ModuleEcosystem'
 
     # build
     $P2 = new 'Hash'
