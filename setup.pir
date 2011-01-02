@@ -68,8 +68,8 @@ No Configure step, no Makefile generated.
 
     # smoke
     $P0['prove_archive'] = 'test_plumage.tar.gz'
-#    $P0['smolder_url'] = 'http://smolder.parrot.org/app/projects/process_add_report/?'
-    $P0['smolder_comments'] = 'plumage'
+    $P0['smolder_url'] = 'http://smolder.parrot.org/app/projects/process_add_report/3'
+#    $P0['smolder_comments'] = 'plumage'
     $S0 = get_tags()
     $P0['smolder_tags'] = $S0
 
@@ -99,7 +99,14 @@ LIBS
 .end
 
 .sub 'get_tags'
-    .return ('plumage')
+    .local string tags
+    .local pmc config
+    config = get_config()
+    tags = config['osname']
+    tags .= ", "
+    $S0 = config['archname']
+    tags .= $S0
+    .return (tags)
 .end
 
 
