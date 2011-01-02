@@ -12,7 +12,7 @@ sub MAIN () {
     pir::compreg__PS('parrot').import('Test::More');
 
     # Load NQP utilities library
-    pir::load_bytecode('src/lib/Plumage/NQPUtil.pbc');
+    pir::load_bytecode('Plumage/NQPUtil.pbc');
 
     # Set correct path for plumage pbc
     $PLUMAGE := fscat(['.'], 'plumage.pbc');

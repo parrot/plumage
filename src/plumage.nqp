@@ -120,9 +120,6 @@ my %*BIN;
 
 
 sub load_helper_libraries () {
-    # Add source tree to Parrot's library loading path
-    pir::getinterp__P()[9][1].unshift('src/lib/');
-
     # Support OO
     pir::load_bytecode('P6object.pbc');
 

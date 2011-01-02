@@ -7,7 +7,7 @@
 
 
 # Load Plumage::NQPUtil module, which includes the regex helper functions
-pir::load_bytecode('src/lib/Plumage/NQPUtil.pir');
+pir::load_bytecode('Plumage/NQPUtil.pbc');
 
 # Load data structure dumper
 pir::load_bytecode('dumper.pbc');

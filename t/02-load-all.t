@@ -18,9 +18,6 @@ sub run_tests () {
 }
 
 sub test_load_pbcs() {
-    # Add source tree to Parrot's library loading path
-    pir::getinterp__P()[9][1].unshift('src/lib/');
-
     my @pbcs := <
                   config.pbc
                   dumper.pbc
