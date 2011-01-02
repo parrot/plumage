@@ -3,10 +3,12 @@
 *.sw?
 
 # Generated files
+MANIFEST
 Makefile
 *.c
 *.o
 *.pbc
-plumage.pir
+*.tar.gz
+*.pir
 plumage
-src/lib/Metadata.pir
+installable_plumage
