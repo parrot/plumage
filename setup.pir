@@ -80,7 +80,7 @@ Plumage/NQPUtil.pbc
 LIBS
     $S0 = pop $P5
     $P0['inst_lib'] = $P5
-    $P6 = glob('metadata/*.json')
+    $P6 = glob('plumage/metadata/*.json')
     $P0['inst_data'] = $P6
 
     # dist

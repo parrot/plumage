@@ -98,7 +98,7 @@ my %DEFAULT_CONF := hash(
     plumage_user_root    => '#parrot_user_root#/plumage',
     plumage_build_root   => '#plumage_user_root#/build',
     saved_metadata_root  => '#plumage_user_root#/saved_metadata',
-    plumage_metadata_dir => 'metadata',
+    plumage_metadata_dir => 'plumage/metadata',
     installed_list_file  => '#plumage_user_root#/installed_projects.list',
     root_command         => 'sudo',
 );
