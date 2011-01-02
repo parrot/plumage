@@ -48,7 +48,7 @@
         "requires"     : {
             "fetch"    : ["git"],
             "build"    : [],
-            "test"     : ["perl5"],
+            "test"     : [],
             "install"  : [],
             "runtime"  : []
         }

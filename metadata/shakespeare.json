@@ -47,7 +47,7 @@
         "requires"     : {
             "fetch"    : ["hg"],
             "build"    : [],
-            "test"     : ["perl5"],
+            "test"     : [],
             "install"  : [],
             "runtime"  : []
         }

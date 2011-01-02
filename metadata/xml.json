@@ -49,7 +49,7 @@
             "fetch"    : ["git"],
             "configure": [],
             "build"    : [],
-            "test"     : ["perl5"],
+            "test"     : [],
             "install"  : [],
             "runtime"  : []
         }

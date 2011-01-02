@@ -48,7 +48,7 @@
         "requires"     : {
             "fetch"    : ["svn"],
             "build"    : [],
-            "test"     : ["perl5"],
+            "test"     : [],
             "install"  : [],
             "runtime"  : []
         }

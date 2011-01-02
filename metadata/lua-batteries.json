@@ -48,7 +48,7 @@
         "requires"     : {
             "fetch"    : ["git"],
             "build"    : ["lua"],
-            "test"     : ["lua", "perl5"],
+            "test"     : ["lua"],
             "install"  : [],
             "runtime"  : ["lua", "mt19937", "markdown"]
         }
