@@ -649,8 +649,7 @@ following way:
 =end
 
 sub find_program ($program) {
-    my $interp  := pir::getinterp__P();
-    my $path_sep := interp[8]["osname"] eq 'MSWin32' ?? ';' !! ':';
+    my $path_sep := %*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
     my %env      := pir::root_new__PP(< parrot Env >);
     my @paths    := pir::split($path_sep, %env<PATH>);
     my @exts     := pir::split($path_sep, %env<PATHEXT>);
