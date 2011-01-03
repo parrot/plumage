@@ -1,5 +1,5 @@
 #!/usr/bin/env parrot
-# Copyright (C) 2010, Parrot Foundation.
+# Copyright (C) 2011, Parrot Foundation.
 
 =head1 NAME
 
@@ -21,6 +21,8 @@ No Configure step, no Makefile generated.
     .param pmc args
     $S0 = shift args
     load_bytecode 'distutils.pbc'
+    .local pmc config
+    config = get_config()
 
     .const 'Sub' selfinstall = 'selfinstall'
     register_step('selfinstall', selfinstall)
@@ -70,8 +72,12 @@ No Configure step, no Makefile generated.
     $P0['prove_archive'] = 'test_plumage.tar.gz'
     $P0['smolder_url'] = 'http://smolder.parrot.org/app/projects/process_add_report/3'
 #    $P0['smolder_comments'] = 'plumage'
-    $S0 = get_tags()
+    $S0 = get_tags(config)
     $P0['smolder_tags'] = $S0
+    $P8 = new 'Hash'
+    $S0 = get_submitter(config)
+    $P8['Submitter'] = $S0
+    $P0['smolder_extra_properties'] = $P8
 
     # install
     $P5 = split "\n", <<'LIBS'
@@ -99,14 +105,34 @@ LIBS
 .end
 
 .sub 'get_tags'
+    .param pmc config
     .local string tags
-    .local pmc config
-    config = get_config()
     tags = config['osname']
     tags .= ", "
     $S0 = config['archname']
     tags .= $S0
     .return (tags)
+.end
+
+.sub 'get_submitter' :anon
+    .param pmc config
+    .local pmc env
+    env = new 'Env'
+    $I0 = exists env['SMOLDER_SUBMITTER']
+    unless $I0 goto L1
+    $S0 = env['SMOLDER_SUBMITTER']
+    .return ($S0)
+  L1:
+    .local string me
+    $I0 = exists config['win32']
+    unless $I0 goto L2
+    me = env['USERNAME']
+    goto L3
+  L2:
+    me = env['LOGNAME']
+  L3:
+    $S0 = me . '@unknown'
+    .return ($S0)
 .end
 
 
