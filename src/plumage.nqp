@@ -393,7 +393,7 @@ sub command_status (@projects) {
 }
 
 
-sub command_info (@projects) {
+sub command_info (@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project you wish info for.');
     }
@@ -412,7 +412,7 @@ sub command_info (@projects) {
 }
 
 
-sub command_showdeps (@projects) {
+sub command_showdeps (@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project to show dependencies for.');
     }
@@ -438,7 +438,7 @@ sub report_metadata_error ($project_name, $meta) {
 }
 
 
-sub command_project_dir (@projects) {
+sub command_project_dir (@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project you wish to find.');
     }
