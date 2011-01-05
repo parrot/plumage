@@ -1,6 +1,5 @@
 #!/usr/bin/env parrot-nqp
 
-our $PARROT;
 our $PLUMAGE;
 my $!;
 
@@ -15,9 +14,7 @@ sub MAIN () {
     pir::load_bytecode('Plumage/NQPUtil.pbc');
 
     # Set correct path for plumage pbc
-    $PLUMAGE := fscat(['.'], 'plumage.pbc');
-
-    $PARROT := 'parrot';
+    $PLUMAGE := fscat(['.'], 'installable_plumage');
 
     # Run all sanity tests for plumage
     run_tests();
@@ -56,36 +53,36 @@ sub test_invalid() {
 }
 
 sub test_plumage_invalid() {
-    qx($PARROT, $PLUMAGE, 'asdfversion');
+    qx($PLUMAGE, 'asdfversion');
     nok($! == 0, 'plumage returns failure for invalid commands');
 }
 
 sub test_plumage_info_invalid() {
-    my $output := qx($PARROT, $PLUMAGE, 'info', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'info', 'coboloncogs');
     ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
        "command 'info' errors properly for unknown project name");
 }
 
 sub test_plumage_configure_invalid() {
-    my $output := qx($PARROT, $PLUMAGE, 'configure', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'configure', 'coboloncogs');
     ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
        "command 'configure' errors properly for unknown project name");
 }
 
 sub test_plumage_build_invalid() {
-    my $output := qx($PARROT, $PLUMAGE, 'build', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'build', 'coboloncogs');
     ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
        "command 'build' errors properly for unknown project name");
 }
 
 sub test_plumage_test_invalid() {
-    my $output := qx($PARROT, $PLUMAGE, 'test', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'test', 'coboloncogs');
     ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
        "command 'test' errors properly for unknown project name");
 }
 
 sub test_plumage_install_invalid() {
-    my $output := qx($PARROT, $PLUMAGE, 'install', 'coboloncogs');
+    my $output := qx($PLUMAGE, 'install', 'coboloncogs');
     ok($output ~~ /:s I don.t know anything about project .coboloncogs./,
        "command 'install' errors properly for unknown project name");
 }
@@ -96,13 +93,13 @@ sub test_plumage_install_invalid() {
 #
 
 sub test_plumage_no_args() {
-    my $output := qx($PARROT, $PLUMAGE);
+    my $output := qx($PLUMAGE);
     ok($output ~~ /:s Print program version and copyright/,   'no args give usage');
     ok($output ~~ /:s Print info about a particular project/, 'no args give usage');
 }
 
 sub test_plumage_fetch_no_args() {
-    my $output := qx($PARROT, $PLUMAGE, 'fetch');
+    my $output := qx($PLUMAGE, 'fetch');
     ok($output ~~ /:s Please specify a project to act on./, 'fetch without args asks for project name');
 }
 
@@ -112,13 +109,13 @@ sub test_plumage_fetch_no_args() {
 #
 
 sub test_plumage_usage() {
-    my $output := qx($PARROT, $PLUMAGE, 'usage');
+    my $output := qx($PLUMAGE, 'usage');
     ok($output ~~ /:s Print program version and copyright/,   'usage explains how to view version and copyright');
     ok($output ~~ /:s Print info about a particular project/, 'usage explains how to get info on a project');
 }
 
 sub test_plumage_version() {
-    my $output := qx($PARROT, $PLUMAGE, 'version');
+    my $output := qx($PLUMAGE, 'version');
     ok($! == 0, 'plumage version returns success');
     ok($output ~~ /:s Parrot Plumage/,    'plumage version knows its name');
     ok($output ~~ /:s Parrot Foundation/, 'version mentions Parrot Foundation');
@@ -126,7 +123,7 @@ sub test_plumage_version() {
 }
 
 sub test_plumage_info() {
-    my $output := qx($PARROT, $PLUMAGE, 'info', 'rakudo');
+    my $output := qx($PLUMAGE, 'info', 'rakudo');
     ok($output ~~ /:s Perl 6 on Parrot/, 'info rakudo');
     ok($output ~~ /dependency\-info/,    'info rakudo');
 }
