@@ -1,8 +1,8 @@
 OVERVIEW
 --------
 
-Parrot Plumage is the Parrot module ecosystem.  It includes tools to
-search metadata, handle dependencies, install modules, and so forth.
+Parrot Plumage is the Parrot Virtual Machine module ecosystem.  It includes
+tools to search metadata, handle dependencies, install modules, and so forth.
 
 This is the first implementation of the toolchain for Parrot Plumage;
 it is functional for day-to-day use, but still under rapid development,
@@ -19,20 +19,12 @@ vortex to begin our descent".  We expect to make many changes as we
 discover new issues during implementation.
 
 
-BUILDING
---------
+BUILDING AND INSTALLING
+-----------------------
 
-Configure and make as usual, except the configure script must be run using
-Parrot's NQP language:
-
-  $ parrot-nqp Configure.nqp
-  $ make
-  $ make test
-
-If your Parrot does not have a parrot-nqp binary, this is a strong indication
-that your Parrot is too old, and you will need to upgrade it before building
-Parrot Plumage.
-
+  $ parrot setup.pir build
+  $ parrot setup.pir test
+  $ parrot setup.pir install
 
 USING
 -----
