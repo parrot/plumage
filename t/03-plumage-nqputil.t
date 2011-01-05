@@ -1,4 +1,4 @@
-#! parrot-nqp
+#!/usr/bin/env parrot-nqp
 
 my $*EXECUTABLE_NAME;
 
