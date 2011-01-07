@@ -35,6 +35,12 @@
         },
         "install"  : {
             "type" : "make"
+        },
+        "clean"    : {
+            "type" : "make"
+        },
+        "realclean"    : {
+            "type" : "make"
         }
     },
     "dependency-info"  : {
