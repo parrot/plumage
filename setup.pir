@@ -114,27 +114,6 @@ LIBS
     .return (tags)
 .end
 
-.sub 'get_submitter' :anon
-    .param pmc config
-    .local pmc env
-    env = new 'Env'
-    $I0 = exists env['SMOLDER_SUBMITTER']
-    unless $I0 goto L1
-    $S0 = env['SMOLDER_SUBMITTER']
-    .return ($S0)
-  L1:
-    .local string me
-    $I0 = exists config['win32']
-    unless $I0 goto L2
-    me = env['USERNAME']
-    goto L3
-  L2:
-    me = env['LOGNAME']
-  L3:
-    $S0 = me . '@unknown'
-    .return ($S0)
-.end
-
 
 # Local Variables:
 #   mode: pir
