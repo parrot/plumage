@@ -9,7 +9,7 @@
         "version"          : "HEAD",
         "license"          : {
             "type" : "MIT",
-	    "uri"  : "http://www.opensource.org/licenses/mit-license.php"
+            "uri"  : "http://www.opensource.org/licenses/mit-license.php"
         },
         "copyright_holder" : "Peter Lobsinger",
         "keywords"         : ["Ωη", "ohm-eta", "PEG", "OMeta", "Winxed"],
@@ -19,7 +19,8 @@
         "fetch"     : { "type" : "repository" },
         "build"     : { "type" : "make" },
         "test"      : { "type" : "make" },
-        "install"   : { "type" : "make" }
+        "install"   : { "type" : "make" },
+        "uninstall" : { "type" : "make" }
     },
     "dependency-info" : {
         "provides" : ["Ωη", "OMetaWinxed"],
@@ -34,7 +35,7 @@
     "resources" : {
         "repository" : {
              "type"        : "git",
-	     "checkout_uri": "git://github.com/plobsing/ohm-eta-wink-kzd.git",
+             "checkout_uri": "git://github.com/plobsing/ohm-eta-wink-kzd.git",
              "browser_uri" : "http://github.com/plobsing/ohm-eta-wink-kzd",
              "project_uri" : "http://github.com/plobsing/ohm-eta-wink-kzd"
         }
