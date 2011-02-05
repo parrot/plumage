@@ -27,6 +27,12 @@
         "build"    : {
             "type" : "parrot_setup"
         },
+        "clean"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
         "install"  : {
             "type" : "parrot_setup"
         },
