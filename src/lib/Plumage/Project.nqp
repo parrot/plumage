@@ -523,6 +523,10 @@ method uninstall () {
     }
 }
 
+method uninstall_make () {
+    return self.do_with_privs(%*BIN<make>, 'uninstall');
+}
+
 method uninstall_parrot_setup () {
     return self.do_with_privs(%*BIN<parrot>, 'setup.pir', 'uninstall');
 }
