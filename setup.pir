@@ -65,7 +65,7 @@ No Configure step, no Makefile generated.
     $P0['installable_pbc'] = $P4
 
     # test
-    $S0 = get_nqp()
+    $S0 = get_nqp_rx()
     $P0['prove_exec'] = $S0
 
     # smoke
