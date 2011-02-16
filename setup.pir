@@ -74,10 +74,6 @@ No Configure step, no Makefile generated.
 #    $P0['smolder_comments'] = 'plumage'
     $S0 = get_tags(config)
     $P0['smolder_tags'] = $S0
-    $P8 = new 'Hash'
-    $S0 = get_submitter(config)
-    $P8['Submitter'] = $S0
-    $P0['smolder_extra_properties'] = $P8
 
     # install
     $P5 = split "\n", <<'LIBS'
