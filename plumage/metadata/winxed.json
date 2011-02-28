@@ -30,9 +30,6 @@
         "clean"    : {
             "type" : "parrot_setup"
         },
-        "test"     : {
-            "type" : "parrot_setup"
-        },
         "install"  : {
             "type" : "parrot_setup"
         },
