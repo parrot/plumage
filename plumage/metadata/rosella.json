@@ -22,35 +22,35 @@
             "type" : "repository"
         },
         "update"   : {
-            "type" : "nqp_setup"
+            "type" : "winxed_setup"
         },
         "build"    : {
-            "type" : "nqp_setup"
+            "type" : "winxed_setup"
         },
         "test"     : {
-            "type" : "nqp_setup"
+            "type" : "winxed_setup"
         },
         "smoke"    : {
-            "type" : "nqp_setup"
+            "type" : "winxed_setup"
         },
         "install"  : {
-            "type" : "nqp_setup"
+            "type" : "winxed_setup"
         },
         "uninstall": {
-            "type" : "nqp_setup"
+            "type" : "winxed_setup"
         },
         "clean"    : {
-            "type" : "nqp_setup"
+            "type" : "winxed_setup"
         }
     },
     "dependency-info"  : {
         "provides"     : ["rosella"],
         "requires"     : {
             "fetch"    : ["git"],
-            "build"    : [],
-            "test"     : [],
-            "install"  : [],
-            "runtime"  : []
+            "build"    : ["winxed"],
+            "test"     : ["winxed"],
+            "install"  : ["winxed"],
+            "runtime"  : ["winxed"]
         }
     },
     "resources"            : {

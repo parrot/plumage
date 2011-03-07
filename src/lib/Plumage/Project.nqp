@@ -37,6 +37,7 @@ Plumage::Project - A project, its metadata, and its state
 =head1 DESCRIPTION
 
 =end
+=cut
 
 class Plumage::Project;
 
@@ -114,6 +115,12 @@ method _find_source_dir($start_dir?) {
     $*OS.chdir($orig_dir);
 
     return $source_dir;
+}
+
+sub _get_winxed() {
+    my %conf       := %*VM<config>;
+    my $parrot_bin := %conf<bindir>;
+    return "$parrot_bin/winxed";
 }
 
 
@@ -322,6 +329,12 @@ method update_nqp_setup () {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'update');
 }
 
+method update_winxed_setup() {
+    $*OS.chdir($!source_dir);
+
+    return do_run(_get_winxed(), 'setup.winxed', 'update');
+}
+
 
 # CONFIGURE
 
@@ -393,6 +406,10 @@ method build_nqp_setup () {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp');
 }
 
+method build_winxed_setup() {
+    return do_run(_get_winxed(), 'setup.winxed', 'build');
+}
+
 
 # TEST
 
@@ -427,6 +444,10 @@ method test_nqp_setup () {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'test');
 }
 
+method test_winxed_setup() {
+    return do_run(_get_winxed(), 'setup.winxed', 'test');
+}
+
 
 # SMOKE
 
@@ -455,6 +476,10 @@ method smoke_parrot_setup () {
 
 method smoke_nqp_setup () {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'smoke');
+}
+
+method smoke_winxed_setup() {
+    return do_run(_get_winxed(), 'setup.winxed', 'smoke');
 }
 
 
@@ -498,6 +523,10 @@ method install_nqp_setup () {
     return self.do_with_privs(%*BIN<parrot-nqp>, 'setup.nqp', 'install');
 }
 
+method install_winxed_setup() {
+    return self.do_with_privs(_get_winxed(), 'setup.winxed', 'install');
+}
+
 
 # UNINSTALL
 
@@ -533,6 +562,10 @@ method uninstall_parrot_setup () {
 
 method uninstall_nqp_setup () {
     return self.do_with_privs(%*BIN<parrot-nqp>, 'setup.nqp', 'uninstall');
+}
+
+method uninstall_winxed_setup() {
+    return self.do_with_privs(_get_winxed(), 'setup.winxed', 'uninstall');
 }
 
 method do_with_privs (*@cmd) {
@@ -584,6 +617,10 @@ method clean_parrot_setup () {
 
 method clean_nqp_setup () {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'clean');
+}
+
+method clean_winxed_setup() {
+    return do_run(_get_winxed(), 'setup.winxed', 'clean');
 }
 
 
