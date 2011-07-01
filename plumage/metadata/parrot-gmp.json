@@ -1,0 +1,64 @@
+{
+    "meta-spec"    : {
+        "version"  : 1,
+        "uri"      : "https://trac.parrot.org/parrot/wiki/ModuleEcosystem"
+    },
+    "general"      : {
+        "name"     : "parrot-gmp",
+        "abstract" : "Parrot bindings for the GNU Multi-Precision Library",
+        "authority": "http://github.com/bubaflub",
+        "version"  : "HEAD",
+        "license"  : {
+            "type" : "Artistic License 2.0",
+            "uri"  : "http://www.perlfoundation.org/artistic_license_2_0"
+        },
+        "copyright_holder" : "Bob Kuo",
+        "generated_by"     : "distutils",
+        "keywords"         : ["parrot", "gmp"],
+        "description"      : "Parrot bindings for the GNU Multi-Precision Library.  Currently has bindings for Integer type functions and random initialization functions."
+    },
+    "instructions" : {
+        "fetch"    : {
+            "type" : "repository"
+        },
+        "update"   : {
+            "type" : "parrot_setup"
+        },
+        "build"    : {
+            "type" : "parrot_setup"
+        },
+        "test"     : {
+            "type" : "parrot_setup"
+        },
+        "smoke"    : {
+            "type" : "parrot_setup"
+        },
+        "install"  : {
+            "type" : "parrot_setup"
+        },
+        "uninstall": {
+            "type" : "parrot_setup"
+        },
+        "clean"    : {
+            "type" : "parrot_setup"
+        }
+    },
+    "dependency-info"  : {
+        "provides"     : ["parrot-gmp"],
+        "requires"     : {
+            "fetch"    : ["git"],
+            "build"    : [],
+            "test"     : ["rosella"],
+            "install"  : [],
+            "runtime"  : []
+        }
+    },
+    "resources"            : {
+        "repository"       : {
+             "type"        : "git",
+             "checkout_uri": "git://github.com/bubaflub/parrot-gmp.git",
+             "browser_uri" : "git://github.com/bubaflub/parrot-gmp",
+             "project_uri" : "git://github.com/bubaflub/parrot-gmp"
+        }
+    }
+}
