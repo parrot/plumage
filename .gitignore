@@ -4,11 +4,3 @@
 # Ignore
 /_site
 
-# Ignore source files and such
-installable_plumage
-*.c
-*.o
-*.pbc
-/src
-/Plumage
-
