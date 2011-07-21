@@ -1,6 +1,9 @@
 # Ignore vim swap files
 *.swp
 
+# Ignore
+/_site
+
 # Ignore source files and such
 installable_plumage
 *.c
