@@ -24,8 +24,13 @@ No Configure step, no Makefile generated.
     .local pmc config
     config = get_config()
 
-    .const 'Sub' selfinstall = 'selfinstall'
-    register_step('selfinstall', selfinstall)
+    .const 'Sub' selfinstall       = 'selfinstall'
+    .const 'Sub' install_manpage   = 'install_manpage'
+    .const 'Sub' uninstall_manpage = 'uninstall_manpage'
+
+    register_step('selfinstall',     selfinstall)
+    register_step_after('install',   install_manpage)
+    register_step_after('uninstall', uninstall_manpage)
 
     $P0 = new 'Hash'
     $P0['name']                 = 'Plumage'
@@ -98,6 +103,41 @@ LIBS
 .sub 'selfinstall' :anon
     .param pmc kv :slurpy :named
     system('parrot plumage.pbc install plumage', 1 :named('verbose'))
+.end
+
+.sub 'install_manpage' :anon
+    .param pmc kv :slurpy :named
+
+    .include 'iglobals.pasm'
+
+    $P0 = getinterp
+    $P1 = $P0[.IGLOBALS_CONFIG_HASH]
+
+    # Do nothing on MSWin32 platforms
+    $S0 = $P1['osname']
+    if $S0 == 'MSWin32' goto L1
+
+    .local string man, man_path, man_base
+    man      = 'docs/man/plumage.1.gz'
+    man_base = basename(man)
+    man_path = '/usr/share/man/man1/' . man_base
+
+    cp(man, man_path, 1 :named('verbose'))
+  L1:
+.end
+
+.sub 'uninstall_manpage' :anon
+    .param pmc kv :slurpy :named
+
+    .local string man
+    man = '/usr/share/man/man1/plumage.1.gz'
+
+    # Do nothing if manpage doesn't exist
+    $I0 = file_exists(man)
+    unless $I0 goto L1
+
+    unlink(man, 1 :named('verbose'))
+  L1:
 .end
 
 .sub 'get_tags'
