@@ -145,7 +145,6 @@ Plumage:
     * Hmmm, seems to be some fail here WRT standardizing lib names ...
 * Documentation
   * Hacking docs (WIP)
-  * Manpage
   * FAQ
     * Relationship between plumage and distutils/make/etc.
 * Test Suite
