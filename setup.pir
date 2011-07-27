@@ -122,6 +122,9 @@ LIBS
     man_base = basename(man)
     man_path = '/usr/share/man/man1/' . man_base
 
+    $I0 = newer(man_path, man)
+    if $I0 goto L1
+
     cp(man, man_path, 1 :named('verbose'))
   L1:
 .end
