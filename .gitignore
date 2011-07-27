@@ -12,3 +12,6 @@ MANIFEST
 *.tar.gz
 *.pir
 installable_plumage
+
+# Exuberant Ctags files
+tags
