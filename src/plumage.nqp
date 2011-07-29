@@ -412,7 +412,7 @@ sub command_info (@projects, :$command) {
                 _dumper($meta.metadata, 'METADATA');
             }
             else {
-                print_metadata($meta.metadata);
+                print_project_summary($meta.metadata);
             }
         }
         else {
@@ -545,7 +545,7 @@ sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
 }
 
 
-sub print_metadata ($meta) {
+sub print_project_summary ($meta) {
     my %general     := $meta<general>;
 
     my $name        := %general<name>;
