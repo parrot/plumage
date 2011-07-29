@@ -38,6 +38,10 @@ my  %COMMANDS  := hash(
         action  => command_info,
         args    => 'project'
     ),
+    metadata    => hash(
+        action  => command_info,
+        args    => 'project'
+    ),
     project_dir => hash(
         action  => command_project_dir,
         args    => 'project'
@@ -301,7 +305,8 @@ Commands:
   Query metadata/project info:
     projects                List all known projects
     status      [<project>] Show status of projects (defaults to all)
-    info         <project>  Print info about a particular project
+    info         <project>  Print summary about a particular project
+    metadata     <project>  Print JSON metadata about a particular project
     showdeps     <project>  Show dependency resolution for a project
     project-dir  <project>  Print project's top directory
 
@@ -403,7 +408,12 @@ sub command_info (@projects, :$command) {
         my $valid := $meta.find_by_project_name($project);
 
         if $valid {
-            _dumper($meta.metadata, 'INFO');
+            if $command ~~ /metadata/ {
+                _dumper($meta.metadata, 'METADATA');
+            }
+            else {
+                print_metadata($meta.metadata);
+            }
         }
         else {
             report_metadata_error($project, $meta);
@@ -532,4 +542,25 @@ sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
     }
 
     return 1;
+}
+
+
+sub print_metadata ($meta) {
+    my %general     := $meta<general>;
+
+    my $name        := %general<name>;
+    my $version     := %general<version> // "HEAD";
+    my $summary     := %general<abstract>;
+    my $author      := %general<copyright_holder>;
+    my $url         := %general<authority>;
+    my $license     := %general<license><type>;
+    my $description := %general<description>;
+
+    say(pir::sprintf__SsP("%-11s : %s", ["Name",        $name]));
+    say(pir::sprintf__SsP("%-11s : %s", ["Version",     $version]));
+    say(pir::sprintf__SsP("%-11s : %s", ["Summary",     $summary]));
+    say(pir::sprintf__SsP("%-11s : %s", ["Author",      $author]));
+    say(pir::sprintf__SsP("%-11s : %s", ["URL",         $url]));
+    say(pir::sprintf__SsP("%-11s : %s", ["License",     $license]));
+    say(pir::sprintf__SsP("%-11s : %s", ["Description", $description]));
 }

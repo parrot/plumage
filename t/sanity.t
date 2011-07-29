@@ -21,7 +21,7 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(18);
+    plan(20);
 
     # Fuzz tests
     test_invalid();
@@ -40,6 +40,7 @@ sub run_tests () {
     test_plumage_usage();
     test_plumage_version();
     test_plumage_info();
+    test_plumage_metadata();
 }
 
 
@@ -94,8 +95,8 @@ sub test_plumage_install_invalid() {
 
 sub test_plumage_no_args() {
     my $output := qx($PLUMAGE);
-    ok($output ~~ /:s Print program version and copyright/,   'no args give usage');
-    ok($output ~~ /:s Print info about a particular project/, 'no args give usage');
+    ok($output ~~ /:s Print program version and copyright/,      'no args give usage');
+    ok($output ~~ /:s Print summary about a particular project/, 'no args give usage');
 }
 
 sub test_plumage_fetch_no_args() {
@@ -110,8 +111,10 @@ sub test_plumage_fetch_no_args() {
 
 sub test_plumage_usage() {
     my $output := qx($PLUMAGE, 'usage');
-    ok($output ~~ /:s Print program version and copyright/,   'usage explains how to view version and copyright');
-    ok($output ~~ /:s Print info about a particular project/, 'usage explains how to get info on a project');
+    ok($output ~~ /:s Print program version and copyright/,
+        'usage explains how to view version and copyright');
+    ok($output ~~ /:s Print summary about a particular project/,
+        'usage explains how to get info on a project');
 }
 
 sub test_plumage_version() {
@@ -124,6 +127,12 @@ sub test_plumage_version() {
 
 sub test_plumage_info() {
     my $output := qx($PLUMAGE, 'info', 'rakudo');
-    ok($output ~~ /:s Perl 6 on Parrot/, 'info rakudo');
-    ok($output ~~ /dependency\-info/,    'info rakudo');
+    ok($output ~~ /:s Perl 6 on Parrot/,     'info rakudo');
+    ok($output ~~ /:s Name\s+\:\s+Rakudo/,   'info rakudo');
+}
+
+sub test_plumage_metadata() {
+    my $output := qx($PLUMAGE, 'metadata', 'nqp-rx');
+    ok($output ~~ /:s Not Quite Perl 6/, 'metadata nqp-rx');
+    ok($output ~~ /dependency\-info/,    'metadata nqp-rx');
 }
