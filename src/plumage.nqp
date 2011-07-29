@@ -369,7 +369,7 @@ Commands:
 
   Get info about Plumage itself:
     version                 Print program version and copyright
-    help                    Print a helpful usage message
+    help        [<command>] Print a helpful usage message
 ";
 }
 
