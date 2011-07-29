@@ -21,7 +21,7 @@ sub MAIN () {
 }
 
 sub run_tests () {
-    plan(20);
+    plan(22);
 
     # Fuzz tests
     test_invalid();
@@ -37,7 +37,8 @@ sub run_tests () {
     test_plumage_fetch_no_args();
 
     # Behavior tests
-    test_plumage_usage();
+    #test_plumage_usage();
+    test_plumage_help();
     test_plumage_version();
     test_plumage_info();
     test_plumage_metadata();
@@ -111,10 +112,25 @@ sub test_plumage_fetch_no_args() {
 
 sub test_plumage_usage() {
     my $output := qx($PLUMAGE, 'usage');
+
     ok($output ~~ /:s Print program version and copyright/,
         'usage explains how to view version and copyright');
     ok($output ~~ /:s Print summary about a particular project/,
         'usage explains how to get info on a project');
+}
+
+sub test_plumage_help() {
+    my $output := qx($PLUMAGE, 'help');
+
+    ok($output ~~ /:s Print program version and copyright/,
+        'help explains how to view version and copyright');
+    ok($output ~~ /:s Print summary about a particular project/,
+        'help explains how to get info on a project');
+
+    $output    := qx($PLUMAGE, 'help', 'info');
+
+    ok($output ~~ /:s info \<project\>/,                           'help info displays usage');
+    ok($output ~~ /:s Print summary about a particular project\./, 'help info displays help');
 }
 
 sub test_plumage_version() {

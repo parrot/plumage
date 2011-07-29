@@ -99,7 +99,6 @@ Plumage:
 * Functionality:
   * Read meta from repo after fetch/patch/configure
   * Help
-    * help command
     * --help, -h, -? options
   * System and local installs
     * Where should local installs go by default?

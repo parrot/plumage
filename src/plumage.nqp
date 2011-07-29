@@ -20,75 +20,117 @@ load_helper_libraries();
 my  %COMMANDS  := hash(
     usage       => hash(
         action  => command_usage,
-        args    => 'none'
+        args    => 'none',
+        usage   => 'usage',
+        help    => 'This command is here for compatibility purposes. Please use `help` instead.'
+    ),
+    help        => hash(
+        action  => command_help,
+        args    => 'opt_command',
+        usage   => 'help [<command>]',
+        help    => 'Print a helpful usage message.'
     ),
     version     => hash(
         action  => command_version,
-        args    => 'none'
+        args    => 'none',
+        usage   => 'version',
+        help    => 'Print program version and copyright.',
     ),
     projects    => hash(
         action  => command_projects,
-        args    => 'none'
+        args    => 'none',
+        usage   => 'projects',
+        help    => 'List all known projects.'
     ),
     status      => hash(
         action  => command_status,
-        args    => 'opt_project'
+        args    => 'opt_project',
+        usage   => 'status [<project>]',
+        help    => 'Show status of projects (defaults to all).'
     ),
     info        => hash(
         action  => command_info,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'info <project>',
+        help    => 'Print summary about a particular project.'
     ),
     metadata    => hash(
         action  => command_info,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'metadata <project>',
+        help    => 'Print JSON metadata about a particular project.'
     ),
     project_dir => hash(
         action  => command_project_dir,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'project-dir <project>',
+        help    => 'Print project\'s top directory'
     ),
     showdeps    => hash(
         action  => command_showdeps,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'showdeps <project>',
+        help    => 'Show dependency resolution for a project.'
     ),
     fetch       => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'fetch <project>',
+        help    => 'Download source.'
     ),
     update      => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'update <project>',
+        help    => 'Update source (falls back to fetch).'
     ),
     configure   => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'configure <project>',
+        help    => 'Configure source (updates first).'
     ),
     build       => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'build <project>',
+        help    => 'Build project from source (configures first).'
     ),
     test        => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'test <project>',
+        help    => 'Test built project (builds first).'
     ),
     smoke       => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'smoke <project>',
+        help    => 'Smoke test project (builds first).'
     ),
     install     => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'install <project>',
+        help    => 'Install built files (tests first).'
     ),
     uninstall   => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'uninstall <project>',
+        help    => 'Uninstalls installed files (not always available).'
     ),
     clean       => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'clean <project>',
+        help    => 'Clean source tree.'
     ),
     realclean   => hash(
         action  => command_project_action,
-        args    => 'project'
+        args    => 'project',
+        usage   => 'realclean <project>',
+        help    => 'Clobber/realclean source tree.'
     ),
 );
 
@@ -267,6 +309,8 @@ sub execute_command ($command) {
         if $args eq 'project' && !@*ARGS {
             say('Please specify a project to act on.');
         }
+        #elsif $args eq 'opt_project' {
+        #}
         else {
             $action(@*ARGS, :command($command));
         }
@@ -286,6 +330,7 @@ sub execute_command ($command) {
 sub command_usage () {
     print(usage_info());
 }
+
 
 sub usage_info () {
     return
@@ -324,8 +369,22 @@ Commands:
 
   Get info about Plumage itself:
     version                 Print program version and copyright
-    usage                   Print this usage info
+    help                    Print a helpful usage message
 ";
+}
+
+
+sub command_help ($help_cmd, :$command) {
+    if ?$help_cmd {
+        my $usage := %COMMANDS{$help_cmd[0]}<usage>;
+        my $help  := %COMMANDS{$help_cmd[0]}<help>;
+
+        say("$usage\n");
+        say($help);
+    }
+    else {
+        command_usage();
+    }
 }
 
 
