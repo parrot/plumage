@@ -198,6 +198,11 @@ sub parse_command_line_options () {
     $getopts.push_string('config-file=s');
     $getopts.push_string('ignore-fail:%');
 
+    my $help := $getopts.add();
+    $help.name('HELP');
+    $help.long('help');
+    $help.short('h');
+
     %OPT := $getopts.get_options(@*ARGS);
 }
 
@@ -290,13 +295,17 @@ sub MAIN () {
     read_config_files();
     find_binaries();
 
-    my $command := parse_command_line();
-
-    execute_command($command);
+    if %OPT.exists('HELP') {
+        execute_command('help');
+    }
+    else {
+        my $command := parse_command_line();
+        execute_command($command);
+    }
 }
 
 sub parse_command_line () {
-    my $command := @*ARGS ?? @*ARGS.shift !! 'usage';
+    my $command := @*ARGS ?? @*ARGS.shift !! 'help';
 
     return $command;
 }
@@ -338,8 +347,8 @@ sub usage_info () {
 
 Options:
 
+    -h, --help               Print a helpful usage message.
     --config-file=<path>     Read additional config file
-
     --ignore-fail            Ignore any failing build stages
     --ignore-fail=<stage>    Ignore failures only in a particular stage
                              (may be repeated to select more than one stage)
