@@ -1,24 +1,23 @@
 =pod
 
 This is a partial list of people who have contributed to
-Parrot Plumage, in the same format as the master Parrot CREDITS.
+Plumage. It is sorted by name and formatted to allow easy
+grepping and beautification by scripts.
+
+The fields are: name (N), email (E), web-address (W),
+description (D), main username (U), alias usernames (A)
 
 ----------
-
-N: Geoff Broadwell
-U: japhb
-E: geoff@broadwell.org
-D: Initial design and implementation
 
 N: Daniel Arbelo Arrocha
 U: darbelo
 E: arbelo@gmail.com
 D: Minor code contributions
 
-N: Stephen Weeks
-U: tene
-E: tene@allalone.org
-D: Assorted contributions
+N: Geoff Broadwell
+U: japhb
+E: geoff@broadwell.org
+D: Initial design and implementation
 
 N: Jonathan Leto
 E: jonathan@leto.net
@@ -26,3 +25,15 @@ W: http://leto.net
 U: leto
 S: Portland, OR
 
+N: Kevin Polulak
+U: soh_cah_toa
+E: kpolulak@gmail.com
+S: New Jersey, USA
+D: Assorted contributions
+
+N: Stephen Weeks
+U: tene
+E: tene@allalone.org
+D: Assorted contributions
+
+=cut
