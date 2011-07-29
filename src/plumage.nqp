@@ -377,7 +377,7 @@ sub command_projects () {
 }
 
 
-sub command_status (@projects) {
+sub command_status (@projects, :$command) {
     my $showing_all := !@projects;
 
     unless @projects {
