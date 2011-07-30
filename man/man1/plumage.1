@@ -1,0 +1,104 @@
+.\" Copyright (C) 2001-2011, Parrot Foundation.
+.TH PLUMAGE "1" "July 2011" "Parrot VM" "Plumage Manual Pages"
+.SH NAME
+plumage \- package manager for Parrot module ecosystem
+.SH SYNOPSIS
+.B plumage
+[\fIOPTIONS\fR]... \fICOMMAND\fR [\fIARGUMENTS\fR]
+.SH DESCRIPTION
+.PP
+Plumage is the package manager for the Parrot VM module ecosystem. With it, you
+can perform tasks such as searching, installing, and testing modules in the
+ecosystem.
+.SH OPTIONS
+.TP
+\fB-h\fR, \fB--help\fR
+Print a helpful usage message.
+.TP
+\fB\-c\fR, \fB\-\-config\-file\fR=\fIPATH\fR
+Read additional config file.
+.TP
+\fB-i\fR, \fB\-\-ignore\-fail\fR
+Ignore any failing build stages.
+.TP
+\fB-i\fR, \fB\-\-ignore\-fail\fR=\fISTAGE\fR
+Ignore failures only in a particular stage. May be repeated to select more than
+one stage.
+.TP
+\fB-i\fR, \fB\-\-ignore\-fail\fR=\fISTAGE\fR=\fI0\fR
+Don't ignore failues in this stage.
+.SH COMMANDS
+.SS Query metadata/project info:
+.TP
+\fBprojects\fR
+List all known projects.
+.TP
+\fBstatus\fR [\fIPROJECT\fR]
+Show status of projects. Defaults to all.
+.TP
+\fBinfo\fR \fIPROJECT\fR
+Print summary about a particular project.
+.TP
+\fBmetadata\fR \fIPROJECT\fR
+Print JSON metadata about a particular project.
+.TP
+\fBshowdeps\fR \fIPROJECT\fR
+Show dependency resolution for a project.
+.TP
+\fBproject-dir\fR \fIPROJECT\fR
+Print project's top directory.
+.SS Perform actions on a project:
+.TP
+\fBfetch\fR \fIPROJECT\fR
+Download source.
+.TP
+\fBupdate\fR \fIPROJECT\fR
+Update source. Falls back to fetch.
+.TP
+\fBconfigure\fR \fIPROJECT\fR
+Configure source. Updates first.
+.TP
+\fBbuild\fR \fIPROJECT\fR
+Build project from source. Configures first.
+.TP
+\fBtest\fR \fIPROJECT\fR
+Test build project. Builds first.
+.TP
+\fBsmoke\fR \fIPROJECT\fR
+Smoke test project. Builds first.
+.TP
+\fBinstall\fR \fIPROJECT\fR
+Install built files. Tests first.
+.TP
+\fBuninstall\fR \fIPROJECT\fR
+Uninstall installed files. Not always available.
+.TP
+\fBclean\fR \fIPROJECT\fR
+Clean source tree.
+.TP
+\fBrealclean\fR \fIPROJECT\fR
+Clobber/realclean source tree.
+.SS Get info about Plumage itself:
+.TP
+\fBversion\fR
+Print program version and copyright.
+.TP
+\fBhelp\fR [\fICOMMAND\fR]
+Print a helpful usage message.
+.SH AUTHORS
+Written by Daniel Arbelo Arrocha, Bob Kuo, Francois Perrad, Geoffrey
+Broadwell, Jonathan "Duke" Leto, NotFound, Peter Lobsinger, Patrick
+Michaud, Stephen Weeks, Andrew Whitworth, and Kevin Polulak.
+.PP
+.SH COPYRIGHT
+.PP
+Copyright (C) 2001-2011, Parrot Foundation.
+.PP
+Plumage is distributed under the terms of the Artistic License 2.0.
+For further information, please see LICENSE or visit
+.UR http://www.perlfoundation.org/artistic_license_2_0
+.UE .
+.SH SEE ALSO
+.PP
+http://parrot.github.com/plumage
+

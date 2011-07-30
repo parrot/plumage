@@ -86,10 +86,6 @@ LIBS
     $S0 = pop $P5
     $P0['inst_lib'] = $P5
     $P6 = glob('plumage/metadata/*.json')
-    $S0 = config['osname']
-    if $S0 == 'MSWin32' goto L1
-    push $P6, 'man/man1/plumage.1.gz'
-L1:
     $P0['inst_data'] = $P6
 
     # dist

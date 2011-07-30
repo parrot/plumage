@@ -9,7 +9,7 @@ MANIFEST
 *.obj
 *.exe
 *.pbc
-*.tar.gz
+*.gz
 *.pir
 installable_plumage
 
