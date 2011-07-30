@@ -195,14 +195,28 @@ sub load_helper_libraries () {
 sub parse_command_line_options () {
     my $getopts := pir::root_new__PP(< parrot Getopt Obj >);
 
-    $getopts.push_string('config-file=s');
-    $getopts.push_string('ignore-fail:%');
+    # Configure -c switch
+    my $config := $getopts.add();
+    $config.name('CONFIG_FILE');
+    $config.long('config-file');
+    $config.short('c');
+    $config.type('String');
 
+    # Configure -i switch
+    my $ignore := $getopts.add();
+    $ignore.name('IGNORE_FAIL');
+    $ignore.long('ignore-fail');
+    $ignore.short('i');
+    $ignore.type('Hash');
+    $ignore.optarg(1);
+
+    # Configure -h switch
     my $help := $getopts.add();
     $help.name('HELP');
     $help.long('help');
     $help.short('h');
 
+    # Parse @*ARGS
     %OPT := $getopts.get_options(@*ARGS);
 }
 
@@ -220,7 +234,7 @@ sub read_config_files () {
 
     # If another config specified via command line option, add it.  Because
     # this was manually set by the user, it is a fatal error if missing.
-    my $optconf  := %OPT<config-file>;
+    my $optconf  := %OPT<CONFIG_FILE>;
     if $optconf {
         if path_exists($optconf) {
             @configs.push($optconf);
@@ -243,8 +257,6 @@ sub read_config_files () {
             }
         }
     }
-
-    # _dumper(%*CONF, 'CONF');
 }
 
 sub merge_tree_structures ($dst, $src) {
@@ -347,12 +359,16 @@ sub usage_info () {
 
 Options:
 
-    -h, --help               Print a helpful usage message.
-    --config-file=<path>     Read additional config file
-    --ignore-fail            Ignore any failing build stages
-    --ignore-fail=<stage>    Ignore failures only in a particular stage
-                             (may be repeated to select more than one stage)
-    --ignore-fail=<stage>=0  Don't ignore failures in this stage
+    -h, --help                   Print a helpful usage message
+
+    -c, --config-file=<path>     Read additional config file
+
+    -i, --ignore-fail            Ignore any failing build stages
+
+    -i, --ignore-fail=<stage>    Ignore failures only in a particular stage
+                                 (may be repeated to select more than one stage)
+
+    -i, --ignore-fail=<stage>=0  Don't ignore failures in this stage
 
 Commands:
 
@@ -595,8 +611,8 @@ sub show_dependencies (@projects) {
 
 
 sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
-    my $has_ignore_flag := %OPT.exists('ignore-fail');
-    my %ignore          := %OPT<ignore-fail>;
+    my $has_ignore_flag := %OPT.exists('IGNORE_FAIL');
+    my %ignore          := %OPT<IGNORE_FAIL>;
     my $ignore_all      := $has_ignore_flag && !%ignore;
 
     for @projects -> $project_name {
