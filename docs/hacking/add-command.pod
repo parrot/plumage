@@ -71,8 +71,8 @@ should actually do what claims to do.
 
 =head2 Documentation
 
-The F<plumage> command line tool does not currently have a full manpage;
-when it does, you will need to add documentation for your command there
-as well.
+Lastly, make sure you properly document the purpose and features of the new
+command in the manpage (F<man/man1/plumage.1>). Documentation is very
+important!
 
 =end
