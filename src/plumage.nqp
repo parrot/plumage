@@ -648,3 +648,5 @@ sub print_project_summary ($meta) {
     say(pir::sprintf__SsP("%-11s : %s", ["License",     $license]));
     say(pir::sprintf__SsP("%-11s : %s", ["Description", $description]));
 }
+
+# vim: ft=perl6

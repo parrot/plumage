@@ -131,3 +131,5 @@ method mark_projects_uninstalled (@projects) {
 
     spew($inst_file, $lines);
 }
+
+# vim: ft=perl6

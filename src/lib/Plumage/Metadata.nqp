@@ -377,3 +377,5 @@ method remove_install_copy () {
 =back
 
 =end
+
+# vim: ft=perl6

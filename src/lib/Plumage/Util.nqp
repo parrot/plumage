@@ -76,3 +76,5 @@ sub config_value ($match) {
 =back
 
 =end
+
+# vim: ft=perl6

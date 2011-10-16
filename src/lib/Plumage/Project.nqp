@@ -653,3 +653,5 @@ method realclean_make () {
 method realclean_rake () {
     return do_run(%*BIN<rake>, 'clobber');
 }
+
+# vim: ft=perl6

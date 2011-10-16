@@ -911,3 +911,5 @@ INIT {
     store_dynlex_safely('%*ENV', pir::root_new__PP(< parrot Env >));
     store_dynlex_safely('$*OS',  pir::root_new__PP(< parrot OS  >));
 }
+
+# vim: ft=perl6
