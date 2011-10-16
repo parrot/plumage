@@ -404,8 +404,14 @@ sub command_help ($help_cmd, :$command) {
         my $usage := %COMMANDS{$help_cmd[0]}<usage>;
         my $help  := %COMMANDS{$help_cmd[0]}<help>;
 
-        say("$usage\n");
-        say($help);
+        # Check that command actually exists
+        if ($usage eq '') || ($help eq '') {
+            command_usage();
+        }
+        else {
+            say("$usage\n");
+            say($help);
+        }
     }
     else {
         command_usage();
