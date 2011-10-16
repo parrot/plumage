@@ -1,47 +1,46 @@
-=begin
+=begin pod
 
 =head1 Contributing
 
 =head2 Getting Started
 
-First, read through our short L<Internal Design|design-internals.pod> document
-to get an idea of what things go where.  After that, you might want to take a
-look at some of the more detailed documents in the F<docs/hacking/> directory;
-several tasks (such as adding new commands to F<plumage>) have by now become
-sufficiently regular that we have documented the usual workflow.
+Before reading on, please see L<Internal Design|design-internals.pod> to get an
+idea of what things go where. After that, you might want to take a look at some
+of the more detailed documents in the F<docs/hacking/> directory.
 
-To contribute code right now you will want to be familiar with both the
-NQP and PIR languages, though over time PIR expertise becomes less important
-as we replace old PIR code with NQP.  Our metadata is stored as JSON, which
-should be fairly easy to understand, but currently the Parrot JSON parser is
-rather picky, so it helps to be pedantic if it's whining at you.
-
+To contribute code, you will want to be familiar with both the NQP and PIR
+languages; though over time, PIR expertise will become less important as we
+replace old PIR code with NQP. Metadata is stored in JSON format which is fairly
+easy to understand but Parrot's JSON parser is currently rather picky so it
+helps to be pedantic if it's whining at you.
 
 =head2 The Rules
 
-(Don't worry, there aren't many.)
+Don't worry, there aren't many.
 
 Fundamentally, our committer rules boil down to the same ones Parrot uses:
 
-  Rule 1: Don't break the build.
-  Rule 2: Increase the awesome.
+=item 1 Don't break the build.
 
-(C<chromatic++> for these.)
+=item 2 Increase the awesome.
 
-Our code layout conventions match those in most common use on the Parrot
-project, and are all relatively common sense.  If you have any questions,
-just ask.
+Many thanks to I<chromatic> for suggesting these.
 
+Our coding conventions and guidelines are the same as those used by the
+Parrot project. They can be viewed at
+L<http://docs.parrot.org/parrot/latest/html/docs/pdds/pdd07_codingstd.pod.html>.
+Please do your best to follow them; we want our code to be clean and consistent.
+If you have any questions, feel free to ask on C<#parrot>.
 
 =head2 Submitting Your Changes
 
 Commit bits are given freely to those who have sent in a signed CLA to the
-Parrot project; just ping C<japhb> on C<#parrot> at C<irc.parrot.org> and ask.
-If you prefer, you are welcome to clone the git repository and send patches --
-one of us will review them and commit or reply with comments.
+Parrot project; just ping I<japhb> on C<#parrot> at C<irc.parrot.org> and ask.
+You are welcome to clone the Git repository and send patches - one of us will
+review them and commit or reply with comments.
 
 With your first patch or commit, please add yourself to the F<CREDITS> file.
 
-And that's it.  Welcome to Plumage, we're happy to have you!
+Welcome to the Plumage team. We're happy to have you!
 
-=end
+=end pod

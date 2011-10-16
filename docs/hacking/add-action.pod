@@ -1,12 +1,11 @@
-=begin
+=begin pod
 
 =head1 Adding a New Project Action
 
-Read on if you want to add a new action that can be performed on a project
-according to instructions found in its metadata.  If you're looking to add
-some other type of command to C<plumage>, read
+This document describes how to add a new action that can be performed on a
+project according to the instructions found in its metadata. If you're looking
+to add some other type of command to Plumage, please see
 L<Adding a New Command|add-command.pod> instead.
-
 
 =head2 Base Implementation
 
@@ -15,66 +14,61 @@ action, as follows:
 
 =over 4
 
-=item New subsection
+=item New Subsection
 
 Add a new subsection for the new action within the C<ACTIONS> section of
-the code.  Try to place the new subsection roughly in the sequence the
+the code. Try to place the new subsection roughly in the sequence the
 action is likely to be used.
 
-=item Base action method
+=item Base Action Method
 
-Add the base action method at the top of the new subsection.  It should
-be named for the action itself, and take no arguments.  For instance, the
-base method for the fetch action begins C<method fetch () {>.  This base
+Add the base action method at the top of the new subsection. It should
+be named for the action itself and take no arguments. For instance, the
+base method for the C<fetch> action begins C<method fetch() {>. This base
 method should start by pulling the action instructions from the metadata.
 
 If these instructions don't exist, most actions should simply report that
-the action is not needed or not available on that project, and return
-success (1).  A few actions, such as fetch and install, are required --
-these should return failure (0) if no instructions exist.
+the action is not needed or not available on that project and return 1 on
+success. A few actions, such as C<fetch> and C<install>, are required and should
+return 0 on failure if no instructions exist.
 
 If the instructions do exist, the base method should let the user know
-the action is about to be executed, and then redispatch to a method
+the action is about to be executed and then redispatch to a method
 specific to the action type specified in the metadata instructions.
 
-=item Specific action methods
+=item Specific Action Methods
 
 Add specific action methods for each type supported by the new action.
 Each specific method name should have the base method name and the action
 type separated by an underscore, e.g. C<fetch_git()> and C<fetch_svn()>.
 
-These should actually perform the task at hand, reporting success (1) or
-failure (0) as appropriate.
+These should actually perform the task at hand and return 1 on success and 0
+on failure.
 
 =back
-
 
 =head2 Known Actions List
 
 Before the new action is considered valid, it must be added to the known
 actions list in the C<known_actions()> method at the top of the C<ACTIONS>
-section.  Before this is done, metadata referring to the new action will
+section. Before this is done, metadata referring to the new action will
 be considered invalid, and C<perform_actions()> will not recognize new
 action.
 
-
 =head2 Documentation
 
-Add an entry for the new action to the C<SYNOPSIS> (in the same order you
-used when creating the new code section), and then add a section for the
-new action with more details in the C<DESCRIPTION> section of the POD.
-
+Add an entry for the new action to the C<SYNOPSIS> section (in the same order
+you used when creating the new code section) and then add a section for the new
+action with more details in the C<DESCRIPTION> section
 
 =head2 Tests
 
 C<Plumage::Project> does not have a test suite yet.
 
-
-=head2 Next Step
+=head2 Next Steps
 
 Once the new action is implemented, documented, and tested, continue with
 L<Adding a New Command|add-command.pod> to add a command for this action to
 the C<plumage> command-line tool.
 
-
-=end
+=end pod

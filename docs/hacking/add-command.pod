@@ -1,41 +1,47 @@
-=begin
+=begin pod
 
 =head1 Adding a New Command
 
-Read on if you would like to add a new command to Plumage, so that the
-user can say C<plumage foo> for some new C<foo>.
-
+This document describes how to add a new command to Plumage, so that users can
+run C<plumage foo> for some new C<foo>.
 
 =head2 Before You Start
 
-Make sure that any new I<functionality> exists in the C<Plumage::*>
-libraries, so that it can be accessed by scripts or any UI.  This document
-only explains how to expose I<existing> library functionality through the
-default CLI interface.
+Make sure that any new functionality exists in the C<Plumage::*> libraries so
+that it can be used by any other scripts or interfaces. This document only
+explains how to expose I<existing> library functionality through the default
+command-line interface.
 
-If the new command is a project action, first follow the instructions to
-L<Add a New Project Action|add-action.pod> before coming back here.
+If the new command is a project action, first follow the instructions in
+L<Add a New Project Action|add-action.pod> before reading on.
 
 =head2 Base Implementation
 
-To add a new command to the C<plumage> command-line tool, you will currently
-need to update F<src/plumage.nqp> in three places:
+To add a new command to the command-line tool, you will need to update
+F<src/plumage.nqp> in three places:
 
 =over 4
 
-=item * Add a new F<command_> sub implementing the new command at a logical spot in the C<COMMANDS> section.
+=item *
 
-=item * Add a new entry to C<%COMMANDS> near the top of the file to enable the new command.
+Add a new F<command_> subroutine implementing the new command at an appropriate
+place in the C<COMMANDS> section.
 
-=item * Update the C<usage_info> sub at the top of the C<COMMANDS> section so that the user can find it.
+=item *
+
+Add a new key to the C<%COMMANDS> hash near the top of the file to enable the
+new command.
+
+=item *
+
+Update the C<usage_info()> subroutine at the top of the C<COMMANDS> section so
+that the user can find it.
 
 =back
 
 If the command is a project action, you can skip the first step above and
-simply reuse C<command_project_action()>, which provides default behavior
-for any project action.  You will still need to do the remaining steps above,
-of course.
-
+simply reuse C<command_project_action()> which provides default behavior
+for any project action. You will still need to do the other above steps though.
 
 =head2 Tests
 
@@ -44,30 +50,29 @@ There should be at least four kinds of tests for every command:
 
 =over 4
 
-=item Null tests
+=item Null Tests
 
 The command should do something sane (usually complain to the user) if it
 requires arguments but none were provided.
 
-=item Fuzz tests
+=item Fuzz Tests
 
-The command should behave itself and error out when presented with bad
-arguments.
+The command should still behave properly or display an error message when
+presented with bad arguments.
 
-=item Environment tests
+=item Environment Tests
 
 The command should similarly behave itself when presented with a bad
 environment (bad permissions, incorrect settings, invalid state info, etc.).
-This could mean erroring out, or it could mean fixing the problem (with
+This could mean displaying an error message or fixing the problem (with
 appropriate user notification).
 
-=item Correctness tests
+=item Correctness Tests
 
-Of course, given correct arguments and a valid environment, the command
-should actually do what claims to do.
+Given the correct number and type of arguments and a valid environment, the
+command should actually do what it claims to do.
 
 =back
-
 
 =head2 Documentation
 
@@ -75,4 +80,4 @@ Lastly, make sure you properly document the purpose and features of the new
 command in the manpage (F<man/man1/plumage.1>). Documentation is very
 important!
 
-=end
+=end pod
