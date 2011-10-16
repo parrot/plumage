@@ -409,8 +409,7 @@ sub command_help ($help_cmd, :$command) {
             command_usage();
         }
         else {
-            say("$usage\n");
-            say($help);
+            say("$usage\n\n$help");
         }
     }
     else {
