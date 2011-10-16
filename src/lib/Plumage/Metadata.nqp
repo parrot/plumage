@@ -325,7 +325,7 @@ method saved_copy_path () {
     return $copy_path;
 }
 
-sub _saved_copy_root () {
+sub _saved_copy_root() {
     return replace_config_strings(%*CONF<saved_metadata_root>);
 }
 

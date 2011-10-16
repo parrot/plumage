@@ -91,7 +91,7 @@ Return a true value if C<$key> exists in C<%hash>, or a false value otherwise.
 
 =end
 
-    method exists ($key) {
+    method exists($key) {
         return Q:PIR{
             $P1 = find_lex '$key'
             $I0 = exists self[$P1]
@@ -107,7 +107,7 @@ Return all the C<@keys> in the C<%hash> as an unordered array.
 
 =end
 
-    method keys () {
+    method keys() {
         my @keys;
         for self { @keys.push($_.key); }
         @keys;
@@ -121,7 +121,7 @@ Return all the C<@values> in the C<%hash> as an unordered array.
 
 =end
 
-    method values () {
+    method values() {
         my @values;
         for self { @values.push($_.value); }
         @values;
@@ -138,7 +138,7 @@ when iterating over key and value simultaneously:
 
 =end
 
-    method kv () {
+    method kv() {
         my @kv;
         for self { @kv.push($_.key); @kv.push($_.value); }
         @kv;
@@ -173,7 +173,7 @@ Return a C<@reversed> copy of the C<@array>.
 
 =end
 
-    method reverse () {
+    method reverse() {
         my @reversed;
         for self { @reversed.unshift($_); }
         @reversed;
@@ -205,7 +205,7 @@ one entry in the C<@mapped> output.
 
 =end
 
-sub map (&code, @originals) {
+sub map(&code, @originals) {
     my @mapped;
 
     for @originals {
@@ -224,7 +224,7 @@ Order is retained, and duplicates are handled independently.
 
 =end
 
-sub grep (&code, @all) {
+sub grep(&code, @all) {
     my @matches;
 
     for @all {
@@ -255,7 +255,7 @@ C<$result> is an undefined value.
 
 =end
 
-sub reduce (&code, @array, *@initial) {
+sub reduce(&code, @array, *@initial) {
     my    $init_elems := pir::elements(@initial);
     if    $init_elems >  1 {
         pir::die('Only one initial value allowed in reduce()');
@@ -310,7 +310,7 @@ Coerce a list of pairs into a hash.
 
 =end
 
-sub hash (*%h) { return %h }
+sub hash(*%h) { return %h }
 
 =begin
 
@@ -322,7 +322,7 @@ checks.
 
 =end
 
-sub set_from_array (@array) {
+sub set_from_array(@array) {
     my %set;
 
     for @array {
@@ -420,7 +420,7 @@ Print a list of strings to standard output.
 
 =end
 
-sub print (*@strings) {
+sub print(*@strings) {
     for @strings {
         pir::print($_);
     }
@@ -434,7 +434,7 @@ Print a list of strings to standard output, followed by a newline.
 
 =end
 
-sub say (*@strings) {
+sub say(*@strings) {
     print(|@strings, "\n");
 }
 
@@ -446,7 +446,7 @@ Read the C<$contents> of a file as a single string.
 
 =end
 
-sub slurp ($filename) {
+sub slurp($filename) {
     my $fh := pir::new__Ps('FileHandle');
     $fh.open($filename, 'r');
     my $contents := $fh.readall;
@@ -463,7 +463,7 @@ Write the string C<$contents> to a file.
 
 =end
 
-sub spew ($filename, $contents) {
+sub spew($filename, $contents) {
     my $fh := pir::new__Ps('FileHandle');
     $fh.open($filename, 'w');
     $fh.print($contents);
@@ -478,7 +478,7 @@ Append the string C<$contents> to a file.
 
 =end
 
-sub append ($filename, $contents) {
+sub append($filename, $contents) {
     my $fh := pir::new__Ps('FileHandle');
     $fh.open($filename, 'a');
     $fh.print($contents);
@@ -538,7 +538,7 @@ value if not.
 
 =end
 
-sub path_exists ($path) {
+sub path_exists($path) {
     my @stat := pir::root_new__PP(< parrot OS >).stat($path);
     return 1;
 
@@ -620,7 +620,7 @@ following way:
 
 =end
 
-sub find_program ($program) {
+sub find_program($program) {
     my $path_sep := %*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
     my %env      := pir::root_new__PP(< parrot Env >);
     my @paths    := pir::split($path_sep, %env<PATH>);
@@ -649,7 +649,7 @@ top making directories as needed until an entire path has been created.
 
 =end
 
-sub mkpath ($path) {
+sub mkpath($path) {
     my @path := pir::split('/', $path);
     my $cur  := @path.shift;
 
@@ -682,7 +682,7 @@ if the process could not be spawned at all.
 
 =end
 
-sub run (*@command_and_args) {
+sub run(*@command_and_args) {
     my $aux := pir::spawnw__iP(@command_and_args);
     my $ret := Q:PIR<
         $P0 = find_lex '$aux'
@@ -706,7 +706,7 @@ successfully but itself exited with failure.
 
 =end
 
-sub do_run (*@command_and_args) {
+sub do_run(*@command_and_args) {
     say(pir::join(' ', @command_and_args));
 
     return pir::spawnw__iP(@command_and_args) ?? 0 !! 1;
@@ -729,7 +729,7 @@ B<WARNING>: Parrot currently implements the pipe open B<INSECURELY>!
 
 =end
 
-sub qx (*@command_and_args) {
+sub qx(*@command_and_args) {
     my $cmd  := pir::join(' ', @command_and_args);
     my $pipe := pir::new__Ps('FileHandle');
     $pipe.open($cmd, 'rp');
@@ -762,7 +762,7 @@ returning the C<$result> of executing the compiled code.
 
 =end
 
-sub eval ($source_code, $language) {
+sub eval($source_code, $language) {
     $language := pir::downcase($language);
 
     pir::load_language($language);

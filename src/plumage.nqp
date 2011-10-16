@@ -163,7 +163,7 @@ our %OPT;
 my %*CONF;
 my %*BIN;
 
-sub load_helper_libraries () {
+sub load_helper_libraries() {
     # Support OO
     pir::load_bytecode('P6object.pbc');
 
@@ -186,7 +186,7 @@ sub load_helper_libraries () {
     pir::load_bytecode('Plumage/Dependencies.pbc');
 }
 
-sub parse_command_line_options () {
+sub parse_command_line_options() {
     my $getopts := pir::root_new__PP(< parrot Getopt Obj >);
 
     # Configure -c switch
@@ -214,7 +214,7 @@ sub parse_command_line_options () {
     %OPT := $getopts.get_options(@*ARGS);
 }
 
-sub read_config_files () {
+sub read_config_files() {
     # Find config files for this system and user (ignored if missing).
     my $etc      := %*VM<conf><sysconfdir>;
     my $home     := %*ENV<PLUMAGE_HOME> || user_home_dir();
@@ -253,7 +253,7 @@ sub read_config_files () {
     }
 }
 
-sub merge_tree_structures ($dst, $src) {
+sub merge_tree_structures($dst, $src) {
     for $src.keys -> $k {
         my $d := $dst{$k};
         my $s := $src{$k};
@@ -270,7 +270,7 @@ sub merge_tree_structures ($dst, $src) {
     return $dst;
 }
 
-sub find_binaries () {
+sub find_binaries() {
     my %conf       := %*VM<config>;
     my $parrot_bin := %conf<bindir>;
 
@@ -294,7 +294,7 @@ sub find_binaries () {
 ### MAIN
 ###
 
-sub MAIN () {
+sub MAIN() {
     parse_command_line_options();
     read_config_files();
     find_binaries();
@@ -308,13 +308,13 @@ sub MAIN () {
     }
 }
 
-sub parse_command_line () {
+sub parse_command_line() {
     my $command := @*ARGS ?? @*ARGS.shift !! 'help';
 
     return $command;
 }
 
-sub execute_command ($command) {
+sub execute_command($command) {
     my $action := %COMMANDS{$command}<action>;
     my $args   := %COMMANDS{$command}<args>;
 
@@ -338,11 +338,11 @@ sub execute_command ($command) {
 ### COMMANDS
 ###
 
-sub command_usage () {
+sub command_usage() {
     print(usage_info());
 }
 
-sub usage_info () {
+sub usage_info() {
     return
 "Usage: $*PROGRAM_NAME [<options>] <command> [<arguments>]
 
@@ -387,7 +387,7 @@ Commands:
 ";
 }
 
-sub command_help ($help_cmd, :$command) {
+sub command_help($help_cmd, :$command) {
     if ?$help_cmd {
         my $usage := %COMMANDS{$help_cmd[0]}<usage>;
         my $help  := %COMMANDS{$help_cmd[0]}<help>;
@@ -400,11 +400,11 @@ sub command_help ($help_cmd, :$command) {
     }
 }
 
-sub command_version () {
+sub command_version() {
     print(version_info());
 }
 
-sub version_info () {
+sub version_info() {
     my $version := '0';
     return
 "This is Parrot Plumage, version $version.
@@ -417,7 +417,7 @@ included in the Parrot Plumage source tree.
 ";
 }
 
-sub command_projects () {
+sub command_projects() {
     my @projects := Plumage::Metadata.get_project_list();
        @projects.sort;
 
@@ -446,7 +446,7 @@ sub command_projects () {
     say('');
 }
 
-sub command_status (@projects, :$command) {
+sub command_status(@projects, :$command) {
     my $showing_all := !@projects;
 
     unless @projects {
@@ -466,7 +466,7 @@ sub command_status (@projects, :$command) {
     say('') if $showing_all;
 }
 
-sub command_info (@projects, :$command) {
+sub command_info(@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project you wish info for.');
     }
@@ -489,7 +489,7 @@ sub command_info (@projects, :$command) {
     }
 }
 
-sub command_showdeps (@projects, :$command) {
+sub command_showdeps(@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project to show dependencies for.');
     }
@@ -510,11 +510,11 @@ sub command_showdeps (@projects, :$command) {
     }
 }
 
-sub report_metadata_error ($project_name, $meta) {
+sub report_metadata_error($project_name, $meta) {
     say("Metadata error for project '$project_name':\n" ~ $meta.error);
 }
 
-sub command_project_dir (@projects, :$command) {
+sub command_project_dir(@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project you wish to find.');
     }
@@ -526,12 +526,12 @@ sub command_project_dir (@projects, :$command) {
     }
 }
 
-sub command_project_action (@projects, :$command) {
+sub command_project_action(@projects, :$command) {
        install_required_projects(@projects)
     && perform_actions_on_projects(@projects, :up_to($command));
 }
 
-sub install_required_projects (@projects) {
+sub install_required_projects(@projects) {
     my %resolutions   := Plumage::Dependencies.resolve_dependencies(@projects);
     my @need_projects := %resolutions<need_project>;
 
@@ -546,7 +546,7 @@ sub install_required_projects (@projects) {
     return 1;
 }
 
-sub show_dependencies (@projects) {
+sub show_dependencies(@projects) {
     my %resolutions := Plumage::Dependencies.resolve_dependencies(@projects);
 
     say('');
@@ -589,7 +589,7 @@ sub show_dependencies (@projects) {
     }
 }
 
-sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
+sub perform_actions_on_projects(@projects, :$up_to, :@actions) {
     my $has_ignore_flag := %OPT.exists('IGNORE_FAIL');
     my %ignore          := %OPT<IGNORE_FAIL>;
     my $ignore_all      := $has_ignore_flag && !%ignore;
@@ -607,7 +607,7 @@ sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
     return 1;
 }
 
-sub print_project_summary ($meta) {
+sub print_project_summary($meta) {
     my %general     := $meta<general>;
 
     my $name        := %general<name>;
