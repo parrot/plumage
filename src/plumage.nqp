@@ -2,7 +2,6 @@
 ### NQP WORKAROUND HACKS
 ###
 
-
 # Must declare all 'setting globals' here, because NQP doesn't know about them
 my $*PROGRAM_NAME;
 my $*OSNAME;
@@ -11,10 +10,8 @@ my %*ENV;
 my %*VM;
 my $*OS;
 
-
 # NQP does not include a setting, so must load helper libraries first
 load_helper_libraries();
-
 
 # NQP does not have full {...} hash syntax, so use hash() and named args
 my  %COMMANDS  := hash(
@@ -138,7 +135,6 @@ my  %COMMANDS  := hash(
 # (and as a side benefit, support both spellings)
 %COMMANDS<project-dir> := %COMMANDS<project_dir>;
 
-
 my %DEFAULT_CONF := hash(
     parrot_user_root     => '#user_home_dir#/.parrot',
     plumage_user_root    => '#parrot_user_root#/plumage',
@@ -153,21 +149,17 @@ unless path_exists(%DEFAULT_CONF<plumage_metadata_dir>) {
     %DEFAULT_CONF<plumage_metadata_dir> := %*VM<config><datadir> ~ '/plumage/metadata';
 }
 
-
 # NQP does not automatically call MAIN()
 MAIN();
-
 
 ###
 ### INIT
 ###
 
-
 our %OPT;
 
 my %*CONF;
 my %*BIN;
-
 
 sub load_helper_libraries () {
     # Support OO
@@ -296,11 +288,9 @@ sub find_binaries () {
     %*BIN<hg>    := find_program('hg');
 }
 
-
 ###
 ### MAIN
 ###
-
 
 sub MAIN () {
     parse_command_line_options();
@@ -342,16 +332,13 @@ sub execute_command ($command) {
     }
 }
 
-
 ###
 ### COMMANDS
 ###
 
-
 sub command_usage () {
     print(usage_info());
 }
-
 
 sub usage_info () {
     return
@@ -398,7 +385,6 @@ Commands:
 ";
 }
 
-
 sub command_help ($help_cmd, :$command) {
     if ?$help_cmd {
         my $usage := %COMMANDS{$help_cmd[0]}<usage>;
@@ -411,7 +397,6 @@ sub command_help ($help_cmd, :$command) {
         command_usage();
     }
 }
-
 
 sub command_version () {
     print(version_info());
@@ -429,7 +414,6 @@ For more details, see the full text of the license in the LICENSE file
 included in the Parrot Plumage source tree.
 ";
 }
-
 
 sub command_projects () {
     my @projects := Plumage::Metadata.get_project_list();
@@ -460,7 +444,6 @@ sub command_projects () {
     say('');
 }
 
-
 sub command_status (@projects, :$command) {
     my $showing_all := !@projects;
 
@@ -480,7 +463,6 @@ sub command_status (@projects, :$command) {
 
     say('') if $showing_all;
 }
-
 
 sub command_info (@projects, :$command) {
     unless (@projects) {
@@ -504,7 +486,6 @@ sub command_info (@projects, :$command) {
         }
     }
 }
-
 
 sub command_showdeps (@projects, :$command) {
     unless (@projects) {
@@ -531,7 +512,6 @@ sub report_metadata_error ($project_name, $meta) {
     say("Metadata error for project '$project_name':\n" ~ $meta.error);
 }
 
-
 sub command_project_dir (@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project you wish to find.');
@@ -544,12 +524,10 @@ sub command_project_dir (@projects, :$command) {
     }
 }
 
-
 sub command_project_action (@projects, :$command) {
        install_required_projects(@projects)
     && perform_actions_on_projects(@projects, :up_to($command));
 }
-
 
 sub install_required_projects (@projects) {
     my %resolutions   := Plumage::Dependencies.resolve_dependencies(@projects);
@@ -609,7 +587,6 @@ sub show_dependencies (@projects) {
     }
 }
 
-
 sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
     my $has_ignore_flag := %OPT.exists('IGNORE_FAIL');
     my %ignore          := %OPT<IGNORE_FAIL>;
@@ -627,7 +604,6 @@ sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
 
     return 1;
 }
-
 
 sub print_project_summary ($meta) {
     my %general     := $meta<general>;

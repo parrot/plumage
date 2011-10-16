@@ -12,7 +12,6 @@ Plumage::Util - Plumage-specific utility functions
     # Plumage-specific
     $replaced := replace_config_strings($original);
 
-
 =head1 DESCRIPTION
 
 These utility functions are likely only directly useful to Plumage-related
@@ -69,7 +68,6 @@ sub config_value ($match) {
 
     return $config;
 }
-
 
 =begin
 

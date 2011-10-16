@@ -31,13 +31,11 @@ Plumage::Metadata - Project metadata: find it, parse it, query it
     $meta.save_install_copy;
     $meta.remove_install_copy;
 
-
 =head1 DESCRIPTION
 
 =end
 
 class Plumage::Metadata;
-
 
 =begin
 
@@ -68,7 +66,6 @@ method get_project_list () {
     return @projects;
 }
 
-
 =begin
 
 =item $found := Plumage::Metadata.exists($project_directory?)
@@ -83,7 +80,6 @@ location for Plumage metadata files.
 method exists ($dir?) {
     return path_exists(self.project_metadata_path($dir));
 }
-
 
 =begin
 
@@ -104,7 +100,6 @@ method project_metadata_path ($dir?) {
     return $path;
 }
 
-
 =begin
 
 =item $meta := Plumage::Metadata.new
@@ -112,7 +107,6 @@ method project_metadata_path ($dir?) {
 Instantiate a new, empty metadata object.
 
 =back
-
 
 =head2 Accessors
 
@@ -143,7 +137,6 @@ has $!error;
 method is_valid () { ?$!valid    }
 method error    () {  $!error    }
 method metadata () {  %!metadata }
-
 
 =begin
 
@@ -178,7 +171,6 @@ method find_by_project_name ($project_name) {
     return self.load_from_file($meta_file);
 }
 
-
 =begin
 
 =item $valid := $meta.load_from_project_dir($project_directory)
@@ -192,7 +184,6 @@ C<project_metadata_path>).
 method load_from_project_dir ($dir) {
     return self.load_from_file(self.project_metadata_path($dir));
 }
-
 
 =begin
 
@@ -213,7 +204,6 @@ method load_from_file ($path) {
         return 0;
     }
 }
-
 
 =begin
 
@@ -313,7 +303,6 @@ method metadata_instruction_types_known () {
     return 1;
 }
 
-
 =begin
 
 =head2 Saved Copy
@@ -338,7 +327,6 @@ sub _saved_copy_root () {
     return replace_config_strings(%*CONF<saved_metadata_root>);
 }
 
-
 =begin
 
 =item $meta.save_install_copy()
@@ -355,7 +343,6 @@ method save_install_copy () {
     Config::JSON::WriteConfig(%!metadata, self.saved_copy_path);
 }
 
-
 =begin
 
 =item $meta.remove_install_copy()
@@ -370,7 +357,6 @@ method remove_install_copy () {
 
     $*OS.rm($path) if path_exists($path);
 }
-
 
 =begin
 

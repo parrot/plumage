@@ -68,7 +68,6 @@ Plumage::NQPUtil.nqp - Utility functions for NQP
     my %*VM;
     my $*OS;
 
-
 =head1 DESCRIPTION
 
 =head2 Hash Methods
@@ -79,7 +78,6 @@ functionality expected for Perl 6 Hashes.
 =end
 
 module Hash {
-
 
 =begin
 
@@ -99,7 +97,6 @@ Return a true value if C<$key> exists in C<%hash>, or a false value otherwise.
         };
     }
 
-
 =begin
 
 =item @keys := %hash.keys
@@ -114,7 +111,6 @@ Return all the C<@keys> in the C<%hash> as an unordered array.
         @keys;
     }
 
-
 =begin
 
 =item @values := %hash.values
@@ -128,7 +124,6 @@ Return all the C<@values> in the C<%hash> as an unordered array.
         for self { @values.push($_.value); }
         @values;
     }
-
 
 =begin
 
@@ -147,7 +142,6 @@ when iterating over key and value simultaneously:
         @kv;
     }
 
-
 =begin
 
 =back
@@ -155,7 +149,6 @@ when iterating over key and value simultaneously:
 =end
 
 }
-
 
 =begin
 
@@ -167,7 +160,6 @@ functionality expected for Perl 6 Hashes.
 =end
 
 module Array {
-
 
 =begin
 
@@ -185,7 +177,6 @@ Return a C<@reversed> copy of the C<@array>.
         @reversed;
     }
 
-
 =begin
 
 =back
@@ -193,7 +184,6 @@ Return a C<@reversed> copy of the C<@array>.
 =end
 
 }
-
 
 =begin
 
@@ -223,7 +213,6 @@ sub map (&code, @originals) {
     return @mapped;
 }
 
-
 =begin
 
 =item @matches := grep(&code, @all)
@@ -242,7 +231,6 @@ sub grep (&code, @all) {
 
     return @matches;
 }
-
 
 =begin
 
@@ -303,7 +291,6 @@ sub _reduce(&code, $iter, $initial) {
     return $result;
 }
 
-
 =begin
 
 =head2 Container Coercions
@@ -322,7 +309,6 @@ Coerce a list of pairs into a hash.
 =end
 
 sub hash (*%h) { return %h }
-
 
 =begin
 
@@ -344,11 +330,9 @@ sub set_from_array (@array) {
     return %set;
 }
 
-
 =begin
 
 =back
-
 
 =head2 Regular Expression Functions
 
@@ -372,7 +356,6 @@ sub all_matches($regex, $text) {
 
     return @matches;
 }
-
 
 =begin
 
@@ -419,11 +402,9 @@ sub subst($original, $regex, $replacement) {
     return $edited;
 }
 
-
 =begin
 
 =back
-
 
 =head2 I/O Functions
 
@@ -443,7 +424,6 @@ sub print (*@strings) {
     }
 }
 
-
 =begin
 
 =item say('things', ' to ', 'say', ...)
@@ -455,7 +435,6 @@ Print a list of strings to standard output, followed by a newline.
 sub say (*@strings) {
     print(|@strings, "\n");
 }
-
 
 =begin
 
@@ -474,7 +453,6 @@ sub slurp ($filename) {
     return $contents;
 }
 
-
 =begin
 
 =item spew($filename, $contents)
@@ -489,7 +467,6 @@ sub spew ($filename, $contents) {
     $fh.print($contents);
     $fh.close();
 }
-
 
 =begin
 
@@ -506,11 +483,9 @@ sub append ($filename, $contents) {
     $fh.close();
 }
 
-
 =begin
 
 =back
-
 
 =head2 Filesystem and Path Functions
 
@@ -539,7 +514,6 @@ sub fscat(@path_parts, *@filename) {
     return $joined;
 }
 
-
 =begin
 
 =item $home := user_home_dir()
@@ -552,7 +526,6 @@ sub user_home_dir() {
     my %env := pir::root_new__PP(< parrot Env >);
     return (%env<HOMEDRIVE> // '') ~ %env<HOME>;
 }
-
 
 =begin
 
@@ -572,7 +545,6 @@ sub path_exists ($path) {
     }
 }
 
-
 =begin
 
 =item $is_dir := is_dir($path);
@@ -590,7 +562,6 @@ sub is_dir($path) {
         return 0;
     }
 }
-
 
 =begin
 
@@ -627,7 +598,6 @@ sub test_dir_writable($dir) {
         return 0;
     }
 }
-
 
 =begin
 
@@ -668,7 +638,6 @@ sub find_program ($program) {
     return '';
 }
 
-
 =begin
 
 =item mkpath($directory_path)
@@ -691,11 +660,9 @@ sub mkpath ($path) {
     }
 }
 
-
 =begin
 
 =back
-
 
 =head2 Program Spawning Functions
 
@@ -724,7 +691,6 @@ sub run (*@command_and_args) {
     return $ret;
 }
 
-
 =begin
 
 =item $success := do_run($command, $and, $args, ...)
@@ -747,7 +713,6 @@ sub do_run (*@command_and_args) {
         return 0;
     }
 }
-
 
 =begin
 
@@ -777,11 +742,9 @@ sub qx (*@command_and_args) {
     return $output;
 }
 
-
 =begin
 
 =back
-
 
 =head2 HLL Interop Functions
 
@@ -805,7 +768,6 @@ sub eval ($source_code, $language) {
 
     return $compiler.compile($source_code)();
 }
-
 
 =begin
 
@@ -832,11 +794,9 @@ sub store_dynlex_safely($var_name, $value) {
         unless pir::isnull(pir::find_dynamic_lex($var_name));
 }
 
-
 =begin
 
 =back
-
 
 =head2 Global Variables
 

@@ -33,7 +33,6 @@ Plumage::Project - A project, its metadata, and its state
     $project.clean;
     $project.realclean;
 
-
 =head1 DESCRIPTION
 
 =end
@@ -49,7 +48,6 @@ method name       () { $!name       }
 method metadata   () { $!metadata   }
 method source_dir () { $!source_dir }
 
-
 # CONSTRUCTION
 
 method new($locator) {
@@ -59,7 +57,6 @@ method new($locator) {
 
     return self._init($locator);
 }
-
 
 method _init($locator) {
     $!metadata     := Plumage::Metadata.new;
@@ -97,7 +94,6 @@ method _init($locator) {
     return self;
 }
 
-
 method _find_source_dir($start_dir?) {
     my $orig_dir := $*OS.cwd;
 
@@ -122,7 +118,6 @@ sub _get_winxed() {
     my $parrot_bin := %conf<bindir>;
     return "$parrot_bin/winxed";
 }
-
 
 ###
 ### ACTIONS
@@ -196,7 +191,6 @@ method perform_actions (:$up_to, :@actions, :$ignore_all, :%ignore) {
 
     return 1;
 }
-
 
 # FETCH
 
@@ -288,7 +282,6 @@ method report_fetch_collision ($type) {
     return 0;
 }
 
-
 # UPDATE
 
 method update () {
@@ -335,7 +328,6 @@ method update_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'update');
 }
 
-
 # CONFIGURE
 
 method configure () {
@@ -371,7 +363,6 @@ method configure_parrot_configure () {
 method configure_nqp_configure () {
     return do_run(%*BIN<parrot-nqp>, 'Configure.nqp');
 }
-
 
 # BUILD
 
@@ -410,7 +401,6 @@ method build_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'build');
 }
 
-
 # TEST
 
 method test () {
@@ -448,7 +438,6 @@ method test_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'test');
 }
 
-
 # SMOKE
 
 method smoke () {
@@ -481,7 +470,6 @@ method smoke_nqp_setup () {
 method smoke_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'smoke');
 }
-
 
 # INSTALL
 
@@ -526,7 +514,6 @@ method install_nqp_setup () {
 method install_winxed_setup() {
     return self.do_with_privs(_get_winxed(), 'setup.winxed', 'install');
 }
-
 
 # UNINSTALL
 
@@ -580,7 +567,6 @@ method do_with_privs (*@cmd) {
     }
 }
 
-
 # CLEAN
 
 method clean () {
@@ -622,7 +608,6 @@ method clean_nqp_setup () {
 method clean_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'clean');
 }
-
 
 # REALCLEAN
 

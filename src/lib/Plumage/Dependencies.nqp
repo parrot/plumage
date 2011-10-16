@@ -9,14 +9,11 @@ Plumage::Dependencies - Resolve dependency relationships
     # Load this library
     pir::load_bytecode('Plumage/Dependencies.pbc');
 
-
-
 =head1 DESCRIPTION
 
 =end
 
 class Plumage::Dependencies;
-
 
 method resolve_dependencies (@projects) {
     my @known_projects := Plumage::Metadata.get_project_list();
@@ -61,7 +58,6 @@ method resolve_dependencies (@projects) {
     return %resolutions;
 }
 
-
 method all_dependencies (@projects) {
     my @dep_stack;
     my @deps;
@@ -99,7 +95,6 @@ method all_dependencies (@projects) {
     return @deps;
 }
 
-
 method get_installed_projects () {
     my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
     my $contents  := slurp($inst_file);
@@ -112,14 +107,12 @@ method get_installed_projects () {
     }
 }
 
-
 method mark_projects_installed (@projects) {
     my $lines     := pir::join("\n", @projects) ~ "\n";
     my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
 
     append($inst_file, $lines);
 }
-
 
 method mark_projects_uninstalled (@projects) {
     my %uninst    := set_from_array(@projects);
