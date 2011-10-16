@@ -1,3 +1,5 @@
+# Copyright (C) 2009-2011, Parrot Foundation.
+
 =begin
 
 =head1 NAME
