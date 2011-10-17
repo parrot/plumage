@@ -44,7 +44,7 @@ method welcome() {
       ~ "Copyright (C) 2009-2011, Parrot Foundation.\n\n"
 
       ~ "Enter 'help' for help or see docs/interactive.pod "
-      ~ "for further information\n");
+      ~ "for further information.\n");
 }
 
 # vim: ft=perl6

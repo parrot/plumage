@@ -29,7 +29,8 @@ my  %COMMANDS  := hash(
     help        => Plumage::Command.new(:action(command_help),
                                         :args('opt_command'),
                                         :usage('help [<command>]'),
-                                        :help('Displays a help message on command usage.')),
+                                        :help('Displays a help message on <command> usage '
+                                            ~ '(defaults to all).')),
 
     version     => Plumage::Command.new(:action(command_version),
                                         :args('none'),
@@ -44,7 +45,7 @@ my  %COMMANDS  := hash(
     status      => Plumage::Command.new(:action(command_status),
                                         :args('opt_project'),
                                         :usage('status <project>'),
-                                        :help('Displays status of <project> (defaults to all).')),
+                                        :help('Shows status of <project> (defaults to all).')),
 
     info        => Plumage::Command.new(:action(command_info),
                                         :args('project'),
@@ -75,37 +76,36 @@ my  %COMMANDS  := hash(
                                         :args('project'),
                                         :usage('update <project>'),
                                         :help('Updates source code for <project> '
-                                            ~ '(falls back to "fetch").')),
+                                            ~ "(falls back to 'fetch').")),
 
     configure   => Plumage::Command.new(:action(command_project_action),
                                         :args('project'),
                                         :usage('configure <project>'),
                                         :help('Configures source code for <project> '
-                                            ~ '(runs "update" first).')),
+                                            ~ "(runs 'update' first).")),
 
     build       => Plumage::Command.new(:action(command_project_action),
                                         :args('project'),
                                         :usage('build <project>'),
                                         :help('Builds <project> in current directory '
-                                            ~ '(runs "configure" first).')),
+                                            ~ "(runs 'configure' first).")),
 
     test        => Plumage::Command.new(:action(command_project_action),
                                         :args('project'),
                                         :usage('test <project>'),
                                         :help('Runs test suite for <project> '
-                                            ~ '(runs "build" first).')),
+                                            ~ "(runs 'build' first).")),
 
     smoke       => Plumage::Command.new(:action(command_project_action),
                                         :args('project'),
                                         :usage('smoke <project>'),
-                                        :help('Runs test suite for <project> and sends '
-                                            ~ 'results to Parrot\'s Smolder server '
-                                            ~ '(runs "build" first).')),
+                                        :help("Sends test results to Parrot's Smolder server "
+                                            ~ "(runs 'build' first).")),
 
     install     => Plumage::Command.new(:action(command_project_action),
                                         :args('project'),
                                         :usage('install <project>'),
-                                        :help('Installs <project> (runs "test" first).')),
+                                        :help("Installs <project> (runs 'test' first).")),
 
     uninstall   => Plumage::Command.new(:action(command_project_action),
                                         :args('project'),
@@ -116,13 +116,14 @@ my  %COMMANDS  := hash(
     clean       => Plumage::Command.new(:action(command_project_action),
                                         :args('project'),
                                         :usage('clean <project>'),
-                                        :help('Performs basic clean up of source tree.')),
+                                        :help('Performs basic clean up of source tree '
+                                            ~ 'for <project>.')),
 
     realclean   => Plumage::Command.new(:action(command_project_action),
                                         :args('project'),
                                         :usage('realclean <project>'),
                                         :help('Removes all files generated during the '
-                                            ~ 'build process.')));
+                                            ~ 'build process for <project>.')));
 
 # Add support for both spellings of certain commands
 %COMMANDS<project-dir> := %COMMANDS<project_dir>;
@@ -337,42 +338,42 @@ sub usage_info() {
 
 Options:
 
-    -h, --help                   Print a helpful usage message
+    -h, --help                   Displays a help message on command usage.
 
-    -c, --config-file=<path>     Read additional config file
+    -c, --config-file=<path>     Reads additional config file in <path>.
 
-    -i, --ignore-fail            Ignore any failing build stages
+    -i, --ignore-fail            Ignores any failed build stages.
 
-    -i, --ignore-fail=<stage>    Ignore failures only in a particular stage
-                                 (may be repeated to select more than one stage)
+    -i, --ignore-fail=<stage>    Ignores failures only for <stage>
+                                 (may be repeated to select more than one stage).
 
-    -i, --ignore-fail=<stage>=0  Don't ignore failures in this stage
+    -i, --ignore-fail=<stage>=0  Doesn't ignore failures in <stage>.
 
 Commands:
 
-  Query metadata/project info:
-    projects                List all known projects
-    status      [<project>] Show status of projects (defaults to all)
-    info         <project>  Print summary about a particular project
-    metadata     <project>  Print JSON metadata about a particular project
-    showdeps     <project>  Show dependency resolution for a project
-    project-dir  <project>  Print project's top directory
+  Query metadata and project info:
+    projects                Lists all known projects.
+    status      [<project>] Shows status of <project> (defaults to all).
+    info         <project>  Displays detailed description of <project>.
+    metadata     <project>  Displays JSON metadata for <project>.
+    show-deps    <project>  Shows dependencies for <project>.
+    project-dir  <project>  Displays top directory for <project>.
 
   Perform actions on a project:
-    fetch        <project>  Download source
-    update       <project>  Update source                (falls back to fetch)
-    configure    <project>  Configure source             (updates first)
-    build        <project>  Build project from source    (configures first)
-    test         <project>  Test built project           (builds first)
-    smoke        <project>  Smoke test project           (builds first)
-    install      <project>  Install built files          (tests first)
-    uninstall    <project>  Uninstalls installed files   (not always available)
-    clean        <project>  Clean source tree
-    realclean    <project>  Clobber/realclean source tree
+    fetch        <project>  Downloads source code for <project>.
+    update       <project>  Updates source code for <project> (falls back to fetch).
+    configure    <project>  Configures source code for <project> (runs 'update' first).
+    build        <project>  Builds <project> in current directory (runs 'configure' first).
+    test         <project>  Runs test suite for <project> (runs 'build' first).
+    smoke        <project>  Sends test results to Parrot's Smolder server (runs 'build' first).
+    install      <project>  Installs <project> (runs 'test' first).
+    uninstall    <project>  Uninstalls <project> from system (not always available).
+    clean        <project>  Performs basic cleanup of source tree for <project>.
+    realclean    <project>  Removes all generated files during the build process for <project>.
 
-  Get info about Plumage itself:
-    version                 Print program version and copyright
-    help        [<command>] Print a helpful usage message
+  Get information about Plumage:
+    version                 Displays Plumage version and copyright statement.
+    help        [<command>] Displays a help message on <command> usage (defaults to all).
 ";
 }
 
@@ -406,13 +407,13 @@ sub command_version() {
 sub version_info() {
     my $version := '0';
     return
-"This is Parrot Plumage, version $version.
+"This is Plumage, version $version.
 
-Copyright (C) 2009, Parrot Foundation.
+Copyright (C) 2009-2011, Parrot Foundation.
 
 This code is distributed under the terms of the Artistic License 2.0.
 For more details, see the full text of the license in the LICENSE file
-included in the Parrot Plumage source tree.
+included in the Plumage source tree.
 ";
 }
 
