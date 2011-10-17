@@ -20,10 +20,11 @@ my  %COMMANDS  := hash(
                                         :help('This command is here for compatibility '
                                             ~ 'only. Please use `help` instead.')),
 
-    interactive => Plumage::Command.new(:action(command_interactive),
+    cli         => Plumage::Command.new(:action(command_cli),
                                         :args('none'),
-                                        :usage(''),
-                                        :help('')),
+                                        :usage('cli'),
+                                        :help('Starts the interactive command-line interface. '
+                                            ~ 'Invoked by default if no command was specified.')),
 
     help        => Plumage::Command.new(:action(command_help),
                                         :args('opt_command'),
@@ -294,7 +295,7 @@ sub find_binaries() {
 }
 
 sub parse_command_line() {
-    my $command := @*ARGS ?? @*ARGS.shift !! 'interactive';
+    my $command := @*ARGS ?? @*ARGS.shift !! 'cli';
 
     return $command;
 }
@@ -388,7 +389,7 @@ sub command_help($help_cmd, :$command) {
     }
 }
 
-sub command_interactive() {
+sub command_cli() {
     pir::load_bytecode('Plumage/Interactive.pbc');
 
     my $session := Plumage::Interactive.new;
