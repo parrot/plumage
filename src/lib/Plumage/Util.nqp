@@ -48,7 +48,7 @@ producing unintended expansions.
 
 =end
 
-sub replace_config_strings ($original) {
+sub replace_config_strings($original) {
     my $new := $original;
 
     repeat {
@@ -60,7 +60,7 @@ sub replace_config_strings ($original) {
     return $new;
 }
 
-sub config_value ($match) {
+sub config_value($match) {
     my $key    := $match<ident>;
     my $config := %*CONF{$key}
                || %*VM<config>{$key}

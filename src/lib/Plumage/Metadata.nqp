@@ -53,7 +53,7 @@ passing to C<$meta.find_by_project_name()> to obtain more details.
 
 =end
 
-method get_project_list () {
+method get_project_list() {
     my @files := $*OS.readdir(replace_config_strings(%*CONF<plumage_metadata_dir>));
     my $regex := /\.json$/;
     my @projects;
@@ -79,7 +79,7 @@ location for Plumage metadata files.
 
 =end
 
-method exists ($dir?) {
+method exists($dir?) {
     return path_exists(self.project_metadata_path($dir));
 }
 
@@ -94,7 +94,7 @@ the C<$path> will be the generic default location relative to a project root.
 
 =end
 
-method project_metadata_path ($dir?) {
+method project_metadata_path($dir?) {
     my @dir  := pir::length($dir) ?? [$dir, 'plumage']
                                   !! [      'plumage'];
     my $path := fscat(@dir, 'metadata.json');
@@ -136,9 +136,9 @@ has %!metadata;
 has $!valid;
 has $!error;
 
-method is_valid () { ?$!valid    }
-method error    () {  $!error    }
-method metadata () {  %!metadata }
+method is_valid() { ?$!valid    }
+method error()    {  $!error    }
+method metadata() {  %!metadata }
 
 =begin
 
@@ -160,7 +160,7 @@ C<get_project_list>.
 
 =end
 
-method find_by_project_name ($project_name) {
+method find_by_project_name($project_name) {
     my $meta_dir  := replace_config_strings(%*CONF<plumage_metadata_dir>);
     my $meta_file := fscat([$meta_dir], "$project_name.json");
 
@@ -183,7 +183,7 @@ C<project_metadata_path>).
 
 =end
 
-method load_from_project_dir ($dir) {
+method load_from_project_dir($dir) {
     return self.load_from_file(self.project_metadata_path($dir));
 }
 
@@ -195,7 +195,7 @@ Load and parse a particular metadata file.
 
 =end
 
-method load_from_file ($path) {
+method load_from_file($path) {
     %!metadata := Config::JSON::ReadConfig($path);
 
     return self.validate;
@@ -227,7 +227,7 @@ method load_from_string($serialized) {
     }
 }
 
-method validate () {
+method validate() {
     $!valid := %!metadata
             && self.metadata_spec_known
             && self.metadata_instruction_types_known;
@@ -237,7 +237,7 @@ method validate () {
     return $!valid;
 }
 
-method metadata_spec_known () {
+method metadata_spec_known() {
     my %spec          := %!metadata<meta-spec>;
     my $known_uri     := 'https://trac.parrot.org/parrot/wiki/ModuleEcosystem';
     my $known_version := 1;
@@ -268,7 +268,7 @@ method metadata_spec_known () {
     return 0;
 }
 
-method metadata_instruction_types_known () {
+method metadata_instruction_types_known() {
     my %inst := %!metadata<instructions>;
 
     unless %inst && %inst.keys {
@@ -317,7 +317,7 @@ Return the file path for the metadata copy saved after install.
 
 =end
 
-method saved_copy_path () {
+method saved_copy_path() {
     my $meta_root := _saved_copy_root();
     my $copy_path := fscat([$meta_root],
                            pir::downcase(%!metadata<general><name>) ~ '.json');
@@ -339,7 +339,7 @@ installed.
 
 =end
 
-method save_install_copy () {
+method save_install_copy() {
     mkpath(_saved_copy_root());
 
     Config::JSON::WriteConfig(%!metadata, self.saved_copy_path);
@@ -354,7 +354,7 @@ because the associated project was successfully uninstalled.
 
 =end
 
-method remove_install_copy () {
+method remove_install_copy() {
     my $path := self.saved_copy_path;
 
     $*OS.rm($path) if path_exists($path);
