@@ -54,9 +54,9 @@ method new(:$action, :$args, :$usage, :$help) {
 }
 
 # Accessors
-method action() { return $!action }
-method args()   { return $!args   }
-method usage()  { return $!usage  }
-method help()   { return $!help   }
+method action() { $!action }
+method args()   { $!args   }
+method usage()  { $!usage  }
+method help()   { $!help   }
 
 # vim: ft=perl6
