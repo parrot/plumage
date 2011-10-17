@@ -43,7 +43,7 @@ method welcome() {
     say("Plumage: Package Manager for Parrot\n"
       ~ "Copyright (C) 2009-2011, Parrot Foundation.\n\n"
 
-      ~ "Enter 'h' or 'help' for help or see docs/interactive.pod "
+      ~ "Enter 'help' for help or see docs/interactive.pod "
       ~ "for further information\n");
 }
 
