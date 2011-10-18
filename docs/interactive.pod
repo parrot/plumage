@@ -41,29 +41,30 @@ command.
     plumage> help
     List of commands:
 
+    General:
+        cli                     Starts interactive command-line interface (default with no commands).
+        version                 Displays Plumage version and copyright statement.
+        help        [<command>] Displays a help message on <command> usage (defaults to all).
+
     Query metadata and project info:
-      projects                Lists all known projects.
-      status      [<project>] Shows status of <project> (defaults to all).
-      info         <project>  Displays detailed description of <project>.
-      metadata     <project>  Displays JSON metadata for <project>.
-      show-deps    <project>  Shows dependencies for <project>.
-      project-dir  <project>  Displays top directory for <project>.
+        projects                Lists all known projects.
+        status      [<project>] Shows status of <project> (defaults to all).
+        info         <project>  Displays detailed description of <project>.
+        metadata     <project>  Displays JSON metadata for <project>.
+        show-deps    <project>  Shows dependencies for <project>.
+        project-dir  <project>  Displays top directory for <project>.
 
     Perform actions on a project:
-      fetch        <project>  Downloads source code for <project>.
-      update       <project>  Updates source code for <project> (falls back to fetch).
-      configure    <project>  Configures source code for <project> (runs 'update' first).
-      build        <project>  Builds <project> in current directory (runs 'configure' first).
-      test         <project>  Runs test suite for <project> (runs 'build' first).
-      smoke        <project>  Sends test results to Parrot's Smolder server (runs 'build' first).
-      install      <project>  Installs <project> (runs 'test' first).
-      uninstall    <project>  Uninstalls <project> from system (not always available).
-      clean        <project>  Performs basic cleanup of source tree for <project>.
-      realclean    <project>  Removes all generated files during the build process for <project>.
-
-    Get information about Plumage:
-      version                 Displays Plumage version and copyright statement.
-      help        [<command>] Displays a help message on <command> usage (defaults to all).
+        fetch        <project>  Downloads source code for <project>.
+        update       <project>  Updates source code for <project> (falls back to fetch).
+        configure    <project>  Configures source code for <project> (runs 'update' first).
+        build        <project>  Builds <project> in current directory (runs 'configure' first).
+        test         <project>  Runs test suite for <project> (runs 'build' first).
+        smoke        <project>  Sends test results to Parrot's Smolder server (runs 'build' first).
+        install      <project>  Installs <project> (runs 'test' first).
+        uninstall    <project>  Uninstalls <project> from system (not always available).
+        clean        <project>  Performs basic cleanup of source tree for <project>.
+        realclean    <project>  Removes all generated files during the build process for <project>.
 
 =end code
 
@@ -139,7 +140,6 @@ Uninstalling a project is done with the aptly named C<uninstall> command.
 =begin code
 
     plumage> uninstall lolcode
-
     Uninstalling lolcode ...
     /home/foo/bin/bin/parrot setup.pir uninstall
     Successful.
