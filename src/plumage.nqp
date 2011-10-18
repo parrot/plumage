@@ -1,9 +1,8 @@
-###
-### NQP WORKAROUND HACKS
-###
+# Copyright (C) 2009-2011, Parrot Foundation.
 
+# TODO Add perldoc
 
-# Must declare all 'setting globals' here, because NQP doesn't know about them
+# Global setting variables (NQP workaround)
 my $*PROGRAM_NAME;
 my $*OSNAME;
 my @*ARGS;
@@ -11,134 +10,126 @@ my %*ENV;
 my %*VM;
 my $*OS;
 
+load_libraries();
 
-# NQP does not include a setting, so must load helper libraries first
-load_helper_libraries();
-
-
-# NQP does not have full {...} hash syntax, so use hash() and named args
+# Global structure of recognized commands
 my  %COMMANDS  := hash(
-    usage       => hash(
-        action  => command_usage,
-        args    => 'none',
-        usage   => 'usage',
-        help    => 'This command is here for compatibility purposes. Please use `help` instead.'
-    ),
-    help        => hash(
-        action  => command_help,
-        args    => 'opt_command',
-        usage   => 'help [<command>]',
-        help    => 'Print a helpful usage message.'
-    ),
-    version     => hash(
-        action  => command_version,
-        args    => 'none',
-        usage   => 'version',
-        help    => 'Print program version and copyright.',
-    ),
-    projects    => hash(
-        action  => command_projects,
-        args    => 'none',
-        usage   => 'projects',
-        help    => 'List all known projects.'
-    ),
-    status      => hash(
-        action  => command_status,
-        args    => 'opt_project',
-        usage   => 'status [<project>]',
-        help    => 'Show status of projects (defaults to all).'
-    ),
-    info        => hash(
-        action  => command_info,
-        args    => 'project',
-        usage   => 'info <project>',
-        help    => 'Print summary about a particular project.'
-    ),
-    metadata    => hash(
-        action  => command_info,
-        args    => 'project',
-        usage   => 'metadata <project>',
-        help    => 'Print JSON metadata about a particular project.'
-    ),
-    project_dir => hash(
-        action  => command_project_dir,
-        args    => 'project',
-        usage   => 'project-dir <project>',
-        help    => 'Print project\'s top directory'
-    ),
-    showdeps    => hash(
-        action  => command_showdeps,
-        args    => 'project',
-        usage   => 'showdeps <project>',
-        help    => 'Show dependency resolution for a project.'
-    ),
-    fetch       => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'fetch <project>',
-        help    => 'Download source.'
-    ),
-    update      => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'update <project>',
-        help    => 'Update source (falls back to fetch).'
-    ),
-    configure   => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'configure <project>',
-        help    => 'Configure source (updates first).'
-    ),
-    build       => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'build <project>',
-        help    => 'Build project from source (configures first).'
-    ),
-    test        => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'test <project>',
-        help    => 'Test built project (builds first).'
-    ),
-    smoke       => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'smoke <project>',
-        help    => 'Smoke test project (builds first).'
-    ),
-    install     => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'install <project>',
-        help    => 'Install built files (tests first).'
-    ),
-    uninstall   => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'uninstall <project>',
-        help    => 'Uninstalls installed files (not always available).'
-    ),
-    clean       => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'clean <project>',
-        help    => 'Clean source tree.'
-    ),
-    realclean   => hash(
-        action  => command_project_action,
-        args    => 'project',
-        usage   => 'realclean <project>',
-        help    => 'Clobber/realclean source tree.'
-    ),
-);
+    usage       => Plumage::Command.new(:action(command_usage),
+                                        :args('none'),
+                                        :usage('usage'),
+                                        :help('This command is here for compatibility '
+                                            ~ 'only. Please use `help` instead.')),
 
-# Work around NQP limitation with key names on the left of =>
-# (and as a side benefit, support both spellings)
+    cli         => Plumage::Command.new(:action(command_cli),
+                                        :args('none'),
+                                        :usage('cli'),
+                                        :help('Starts the interactive command-line interface. '
+                                            ~ 'Invoked by default if no command was specified.')),
+
+    help        => Plumage::Command.new(:action(command_help),
+                                        :args('opt_command'),
+                                        :usage('help [<command>]'),
+                                        :help('Displays a help message on <command> usage '
+                                            ~ '(defaults to all).')),
+
+    version     => Plumage::Command.new(:action(command_version),
+                                        :args('none'),
+                                        :usage('version'),
+                                        :help('Displays Plumage version and copyright statement.')),
+
+    projects    => Plumage::Command.new(:action(command_projects),
+                                        :args('none'),
+                                        :usage('projects'),
+                                        :help('Lists all known projects.')),
+
+    status      => Plumage::Command.new(:action(command_status),
+                                        :args('opt_project'),
+                                        :usage('status <project>'),
+                                        :help('Shows status of <project> (defaults to all).')),
+
+    info        => Plumage::Command.new(:action(command_info),
+                                        :args('project'),
+                                        :usage('info <project>'),
+                                        :help('Displays detailed description of <project>.')),
+
+    metadata    => Plumage::Command.new(:action(command_info),
+                                        :args('project'),
+                                        :usage('metadata <project>'),
+                                        :help('Displays JSON metadata for <project>.')),
+
+    project_dir => Plumage::Command.new(:action(command_project_dir),
+                                        :args('project'),
+                                        :usage('project-dir <project>'),
+                                        :help('Displays top directory for <project>.')),
+
+    show_deps   => Plumage::Command.new(:action(command_show_deps),
+                                        :args('project'),
+                                        :usage('show-deps <project>'),
+                                        :help('Shows dependencies for <project>.')),
+
+    fetch       => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('fetch <project>'),
+                                        :help('Downloads source code for <project>.')),
+
+    update      => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('update <project>'),
+                                        :help('Updates source code for <project> '
+                                            ~ "(falls back to 'fetch').")),
+
+    configure   => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('configure <project>'),
+                                        :help('Configures source code for <project> '
+                                            ~ "(runs 'update' first).")),
+
+    build       => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('build <project>'),
+                                        :help('Builds <project> in current directory '
+                                            ~ "(runs 'configure' first).")),
+
+    test        => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('test <project>'),
+                                        :help('Runs test suite for <project> '
+                                            ~ "(runs 'build' first).")),
+
+    smoke       => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('smoke <project>'),
+                                        :help("Sends test results to Parrot's Smolder server "
+                                            ~ "(runs 'build' first).")),
+
+    install     => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('install <project>'),
+                                        :help("Installs <project> (runs 'test' first).")),
+
+    uninstall   => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('uninstall <project>'),
+                                        :help('Uninstalls <project> from system '
+                                            ~ '(not always available).')),
+
+    clean       => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('clean <project>'),
+                                        :help('Performs basic clean up of source tree '
+                                            ~ 'for <project>.')),
+
+    realclean   => Plumage::Command.new(:action(command_project_action),
+                                        :args('project'),
+                                        :usage('realclean <project>'),
+                                        :help('Removes all files generated during the '
+                                            ~ 'build process for <project>.')));
+
+# Add support for both spellings of certain commands
 %COMMANDS<project-dir> := %COMMANDS<project_dir>;
+%COMMANDS<show-deps>   := %COMMANDS<show_deps>;
 
-
+# Default configuration
 my %DEFAULT_CONF := hash(
     parrot_user_root     => '#user_home_dir#/.parrot',
     plumage_user_root    => '#parrot_user_root#/plumage',
@@ -153,57 +144,66 @@ unless path_exists(%DEFAULT_CONF<plumage_metadata_dir>) {
     %DEFAULT_CONF<plumage_metadata_dir> := %*VM<config><datadir> ~ '/plumage/metadata';
 }
 
-
-# NQP does not automatically call MAIN()
 MAIN();
 
-
 ###
-### INIT
+### INITIALIZATION
+###
+### The following subroutines perform the various tasks that need to be
+### performed before any commands are executed such as loading libraries,
+### parsing command-line options, and reading the config file
 ###
 
+# XXX Why is this package-scoped? Can it be declared with 'my'?
+our %OPTIONS;    # Command-line switches
 
-our %OPT;
+my %*CONF;       # Configuration options
+my %*BIN;        # System binaries
 
-my %*CONF;
-my %*BIN;
-
-
-sub load_helper_libraries () {
-    # Support OO
+sub load_libraries() {
+    # Object-oriented interface
     pir::load_bytecode('P6object.pbc');
 
-    # Process command line options
+    # Processes command-line switches
     pir::load_bytecode('Getopt/Obj.pbc');
 
-    # Parse files in JSON format
+    # Parses JSON config files
     pir::load_bytecode('Config/JSON.pbc');
 
-    # Data structure dumper for PMCs (used for debugging)
+    # "Stringifies" PMC data structures (used for debugging only)
     pir::load_bytecode('dumper.pbc');
 
-    # Utility functions and standard "globals"
+    # Extends NQP runtime environment and native data structures
     pir::load_bytecode('Plumage/NQPUtil.pbc');
 
-    # Plumage modules: util, metadata, project, dependencies
+    # Provides subroutines needed to replace config strings
     pir::load_bytecode('Plumage/Util.pbc');
+
+    # Parses a project's metadata
     pir::load_bytecode('Plumage/Metadata.pbc');
+
+    # Represents a project and performs certain actions on them
     pir::load_bytecode('Plumage/Project.pbc');
+
+    # Resolves dependencies
     pir::load_bytecode('Plumage/Dependencies.pbc');
+
+    # Represents Plumage commands
+    pir::load_bytecode('Plumage/Command.pbc');
 }
 
-sub parse_command_line_options () {
-    my $getopts := pir::root_new__PP(< parrot Getopt Obj >);
+sub parse_command_line_options() {
+    my $getopt := pir::root_new__PP(< parrot Getopt Obj >);
 
     # Configure -c switch
-    my $config := $getopts.add();
+    my $config := $getopt.add();
     $config.name('CONFIG_FILE');
     $config.long('config-file');
     $config.short('c');
     $config.type('String');
 
     # Configure -i switch
-    my $ignore := $getopts.add();
+    my $ignore := $getopt.add();
     $ignore.name('IGNORE_FAIL');
     $ignore.long('ignore-fail');
     $ignore.short('i');
@@ -211,17 +211,16 @@ sub parse_command_line_options () {
     $ignore.optarg(1);
 
     # Configure -h switch
-    my $help := $getopts.add();
+    my $help := $getopt.add();
     $help.name('HELP');
     $help.long('help');
     $help.short('h');
 
-    # Parse @*ARGS
-    %OPT := $getopts.get_options(@*ARGS);
+    %OPTIONS := $getopt.get_options(@*ARGS);
 }
 
-sub read_config_files () {
-    # Find config files for this system and user (ignored if missing).
+sub read_config_files() {
+    # Find config file for this system and user (if any)
     my $etc      := %*VM<conf><sysconfdir>;
     my $home     := %*ENV<PLUMAGE_HOME> || user_home_dir();
     my $base     := 'plumage.json';
@@ -229,12 +228,12 @@ sub read_config_files () {
     my $userconf := fscat([$home, 'parrot', 'plumage'], $base);
     my @configs  := ($sysconf, $userconf);
 
-    # Remember home dir, we'll need that later
+    # Remember home directory
     %*CONF<user_home_dir> := $home;
 
-    # If another config specified via command line option, add it.  Because
-    # this was manually set by the user, it is a fatal error if missing.
-    my $optconf  := %OPT<CONFIG_FILE>;
+    # Use config file given on command-line, if given
+    my $optconf := %OPTIONS<CONFIG_FILE>;
+
     if $optconf {
         if path_exists($optconf) {
             @configs.push($optconf);
@@ -244,7 +243,7 @@ sub read_config_files () {
         }
     }
 
-    # Merge together default, system, user, and option configs
+    # Merge together 'default', 'system', 'user', and 'option' config options
     %*CONF := merge_tree_structures(%*CONF, %DEFAULT_CONF);
 
     for @configs -> $config {
@@ -253,20 +252,20 @@ sub read_config_files () {
             %*CONF   := merge_tree_structures(%*CONF, %conf);
 
             CATCH {
-                say("Could not parse JSON file '$config'.");
+                say("Could not parse config file '$config'.");
             }
         }
     }
 }
 
-sub merge_tree_structures ($dst, $src) {
+sub merge_tree_structures($dst, $src) {
     for $src.keys -> $k {
         my $d := $dst{$k};
         my $s := $src{$k};
 
-        if  $d && pir::does__IPs($d, 'hash')
-        &&  $s && pir::does__IPs($s, 'hash') {
-            $dst{$k} := merge_tree_structures($d, $s);
+        if $d && pir::does__IPs($d, 'hash')
+        && $s && pir::does__IPs($s, 'hash') {
+           $dst{$k}  := merge_tree_structures($d, $s);
         }
         else {
             $dst{$k} := $s;
@@ -276,133 +275,108 @@ sub merge_tree_structures ($dst, $src) {
     return $dst;
 }
 
-sub find_binaries () {
+sub find_binaries() {
     my %conf       := %*VM<config>;
     my $parrot_bin := %conf<bindir>;
 
-    # Parrot programs; must be sourced from configured parrot bin directory
+    # Parrot binaries (must be sourced from configured Parrot bin directory)
     %*BIN<parrot_config> := fscat([$parrot_bin], 'parrot_config');
     %*BIN<parrot-nqp>    := fscat([$parrot_bin], 'parrot-nqp');
     %*BIN<parrot>        := fscat([$parrot_bin], 'parrot');
 
-    # Programs used to build parrot; make sure we use the same ones
-    %*BIN<perl5> := %conf<perl>;
-    %*BIN<make>  := %conf<make>;
+    # Use the same programs used to build Parrot
+    %*BIN<perl5>         := %conf<perl>;
+    %*BIN<make>          := %conf<make>;
 
-    # Unrelated system programs; look for them in the user's search path
-    %*BIN<rake>  := find_program('rake');
-    %*BIN<svn>   := find_program('svn');
-    %*BIN<git>   := find_program('git');
-    %*BIN<hg>    := find_program('hg');
+    # Additional programs needed to fetch project's source code
+    %*BIN<rake>          := find_program('rake');
+    %*BIN<svn>           := find_program('svn');
+    %*BIN<git>           := find_program('git');
+    %*BIN<hg>            := find_program('hg');
 }
 
-
-###
-### MAIN
-###
-
-
-sub MAIN () {
-    parse_command_line_options();
-    read_config_files();
-    find_binaries();
-
-    if %OPT.exists('HELP') {
-        execute_command('help');
-    }
-    else {
-        my $command := parse_command_line();
-        execute_command($command);
-    }
+sub parse_command_line() {
+    return @*ARGS ?? @*ARGS.shift !! 'cli';
 }
 
-sub parse_command_line () {
-    my $command := @*ARGS ?? @*ARGS.shift !! 'help';
+sub execute_command($command) {
+    my $action := %COMMANDS{$command}.action;
+    my $args   := %COMMANDS{$command}.args;
 
-    return $command;
-}
-
-sub execute_command ($command) {
-    my $action := %COMMANDS{$command}<action>;
-    my $args   := %COMMANDS{$command}<args>;
-
-    if ($action) {
+    if $action {
         if $args eq 'project' && !@*ARGS {
             say('Please specify a project to act on.');
         }
-        #elsif $args eq 'opt_project' {
-        #}
         else {
             $action(@*ARGS, :command($command));
         }
     }
     else {
-        say("I don't know how to '$command'!");
-        pir::exit(1);
+        say("No such command: $command. Please use $*PROGRAM_NAME --help");
+        pir::exit__vi(1);
     }
 }
-
 
 ###
 ### COMMANDS
 ###
+### Each of the following subroutines represents an individual command recognized
+### by Plumage (note the command_* prefix followed by the actual command name)
+###
 
-
-sub command_usage () {
+sub command_usage() {
     print(usage_info());
 }
 
-
-sub usage_info () {
+sub usage_info() {
     return
 "Usage: $*PROGRAM_NAME [<options>] <command> [<arguments>]
 
 Options:
 
-    -h, --help                   Print a helpful usage message
+    -h, --help                   Displays a help message on command usage.
 
-    -c, --config-file=<path>     Read additional config file
+    -c, --config-file=<path>     Reads additional config file in <path>.
 
-    -i, --ignore-fail            Ignore any failing build stages
+    -i, --ignore-fail            Ignores any failed build stages.
 
-    -i, --ignore-fail=<stage>    Ignore failures only in a particular stage
-                                 (may be repeated to select more than one stage)
+    -i, --ignore-fail=<stage>    Ignores failures only for <stage>
+                                 (may be repeated to select more than one stage).
 
-    -i, --ignore-fail=<stage>=0  Don't ignore failures in this stage
+    -i, --ignore-fail=<stage>=0  Doesn't ignore failures in <stage>.
 
 Commands:
 
-  Query metadata/project info:
-    projects                List all known projects
-    status      [<project>] Show status of projects (defaults to all)
-    info         <project>  Print summary about a particular project
-    metadata     <project>  Print JSON metadata about a particular project
-    showdeps     <project>  Show dependency resolution for a project
-    project-dir  <project>  Print project's top directory
+  Query metadata and project info:
+    projects                Lists all known projects.
+    status      [<project>] Shows status of <project> (defaults to all).
+    info         <project>  Displays detailed description of <project>.
+    metadata     <project>  Displays JSON metadata for <project>.
+    show-deps    <project>  Shows dependencies for <project>.
+    project-dir  <project>  Displays top directory for <project>.
 
   Perform actions on a project:
-    fetch        <project>  Download source
-    update       <project>  Update source                (falls back to fetch)
-    configure    <project>  Configure source             (updates first)
-    build        <project>  Build project from source    (configures first)
-    test         <project>  Test built project           (builds first)
-    smoke        <project>  Smoke test project           (builds first)
-    install      <project>  Install built files          (tests first)
-    uninstall    <project>  Uninstalls installed files   (not always available)
-    clean        <project>  Clean source tree
-    realclean    <project>  Clobber/realclean source tree
+    fetch        <project>  Downloads source code for <project>.
+    update       <project>  Updates source code for <project> (falls back to fetch).
+    configure    <project>  Configures source code for <project> (runs 'update' first).
+    build        <project>  Builds <project> in current directory (runs 'configure' first).
+    test         <project>  Runs test suite for <project> (runs 'build' first).
+    smoke        <project>  Sends test results to Parrot's Smolder server (runs 'build' first).
+    install      <project>  Installs <project> (runs 'test' first).
+    uninstall    <project>  Uninstalls <project> from system (not always available).
+    clean        <project>  Performs basic cleanup of source tree for <project>.
+    realclean    <project>  Removes all generated files during the build process for <project>.
 
-  Get info about Plumage itself:
-    version                 Print program version and copyright
-    help        [<command>] Print a helpful usage message
+  Get information about Plumage:
+    version                 Displays Plumage version and copyright statement.
+    help        [<command>] Displays a help message on <command> usage (defaults to all).
 ";
 }
 
-
-sub command_help ($help_cmd, :$command) {
+sub command_help($help_cmd, :$command) {
     if ?$help_cmd {
-        my $usage := %COMMANDS{$help_cmd[0]}<usage>;
-        my $help  := %COMMANDS{$help_cmd[0]}<help>;
+        my $usage := %COMMANDS{$help_cmd[0]}.usage;
+        my $help  := %COMMANDS{$help_cmd[0]}.help;
 
         # Check that command actually exists
         if ($usage eq '') || ($help eq '') {
@@ -417,26 +391,58 @@ sub command_help ($help_cmd, :$command) {
     }
 }
 
+sub command_cli() {
+    pir::load_bytecode('Plumage/Interactive.pbc');
 
-sub command_version () {
+    my $session := Plumage::Interactive.new(:prompt_string('plumage'));
+    my $input;
+
+    # Main runloop
+    while 1 {
+        $session.prompt();
+
+        pir::exit__vi(0) if $session.input eq 'quit';
+
+        # @command[0] contains the given command
+        # @command[1] contains the arguments
+        my @command := $session.parse_command_line();
+
+        my $action  := %COMMANDS{@command[0]}.action;
+        my $args    := %COMMANDS{@command[0]}.args;
+
+        if $action {
+            if $args eq 'project' && !@command[1] {
+                say('Please specify a project to act on.');
+            }
+            else {
+                $action([@command[1]], :command(@command[0]));
+            }
+        }
+        else {
+            say("No such command: $input. Trying using 'help'.");
+            pir::exit__vi(1);
+        }
+    }
+}
+
+sub command_version() {
     print(version_info());
 }
 
-sub version_info () {
+sub version_info() {
     my $version := '0';
     return
-"This is Parrot Plumage, version $version.
+"This is Plumage, version $version.
 
-Copyright (C) 2009, Parrot Foundation.
+Copyright (C) 2009-2011, Parrot Foundation.
 
 This code is distributed under the terms of the Artistic License 2.0.
 For more details, see the full text of the license in the LICENSE file
-included in the Parrot Plumage source tree.
+included in the Plumage source tree.
 ";
 }
 
-
-sub command_projects () {
+sub command_projects() {
     my @projects := Plumage::Metadata.get_project_list();
        @projects.sort;
 
@@ -465,13 +471,12 @@ sub command_projects () {
     say('');
 }
 
-
-sub command_status (@projects, :$command) {
+sub command_status(@projects, :$command) {
     my $showing_all := !@projects;
 
     unless @projects {
         @projects := Plumage::Metadata.get_project_list();
-        say("\nKnown projects:\n");
+        say("Known projects:\n");
     }
 
     my @installed := Plumage::Dependencies.get_installed_projects();
@@ -486,11 +491,8 @@ sub command_status (@projects, :$command) {
     say('') if $showing_all;
 }
 
-
-sub command_info (@projects, :$command) {
-    unless (@projects) {
-        say('Please include the name of the project you wish info for.');
-    }
+sub command_info(@projects, :$command) {
+    say('You must specify the name of the project.') unless @projects;
 
     for @projects -> $project {
         my $meta  := Plumage::Metadata.new();
@@ -510,8 +512,7 @@ sub command_info (@projects, :$command) {
     }
 }
 
-
-sub command_showdeps (@projects, :$command) {
+sub command_show_deps(@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project to show dependencies for.');
     }
@@ -532,12 +533,11 @@ sub command_showdeps (@projects, :$command) {
     }
 }
 
-sub report_metadata_error ($project_name, $meta) {
+sub report_metadata_error($project_name, $meta) {
     say("Metadata error for project '$project_name':\n" ~ $meta.error);
 }
 
-
-sub command_project_dir (@projects, :$command) {
+sub command_project_dir(@projects, :$command) {
     unless (@projects) {
         say('Please include the name of the project you wish to find.');
     }
@@ -549,14 +549,12 @@ sub command_project_dir (@projects, :$command) {
     }
 }
 
-
-sub command_project_action (@projects, :$command) {
+sub command_project_action(@projects, :$command) {
        install_required_projects(@projects)
     && perform_actions_on_projects(@projects, :up_to($command));
 }
 
-
-sub install_required_projects (@projects) {
+sub install_required_projects(@projects) {
     my %resolutions   := Plumage::Dependencies.resolve_dependencies(@projects);
     my @need_projects := %resolutions<need_project>;
 
@@ -571,7 +569,7 @@ sub install_required_projects (@projects) {
     return 1;
 }
 
-sub show_dependencies (@projects) {
+sub show_dependencies(@projects) {
     my %resolutions := Plumage::Dependencies.resolve_dependencies(@projects);
 
     say('');
@@ -592,7 +590,7 @@ sub show_dependencies (@projects) {
     say("Missing and unrecognized:    $need_unknown");
 
     if $need_unknown {
-        # XXXX: Don't forget to fix this when metadata is retrieved from server
+        # XXX Don't forget to fix this when metadata is retrieved from server
 
         say("\nI don't recognize some of these dependencies.  First, update and\n"
             ~ "rebuild Plumage to get the latest metadata.  Next, please check\n"
@@ -614,14 +612,14 @@ sub show_dependencies (@projects) {
     }
 }
 
-
-sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
-    my $has_ignore_flag := %OPT.exists('IGNORE_FAIL');
-    my %ignore          := %OPT<IGNORE_FAIL>;
+sub perform_actions_on_projects(@projects, :$up_to, :@actions) {
+    my $has_ignore_flag := %OPTIONS.exists('IGNORE_FAIL');
+    my %ignore          := %OPTIONS<IGNORE_FAIL>;
     my $ignore_all      := $has_ignore_flag && !%ignore;
 
     for @projects -> $project_name {
         my $project := Plumage::Project.new($project_name);
+
         if pir::defined__IP($project) {
             return 0 unless $project.perform_actions(:up_to($up_to),
                                                      :actions(@actions),
@@ -633,8 +631,7 @@ sub perform_actions_on_projects (@projects, :$up_to, :@actions) {
     return 1;
 }
 
-
-sub print_project_summary ($meta) {
+sub print_project_summary($meta) {
     my %general     := $meta<general>;
 
     my $name        := %general<name>;
@@ -653,3 +650,19 @@ sub print_project_summary ($meta) {
     say(pir::sprintf__SsP("%-11s : %s", ["License",     $license]));
     say(pir::sprintf__SsP("%-11s : %s", ["Description", $description]));
 }
+
+sub MAIN() {
+    parse_command_line_options();
+    read_config_files();
+    find_binaries();
+
+    if %OPTIONS.exists('HELP') {
+        execute_command('help');
+    }
+    else {
+        my $command := parse_command_line();
+        execute_command($command);
+    }
+}
+
+# vim: ft=perl6

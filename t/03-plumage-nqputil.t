@@ -4,7 +4,7 @@ my $*EXECUTABLE_NAME;
 
 MAIN();
 
-sub MAIN () {
+sub MAIN() {
     # Load testing tools
     pir::load_language('parrot');
     pir::compreg__PS('parrot').import('Test::More');
@@ -16,7 +16,7 @@ sub MAIN () {
     run_tests();
 }
 
-sub run_tests () {
+sub run_tests() {
     plan(51);
 
     test_hash_exists();
@@ -40,17 +40,18 @@ sub run_tests () {
 sub test_all_matches() {
     my @matches;
     @matches := all_matches(/ab?d?x?c/,"abc y adcef x axcfoo twiddle");
-    is(@matches[0],'abc','all_matches found abc');
-    is(@matches[1],'adc','all_matches found adc');
-    is(@matches[2],'axc','all_matches found axc');
+
+    is(@matches[0], 'abc', 'all_matches found abc');
+    is(@matches[1], 'adc', 'all_matches found adc');
+    is(@matches[2], 'axc', 'all_matches found axc');
 }
 
 sub test_hash() {
-    my %hash := hash( monkey => 'see');
+    my %hash := hash(monkey => 'see');
     my @kv   := %hash.kv;
 
-    is(@kv[0],'monkey', 'has() creates the monkey key');
-    is(@kv[1],'see', 'hash() set the value of monkey correctly');
+    is(@kv[0], 'monkey', 'hash() creates the monkey key');
+    is(@kv[1], 'see',    'hash() set the value of monkey correctly');
 
 }
 
@@ -58,7 +59,7 @@ sub test_hash_exists() {
     my %opt;
     %opt<foobar> := 42;
 
-    ok( %opt.exists('foobar'),   'exists works for existing keys');
+    ok(%opt.exists('foobar'),    'exists works for existing keys');
     nok(%opt.exists('zanzibar'), 'exists works for non-existent keys');
 }
 
@@ -67,14 +68,16 @@ sub test_hash_values() {
     my @values := %hash.values;
 
     is(@values, 0, 'values on empty hash is empty');
-    %hash<GreatJob> := 42;
 
+    %hash<GreatJob> := 42;
     @values := %hash.values;
-    is(@values,    1,  'values on hash with one entry has one element');
+
+    is(@values,     1, 'values on hash with one entry has one element');
     is(@values[0], 42, '... and that element is correct');
 
     %hash<pigdog> := 99;
-    is( %hash.values, 2, 'values on hash with two entries has two elements');
+
+    is(%hash.values, 2, 'values on hash with two entries has two elements');
 }
 
 sub test_hash_keys() {
@@ -149,26 +152,31 @@ sub test_set_from_array() {
     my @array;
     my %set  := set_from_array(@array);
     my @keys := %set.keys;
+
     is(@keys, 0, 'set_from_array on empty array produces empty set');
 
     @array := (1, "two", "two", 3, '3', 3);
     %set   := set_from_array(@array);
     @keys  := %set.keys;
+
     is(@keys,     3, 'set_from_array on array with dups has correct number of keys');
     is(%set<1>,   1, '... and first key is in set');
     is(%set<two>, 1, '... and second key is in set');
     is(%set<3>,   1, '... and third key is in set');
+
     nok(%set.exists('four'), '... and non-existant key is not in set');
 }
 
 sub test_subst() {
     my $string := 'chewbacca';
     my $subst  := subst($string, /a/, 'x');
+
     is($subst,  'chewbxccx', 'subst works with plain string replacement');
     is($string, 'chewbacca', 'plain string subst edits a clone');
 
     my $text  := 'wookie';
     my $fixed := subst($text, /w|k/, replacement);
+
     is($fixed, 'wwookkie', 'subst works with code replacement');
     is($text,  'wookie',   'code replacement subst edits a clone');
 }
@@ -180,12 +188,12 @@ sub replacement($match) {
 }
 
 sub test_path_exists() {
-    ok( path_exists('.'),            'path_exists finds .');
+    ok(path_exists('.'),             'path_exists finds .');
     nok(path_exists('DOESNOTEXIST'), 'path_exists returns false for nonexistent files');
 }
 
 sub test_is_dir() {
-    ok( is_dir('.'),            '. is a directory');
+    ok(is_dir('.'),             '. is a directory');
     nok(is_dir('DOESNOTEXIST'), 'is_dir returns false for nonexistent dirs');
     nok(is_dir('harness'),      'is_dir returns false for normal files');
 }
@@ -197,14 +205,19 @@ sub test_qx() {
     is(qx(''), '', 'qx("") returns an empty string');
 
     $output := qx('IHOPETHATTHISPATHDOESNOTEXISTANDISEXECUTABLEANDRETURNSTRUE');
+
     ok($output ~~ /:s not [found|recognized]/, 'qx() on invalid path returns not found error');
     isnt($!, 0, '... and the exit status is non-zero');
 
     $output := qx($*EXECUTABLE_NAME, '-e', '"say(42); pir::exit(0)"');
+
     is($output, "42\n", 'qx() captures output of exit(0) program, retaining line endings');
     is($!,      0,      '... and the exit status is correct');
 
     $output := qx($*EXECUTABLE_NAME, '-e', '"say(21); pir::exit(1)"');
+
     is($output, "21\n", 'qx() captures output of exit(1) program, retaining line endings');
     is($!,      1,      '... and the exit status is correct');
 }
+
+# vim: ft=perl6

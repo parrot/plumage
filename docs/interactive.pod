@@ -1,0 +1,149 @@
+=begin pod
+
+=head1 Using the Plumage Interactive Command-Line Interface
+
+In addition to the basic single command interface from the shell, Plumage
+also provides an interactive command-line interface (CLI). If you need to
+run several commands, you will probably feel more comfortable with the CLI
+rather than continually invoking Plumage for each command.
+
+The CLI is invoked by default when no commands have been specified.
+Additionally, you can start an interactive session by explicitly specifying the
+C<cli> command. However, this is a bit redundant so it's easier to just not
+specify a command.
+
+=head2 Recognized Commands
+
+Any command that can be used from the shell interface can be invoked from the
+CLI as well. The CLI also allows you to change the config file either just
+temporarily or permanently.
+
+=head2 Examples
+
+After you've started Plumage, you will be greeted by the welcome message.
+
+=begin code
+
+    Plumage: Package Manager for Parrot
+    Copyright (C) 2009-2011, Parrot Foundation.
+
+    Enter 'help' for help or see docs/interactive.pod for further information.
+
+    plumage>
+
+=end code
+
+As the above message suggests, if you aren't sure of something, use the C<help>
+command.
+
+=begin code
+
+    plumage> help
+    List of commands:
+
+    Query metadata and project info:
+      projects                Lists all known projects.
+      status      [<project>] Shows status of <project> (defaults to all).
+      info         <project>  Displays detailed description of <project>.
+      metadata     <project>  Displays JSON metadata for <project>.
+      show-deps    <project>  Shows dependencies for <project>.
+      project-dir  <project>  Displays top directory for <project>.
+
+    Perform actions on a project:
+      fetch        <project>  Downloads source code for <project>.
+      update       <project>  Updates source code for <project> (falls back to fetch).
+      configure    <project>  Configures source code for <project> (runs 'update' first).
+      build        <project>  Builds <project> in current directory (runs 'configure' first).
+      test         <project>  Runs test suite for <project> (runs 'build' first).
+      smoke        <project>  Sends test results to Parrot's Smolder server (runs 'build' first).
+      install      <project>  Installs <project> (runs 'test' first).
+      uninstall    <project>  Uninstalls <project> from system (not always available).
+      clean        <project>  Performs basic cleanup of source tree for <project>.
+      realclean    <project>  Removes all generated files during the build process for <project>.
+
+    Get information about Plumage:
+      version                 Displays Plumage version and copyright statement.
+      help        [<command>] Displays a help message on <command> usage (defaults to all).
+
+=end code
+
+Suppose you want to try a new programming language but aren't sure which. Let's
+see what's available.
+
+=begin code
+
+    plumage> projects
+    Known projects:
+      Close                  Systems programming language (C-like) for the Parrot VM
+      bf                     Brainfuck
+      blizkost               Embed Perl 5 in Parrot, exposed as a standard HLL
+      cardinal               Cardinal - Ruby compiler for Parrot
+      chitchat               ChitChat
+      dbm-dynpmcs            dynpmc interface to dbm-like databases.
+      decnum-dynpmcs         Set of decimal arithmetic PMCs for the Parrot VM
+      digest-dynpmcs         Set of message-digest dynpmcs for the Parrot VM.
+      ecmascript             aka JavaScript
+      forth                  Forth on Parrot
+      fun                    An even happier Joy
+      gil                    Generic Imperative Language
+      hq9plus                HQ9plus is a non turing-complete joke language
+      kakapo                 Run-time library for NQP programs on the Parrot VM
+      kea                    Factor on Parrot
+      lolcode                Lolcode
+      lua                    Lua on Parrot
+      lua-batteries          Libraries for Lua on Parrot
+
+    # Output truncated for brevity
+
+=end code
+
+As you can see, the C<projects> command lists all the projects in the
+ecosystem. Maybe you're feeling a little silly and want to write some
+LOLCODE. Let's find out a little bit more about LOLCODE.
+
+=begin code
+
+    plumage> info lolcode
+    Name        : lolcode
+    Version     : HEAD
+    Summary     : Lolcode
+    Author      : Parrot Foundation
+    URL         : 
+    License     : Artistic License 2.0
+    Description : Lolcode
+
+=end code
+
+Looks like someone was lazy and didn't fully fill out the LOLCODE metadata
+file. That's alright, it'll be a surprise!
+
+=begin code
+
+    plumage> install lolcode
+    /usr/bin/git clone git://github.com/parrot/lolcode.git /home/foo/.parrot/plumage/build/lolcode
+    Cloning into /home/foo/.parrot/plumage/build/lolcode...
+    /usr/bin/git submodule update --init
+    Successful.
+
+    Configuration not required for lolcode.
+    Successful.
+
+    # Output truncated for brevity
+
+=end code
+
+This builds, tests, and installs a particular project/module; in this case,
+C<lolcode>. It could be that you're not really in a lolcatz mood right now.
+Uninstalling a project is done with the aptly named C<uninstall> command.
+
+=begin code
+
+    plumage> uninstall lolcode
+
+    Uninstalling lolcode ...
+    /home/foo/bin/bin/parrot setup.pir uninstall
+    Successful.
+
+=end code
+
+=end pod

@@ -1,3 +1,5 @@
+# Copyright (C) 2009-2011, Parrot Foundation.
+
 =begin
 
 =head1 NAME
@@ -68,7 +70,6 @@ Plumage::NQPUtil.nqp - Utility functions for NQP
     my %*VM;
     my $*OS;
 
-
 =head1 DESCRIPTION
 
 =head2 Hash Methods
@@ -80,7 +81,6 @@ functionality expected for Perl 6 Hashes.
 
 module Hash {
 
-
 =begin
 
 =over 4
@@ -91,14 +91,13 @@ Return a true value if C<$key> exists in C<%hash>, or a false value otherwise.
 
 =end
 
-    method exists ($key) {
+    method exists($key) {
         return Q:PIR{
             $P1 = find_lex '$key'
             $I0 = exists self[$P1]
             %r  = box $I0
         };
     }
-
 
 =begin
 
@@ -108,12 +107,11 @@ Return all the C<@keys> in the C<%hash> as an unordered array.
 
 =end
 
-    method keys () {
+    method keys() {
         my @keys;
         for self { @keys.push($_.key); }
         @keys;
     }
-
 
 =begin
 
@@ -123,12 +121,11 @@ Return all the C<@values> in the C<%hash> as an unordered array.
 
 =end
 
-    method values () {
+    method values() {
         my @values;
         for self { @values.push($_.value); }
         @values;
     }
-
 
 =begin
 
@@ -141,12 +138,11 @@ when iterating over key and value simultaneously:
 
 =end
 
-    method kv () {
+    method kv() {
         my @kv;
         for self { @kv.push($_.key); @kv.push($_.value); }
         @kv;
     }
-
 
 =begin
 
@@ -155,7 +151,6 @@ when iterating over key and value simultaneously:
 =end
 
 }
-
 
 =begin
 
@@ -168,7 +163,6 @@ functionality expected for Perl 6 Hashes.
 
 module Array {
 
-
 =begin
 
 =over 4
@@ -179,12 +173,11 @@ Return a C<@reversed> copy of the C<@array>.
 
 =end
 
-    method reverse () {
+    method reverse() {
         my @reversed;
         for self { @reversed.unshift($_); }
         @reversed;
     }
-
 
 =begin
 
@@ -193,7 +186,6 @@ Return a C<@reversed> copy of the C<@array>.
 =end
 
 }
-
 
 =begin
 
@@ -213,7 +205,7 @@ one entry in the C<@mapped> output.
 
 =end
 
-sub map (&code, @originals) {
+sub map(&code, @originals) {
     my @mapped;
 
     for @originals {
@@ -222,7 +214,6 @@ sub map (&code, @originals) {
 
     return @mapped;
 }
-
 
 =begin
 
@@ -233,7 +224,7 @@ Order is retained, and duplicates are handled independently.
 
 =end
 
-sub grep (&code, @all) {
+sub grep(&code, @all) {
     my @matches;
 
     for @all {
@@ -242,7 +233,6 @@ sub grep (&code, @all) {
 
     return @matches;
 }
-
 
 =begin
 
@@ -265,7 +255,7 @@ C<$result> is an undefined value.
 
 =end
 
-sub reduce (&code, @array, *@initial) {
+sub reduce(&code, @array, *@initial) {
     my    $init_elems := pir::elements(@initial);
     if    $init_elems >  1 {
         pir::die('Only one initial value allowed in reduce()');
@@ -303,7 +293,6 @@ sub _reduce(&code, $iter, $initial) {
     return $result;
 }
 
-
 =begin
 
 =head2 Container Coercions
@@ -321,8 +310,7 @@ Coerce a list of pairs into a hash.
 
 =end
 
-sub hash (*%h) { return %h }
-
+sub hash(*%h) { return %h }
 
 =begin
 
@@ -334,7 +322,7 @@ checks.
 
 =end
 
-sub set_from_array (@array) {
+sub set_from_array(@array) {
     my %set;
 
     for @array {
@@ -344,11 +332,9 @@ sub set_from_array (@array) {
     return %set;
 }
 
-
 =begin
 
 =back
-
 
 =head2 Regular Expression Functions
 
@@ -372,7 +358,6 @@ sub all_matches($regex, $text) {
 
     return @matches;
 }
-
 
 =begin
 
@@ -419,11 +404,9 @@ sub subst($original, $regex, $replacement) {
     return $edited;
 }
 
-
 =begin
 
 =back
-
 
 =head2 I/O Functions
 
@@ -437,12 +420,11 @@ Print a list of strings to standard output.
 
 =end
 
-sub print (*@strings) {
+sub print(*@strings) {
     for @strings {
         pir::print($_);
     }
 }
-
 
 =begin
 
@@ -452,10 +434,9 @@ Print a list of strings to standard output, followed by a newline.
 
 =end
 
-sub say (*@strings) {
+sub say(*@strings) {
     print(|@strings, "\n");
 }
-
 
 =begin
 
@@ -465,7 +446,7 @@ Read the C<$contents> of a file as a single string.
 
 =end
 
-sub slurp ($filename) {
+sub slurp($filename) {
     my $fh := pir::new__Ps('FileHandle');
     $fh.open($filename, 'r');
     my $contents := $fh.readall;
@@ -473,7 +454,6 @@ sub slurp ($filename) {
 
     return $contents;
 }
-
 
 =begin
 
@@ -483,13 +463,12 @@ Write the string C<$contents> to a file.
 
 =end
 
-sub spew ($filename, $contents) {
+sub spew($filename, $contents) {
     my $fh := pir::new__Ps('FileHandle');
     $fh.open($filename, 'w');
     $fh.print($contents);
     $fh.close();
 }
-
 
 =begin
 
@@ -499,18 +478,16 @@ Append the string C<$contents> to a file.
 
 =end
 
-sub append ($filename, $contents) {
+sub append($filename, $contents) {
     my $fh := pir::new__Ps('FileHandle');
     $fh.open($filename, 'a');
     $fh.print($contents);
     $fh.close();
 }
 
-
 =begin
 
 =back
-
 
 =head2 Filesystem and Path Functions
 
@@ -539,7 +516,6 @@ sub fscat(@path_parts, *@filename) {
     return $joined;
 }
 
-
 =begin
 
 =item $home := user_home_dir()
@@ -553,7 +529,6 @@ sub user_home_dir() {
     return (%env<HOMEDRIVE> // '') ~ %env<HOME>;
 }
 
-
 =begin
 
 =item $found := path_exists($path);
@@ -563,7 +538,7 @@ value if not.
 
 =end
 
-sub path_exists ($path) {
+sub path_exists($path) {
     my @stat := pir::root_new__PP(< parrot OS >).stat($path);
     return 1;
 
@@ -571,7 +546,6 @@ sub path_exists ($path) {
         return 0;
     }
 }
-
 
 =begin
 
@@ -590,7 +564,6 @@ sub is_dir($path) {
         return 0;
     }
 }
-
 
 =begin
 
@@ -628,7 +601,6 @@ sub test_dir_writable($dir) {
     }
 }
 
-
 =begin
 
 =item $binary_path := find_program($program)
@@ -648,7 +620,7 @@ following way:
 
 =end
 
-sub find_program ($program) {
+sub find_program($program) {
     my $path_sep := %*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
     my %env      := pir::root_new__PP(< parrot Env >);
     my @paths    := pir::split($path_sep, %env<PATH>);
@@ -668,7 +640,6 @@ sub find_program ($program) {
     return '';
 }
 
-
 =begin
 
 =item mkpath($directory_path)
@@ -678,7 +649,7 @@ top making directories as needed until an entire path has been created.
 
 =end
 
-sub mkpath ($path) {
+sub mkpath($path) {
     my @path := pir::split('/', $path);
     my $cur  := @path.shift;
 
@@ -691,11 +662,9 @@ sub mkpath ($path) {
     }
 }
 
-
 =begin
 
 =back
-
 
 =head2 Program Spawning Functions
 
@@ -713,7 +682,7 @@ if the process could not be spawned at all.
 
 =end
 
-sub run (*@command_and_args) {
+sub run(*@command_and_args) {
     my $aux := pir::spawnw__iP(@command_and_args);
     my $ret := Q:PIR<
         $P0 = find_lex '$aux'
@@ -723,7 +692,6 @@ sub run (*@command_and_args) {
     >;
     return $ret;
 }
-
 
 =begin
 
@@ -738,7 +706,7 @@ successfully but itself exited with failure.
 
 =end
 
-sub do_run (*@command_and_args) {
+sub do_run(*@command_and_args) {
     say(pir::join(' ', @command_and_args));
 
     return pir::spawnw__iP(@command_and_args) ?? 0 !! 1;
@@ -747,7 +715,6 @@ sub do_run (*@command_and_args) {
         return 0;
     }
 }
-
 
 =begin
 
@@ -762,7 +729,7 @@ B<WARNING>: Parrot currently implements the pipe open B<INSECURELY>!
 
 =end
 
-sub qx (*@command_and_args) {
+sub qx(*@command_and_args) {
     my $cmd  := pir::join(' ', @command_and_args);
     my $pipe := pir::new__Ps('FileHandle');
     $pipe.open($cmd, 'rp');
@@ -777,11 +744,9 @@ sub qx (*@command_and_args) {
     return $output;
 }
 
-
 =begin
 
 =back
-
 
 =head2 HLL Interop Functions
 
@@ -797,7 +762,7 @@ returning the C<$result> of executing the compiled code.
 
 =end
 
-sub eval ($source_code, $language) {
+sub eval($source_code, $language) {
     $language := pir::downcase($language);
 
     pir::load_language($language);
@@ -805,7 +770,6 @@ sub eval ($source_code, $language) {
 
     return $compiler.compile($source_code)();
 }
-
 
 =begin
 
@@ -832,11 +796,9 @@ sub store_dynlex_safely($var_name, $value) {
         unless pir::isnull(pir::find_dynamic_lex($var_name));
 }
 
-
 =begin
 
 =back
-
 
 =head2 Global Variables
 
@@ -911,3 +873,5 @@ INIT {
     store_dynlex_safely('%*ENV', pir::root_new__PP(< parrot Env >));
     store_dynlex_safely('$*OS',  pir::root_new__PP(< parrot OS  >));
 }
+
+# vim: ft=perl6

@@ -1,4 +1,4 @@
-### Looking for something to work on?  See TASKS.
+### Looking for something to work on? See TASKS.
 ###
 ### This file is more of a "don't forget to do this" list.
 
@@ -141,7 +141,7 @@ Plumage:
     * Generate .pc files if module install type does not automatically do so
     * Hmmm, seems to be some fail here WRT standardizing lib names ...
 * Documentation
-  * Hacking docs (WIP)
+  * Add a tutorial/examples document
   * FAQ
     * Relationship between plumage and distutils/make/etc.
 * Test Suite
@@ -152,7 +152,6 @@ Plumage:
   * Improve harness output
 * Misc suggestions
   * Merge Plumage .pbc's all together into executable using pbc_merge
-  * Make Plumage itself installable
   * Avoid asking questions (after first setup?) if at all possible
   * Recommendations ("optional dependencies") should not abort top-level
     install if they fail to install
@@ -168,6 +167,26 @@ Plumage:
     * From #perl6:
       * mberends does not like adding directories to PATH
         mberends does 'sudo ln -s <parrot_install>/bin/perl6 /usr/local/bin' instead
+* Rename --ignore-fail=<stage>=0 to --no-ignore-fail=<stage> as this is a more common
+  convention and is much cleaner
+
+
+CLI:
+----
+* Support temporary and permanent modification of config file
+* Fully document usage in docs/interactive.pod
+* Set version to 1.0 after soh-cah-toa/interactive is merged into master
+  * Display Plumage version in welcome message (update example in docs/interactive.pod)
+
+
+Misc:
+-----
+* Move all perldoc to top of file so code is easier to read
+* Improve output messages so that they don't try to sound like a real person talking
+  because this is really childish.
+* Reword all comments that say Plumage is the "module ecosystem" because that's not
+  true: it's a package manager for the module ecosystem
+* Cleanup code for probe tests
 
 
 Parrot:

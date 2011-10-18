@@ -13,78 +13,78 @@ ecosystem.
 .SH OPTIONS
 .TP
 \fB-h\fR, \fB--help\fR
-Print a helpful usage message.
+Displays a help message on command usage.
 .TP
 \fB\-c\fR, \fB\-\-config\-file\fR=\fIPATH\fR
-Read additional config file.
+Reads additional config file in \fIPATH\fR.
 .TP
 \fB-i\fR, \fB\-\-ignore\-fail\fR
-Ignore any failing build stages.
+Ignores any failed build stages.
 .TP
 \fB-i\fR, \fB\-\-ignore\-fail\fR=\fISTAGE\fR
-Ignore failures only in a particular stage. May be repeated to select more than
-one stage.
+Ignores failures only for \fISTAGE\fR (may be repeated to select more than one
+stage).
 .TP
 \fB-i\fR, \fB\-\-ignore\-fail\fR=\fISTAGE\fR=\fI0\fR
-Don't ignore failues in this stage.
+Doesn't ignore failures in \fISTAGE\fR.
 .SH COMMANDS
-.SS Query metadata/project info:
+.SS Query metadata and project info:
 .TP
 \fBprojects\fR
-List all known projects.
+Lists all known projects.
 .TP
 \fBstatus\fR [\fIPROJECT\fR]
-Show status of projects. Defaults to all.
+Shows status of \fIPROJECT\fR (defaults to all).
 .TP
 \fBinfo\fR \fIPROJECT\fR
-Print summary about a particular project.
+Displays detailed description of \fIPROJECT\fR.
 .TP
 \fBmetadata\fR \fIPROJECT\fR
-Print JSON metadata about a particular project.
+Displays JSON metadata for \fIPROJECT\fR.
 .TP
-\fBshowdeps\fR \fIPROJECT\fR
-Show dependency resolution for a project.
+\fBshow-deps\fR \fIPROJECT\fR
+Shows dependencies for \fIPROJECT\fR.
 .TP
 \fBproject-dir\fR \fIPROJECT\fR
-Print project's top directory.
+Displays top directory for \fIPROJECT\fR.
 .SS Perform actions on a project:
 .TP
 \fBfetch\fR \fIPROJECT\fR
-Download source.
+Downloads source code for \fIPROJECT\fR.
 .TP
 \fBupdate\fR \fIPROJECT\fR
-Update source. Falls back to fetch.
+Updates source code for \fIPROJECT\fR (falls back to fetch).
 .TP
 \fBconfigure\fR \fIPROJECT\fR
-Configure source. Updates first.
+Configures source code for \fIPROJECT\fR (runs 'update' first).
 .TP
 \fBbuild\fR \fIPROJECT\fR
-Build project from source. Configures first.
+Builds \fIPROJECT\fR in current directory (runs 'configure' first).
 .TP
 \fBtest\fR \fIPROJECT\fR
-Test build project. Builds first.
+Runs test suite for \fIPROJECT\fR (runs 'build' first).
 .TP
 \fBsmoke\fR \fIPROJECT\fR
-Smoke test project. Builds first.
+Sends test results to Parrot's Smolder server (runs 'build' first).
 .TP
 \fBinstall\fR \fIPROJECT\fR
-Install built files. Tests first.
+Installs \fIPROJECT\fR (runs 'test' first).
 .TP
 \fBuninstall\fR \fIPROJECT\fR
-Uninstall installed files. Not always available.
+Uninstalls \fIPROJECT\fR from system (not always available).
 .TP
 \fBclean\fR \fIPROJECT\fR
-Clean source tree.
+Performs basic cleanup of source tree for \fIPROJECT\fR.
 .TP
 \fBrealclean\fR \fIPROJECT\fR
-Clobber/realclean source tree.
+Removes all generated files during the build process for \fIPROJECT\fR.
 .SS Get info about Plumage itself:
 .TP
 \fBversion\fR
-Print program version and copyright.
+Displays Plumage version and copyright statement.
 .TP
 \fBhelp\fR [\fICOMMAND\fR]
-Print a helpful usage message.
+Displays a help message on \fICOMMAND\fR usage (defaults to all).
 .SH AUTHORS
 Written by Geoffrey Broadwell.
 .PP
@@ -103,5 +103,4 @@ For further information, please see LICENSE or visit
 .UE .
 .SH SEE ALSO
 .PP
-http://parrot.github.com/plumage
-
+http://parrot.github.com/plumage, https://github.com/parrot/plumage

@@ -1,3 +1,5 @@
+# Copyright (C) 2009-2011, Parrot Foundation.
+
 =begin
 
 =head1 NAME
@@ -11,7 +13,6 @@ Plumage::Util - Plumage-specific utility functions
 
     # Plumage-specific
     $replaced := replace_config_strings($original);
-
 
 =head1 DESCRIPTION
 
@@ -47,7 +48,7 @@ producing unintended expansions.
 
 =end
 
-sub replace_config_strings ($original) {
+sub replace_config_strings($original) {
     my $new := $original;
 
     repeat {
@@ -59,7 +60,7 @@ sub replace_config_strings ($original) {
     return $new;
 }
 
-sub config_value ($match) {
+sub config_value($match) {
     my $key    := $match<ident>;
     my $config := %*CONF{$key}
                || %*VM<config>{$key}
@@ -70,9 +71,10 @@ sub config_value ($match) {
     return $config;
 }
 
-
 =begin
 
 =back
 
 =end
+
+# vim: ft=perl6

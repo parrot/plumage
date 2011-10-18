@@ -1,3 +1,5 @@
+# Copyright (C) 2009-2011, Parrot Foundation.
+
 =begin
 
 =head1 NAME
@@ -9,16 +11,13 @@ Plumage::Dependencies - Resolve dependency relationships
     # Load this library
     pir::load_bytecode('Plumage/Dependencies.pbc');
 
-
-
 =head1 DESCRIPTION
 
 =end
 
 class Plumage::Dependencies;
 
-
-method resolve_dependencies (@projects) {
+method resolve_dependencies(@projects) {
     my @known_projects := Plumage::Metadata.get_project_list();
     my @all_deps       := self.all_dependencies(@projects);
     my @installed      := self.get_installed_projects;
@@ -61,8 +60,7 @@ method resolve_dependencies (@projects) {
     return %resolutions;
 }
 
-
-method all_dependencies (@projects) {
+method all_dependencies(@projects) {
     my @dep_stack;
     my @deps;
     my %seen;
@@ -99,8 +97,7 @@ method all_dependencies (@projects) {
     return @deps;
 }
 
-
-method get_installed_projects () {
+method get_installed_projects() {
     my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
     my $contents  := slurp($inst_file);
     my @projects  := grep(-> $_ { ?$_ }, pir::split("\n", $contents));
@@ -112,16 +109,14 @@ method get_installed_projects () {
     }
 }
 
-
-method mark_projects_installed (@projects) {
+method mark_projects_installed(@projects) {
     my $lines     := pir::join("\n", @projects) ~ "\n";
     my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
 
     append($inst_file, $lines);
 }
 
-
-method mark_projects_uninstalled (@projects) {
+method mark_projects_uninstalled(@projects) {
     my %uninst    := set_from_array(@projects);
     my $inst_file := replace_config_strings(%*CONF<installed_list_file>);
     my $contents  := slurp($inst_file);
@@ -131,3 +126,5 @@ method mark_projects_uninstalled (@projects) {
 
     spew($inst_file, $lines);
 }
+
+# vim: ft=perl6

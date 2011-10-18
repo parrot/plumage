@@ -1,3 +1,5 @@
+# Copyright (C) 2009-2011, Parrot Foundation.
+
 =begin
 
 =head1 NAME
@@ -33,7 +35,6 @@ Plumage::Project - A project, its metadata, and its state
     $project.clean;
     $project.realclean;
 
-
 =head1 DESCRIPTION
 
 =end
@@ -45,10 +46,9 @@ has $!name;
 has $!metadata;
 has $!source_dir;
 
-method name       () { $!name       }
-method metadata   () { $!metadata   }
-method source_dir () { $!source_dir }
-
+method name()       { $!name       }
+method metadata()   { $!metadata   }
+method source_dir() { $!source_dir }
 
 # CONSTRUCTION
 
@@ -59,7 +59,6 @@ method new($locator) {
 
     return self._init($locator);
 }
-
 
 method _init($locator) {
     $!metadata     := Plumage::Metadata.new;
@@ -97,7 +96,6 @@ method _init($locator) {
     return self;
 }
 
-
 method _find_source_dir($start_dir?) {
     my $orig_dir := $*OS.cwd;
 
@@ -123,18 +121,17 @@ sub _get_winxed() {
     return "$parrot_bin/winxed";
 }
 
-
 ###
 ### ACTIONS
 ###
 
-method known_actions () {
+method known_actions() {
     return grep(-> $_ {self.HOW.can(self, $_)},
                 < fetch update configure build test smoke
                   install uninstall clean realclean >);
 }
 
-sub _build_stage_paths () {
+sub _build_stage_paths() {
     our %STAGES;
 
     # All stages in install path require their predecessors
@@ -152,14 +149,14 @@ sub _build_stage_paths () {
     %STAGES<smoke>[-1] := 'smoke';
 }
 
-method _actions_up_to ($stage) {
+method _actions_up_to($stage) {
     our %STAGES;
     _build_stage_paths();
 
     return %STAGES{$stage};
 }
 
-method perform_actions (:$up_to, :@actions, :$ignore_all, :%ignore) {
+method perform_actions(:$up_to, :@actions, :$ignore_all, :%ignore) {
     if $up_to && @actions {
         die("Cannot specify both up_to and actions in perform_actions()");
     }
@@ -197,10 +194,9 @@ method perform_actions (:$up_to, :@actions, :$ignore_all, :%ignore) {
     return 1;
 }
 
-
 # FETCH
 
-method fetch () {
+method fetch() {
     my %fetch := $!metadata.metadata<instructions><fetch>;
     if %fetch {
         my $build_root := replace_config_strings(%*CONF<plumage_build_root>);
@@ -216,7 +212,7 @@ method fetch () {
     }
 }
 
-method fetch_repository () {
+method fetch_repository() {
     my %repo := $!metadata.metadata<resources><repository>;
     if %repo {
         say("Fetching $!name ...");
@@ -229,7 +225,7 @@ method fetch_repository () {
     }
 }
 
-method fetch_git () {
+method fetch_git() {
     if path_exists($!source_dir) {
         if path_exists(fscat([$!source_dir, '.git'])) {
             $*OS.chdir($!source_dir);
@@ -250,7 +246,7 @@ method fetch_git () {
     }
 }
 
-method fetch_hg () {
+method fetch_hg() {
     if path_exists($!source_dir) {
         if path_exists(fscat([$!source_dir, '.hg'])) {
             $*OS.chdir($!source_dir);
@@ -267,7 +263,7 @@ method fetch_hg () {
     }
 }
 
-method fetch_svn () {
+method fetch_svn() {
     if  path_exists($!source_dir)
     && !path_exists(fscat([$!source_dir, '.svn'])) {
         return report_fetch_collision('Subversion');
@@ -279,7 +275,7 @@ method fetch_svn () {
     }
 }
 
-method report_fetch_collision ($type) {
+method report_fetch_collision($type) {
     say("\n$!name is a $type project, but the fetch directory:\n"
         ~ "\n    $!source_dir\n\n"
         ~ "already exists and is not the right type.\n"
@@ -288,10 +284,9 @@ method report_fetch_collision ($type) {
     return 0;
 }
 
-
 # UPDATE
 
-method update () {
+method update() {
     my %update := $!metadata.metadata<instructions><update>;
 
     if %update && path_exists($!source_dir) {
@@ -303,7 +298,7 @@ method update () {
     }
 }
 
-method update_repository () {
+method update_repository() {
     my %repo := $!metadata.metadata<resources><repository>;
     if %repo {
         say("Updating $!name ...");
@@ -317,13 +312,13 @@ method update_repository () {
     }
 }
 
-method update_parrot_setup () {
+method update_parrot_setup() {
     $*OS.chdir($!source_dir);
 
     return do_run(%*BIN<parrot>, 'setup.pir', 'update');
 }
 
-method update_nqp_setup () {
+method update_nqp_setup() {
     $*OS.chdir($!source_dir);
 
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'update');
@@ -335,10 +330,9 @@ method update_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'update');
 }
 
-
 # CONFIGURE
 
-method configure () {
+method configure() {
     my %conf := $!metadata.metadata<instructions><configure>;
     if %conf {
         say("\nConfiguring $!name ...");
@@ -353,29 +347,28 @@ method configure () {
     }
 }
 
-method configure_rake () {
+method configure_rake() {
     return do_run(%*BIN<rake>, 'config');
 }
 
-method configure_perl5_configure () {
+method configure_perl5_configure() {
     my $extra := $!metadata.metadata<instructions><configure><extra_args>;
     my @extra := map(replace_config_strings, $extra);
 
     return do_run(%*BIN<perl5>, 'Configure.pl', |@extra);
 }
 
-method configure_parrot_configure () {
+method configure_parrot_configure() {
     return do_run(%*BIN<parrot>, 'Configure.pir');
 }
 
-method configure_nqp_configure () {
+method configure_nqp_configure() {
     return do_run(%*BIN<parrot-nqp>, 'Configure.nqp');
 }
 
-
 # BUILD
 
-method build () {
+method build() {
     my %build := $!metadata.metadata<instructions><build>;
     if %build {
         say("\nBuilding $!name ...");
@@ -390,19 +383,19 @@ method build () {
     }
 }
 
-method build_make () {
+method build_make() {
     return do_run(%*BIN<make>);
 }
 
-method build_rake () {
+method build_rake() {
     return do_run(%*BIN<rake>);
 }
 
-method build_parrot_setup () {
+method build_parrot_setup() {
     return do_run(%*BIN<parrot>, 'setup.pir');
 }
 
-method build_nqp_setup () {
+method build_nqp_setup() {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp');
 }
 
@@ -410,10 +403,9 @@ method build_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'build');
 }
 
-
 # TEST
 
-method test () {
+method test() {
     my %test := $!metadata.metadata<instructions><test>;
     if %test {
         say("\nTesting $!name ...");
@@ -428,19 +420,19 @@ method test () {
     }
 }
 
-method test_make () {
+method test_make() {
     return do_run(%*BIN<make>, 'test');
 }
 
-method test_rake () {
+method test_rake() {
     return do_run(%*BIN<rake>, 'test');
 }
 
-method test_parrot_setup () {
+method test_parrot_setup() {
     return do_run(%*BIN<parrot>, 'setup.pir', 'test');
 }
 
-method test_nqp_setup () {
+method test_nqp_setup() {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'test');
 }
 
@@ -448,10 +440,9 @@ method test_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'test');
 }
 
-
 # SMOKE
 
-method smoke () {
+method smoke() {
     my %smoke := $!metadata.metadata<instructions><smoke>;
     if %smoke {
         say("\nSmoke testing $!name ...");
@@ -466,15 +457,15 @@ method smoke () {
     }
 }
 
-method smoke_make () {
+method smoke_make() {
     return do_run(%*BIN<make>, 'smoke');
 }
 
-method smoke_parrot_setup () {
+method smoke_parrot_setup() {
     return do_run(%*BIN<parrot>, 'setup.pir', 'smoke');
 }
 
-method smoke_nqp_setup () {
+method smoke_nqp_setup() {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'smoke');
 }
 
@@ -482,10 +473,9 @@ method smoke_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'smoke');
 }
 
-
 # INSTALL
 
-method install () {
+method install() {
     my %inst := $!metadata.metadata<instructions><install>;
     if %inst {
         say("\nInstalling $!name ...");
@@ -507,19 +497,19 @@ method install () {
     }
 }
 
-method install_make () {
+method install_make() {
     return self.do_with_privs(%*BIN<make>, 'install');
 }
 
-method install_rake () {
+method install_rake() {
     return self.do_with_privs(%*BIN<rake>, 'install');
 }
 
-method install_parrot_setup () {
+method install_parrot_setup() {
     return self.do_with_privs(%*BIN<parrot>, 'setup.pir', 'install');
 }
 
-method install_nqp_setup () {
+method install_nqp_setup() {
     return self.do_with_privs(%*BIN<parrot-nqp>, 'setup.nqp', 'install');
 }
 
@@ -527,10 +517,9 @@ method install_winxed_setup() {
     return self.do_with_privs(_get_winxed(), 'setup.winxed', 'install');
 }
 
-
 # UNINSTALL
 
-method uninstall () {
+method uninstall() {
     my %uninst := $!metadata.metadata<instructions><uninstall>;
     if %uninst {
         say("\nUninstalling $!name ...");
@@ -552,15 +541,15 @@ method uninstall () {
     }
 }
 
-method uninstall_make () {
+method uninstall_make() {
     return self.do_with_privs(%*BIN<make>, 'uninstall');
 }
 
-method uninstall_parrot_setup () {
+method uninstall_parrot_setup() {
     return self.do_with_privs(%*BIN<parrot>, 'setup.pir', 'uninstall');
 }
 
-method uninstall_nqp_setup () {
+method uninstall_nqp_setup() {
     return self.do_with_privs(%*BIN<parrot-nqp>, 'setup.nqp', 'uninstall');
 }
 
@@ -568,7 +557,7 @@ method uninstall_winxed_setup() {
     return self.do_with_privs(_get_winxed(), 'setup.winxed', 'uninstall');
 }
 
-method do_with_privs (*@cmd) {
+method do_with_privs(*@cmd) {
     my $bin_dir  := %*VM<config><bindir>;
     my $root_cmd := replace_config_strings(%*CONF<root_command>);
 
@@ -580,10 +569,9 @@ method do_with_privs (*@cmd) {
     }
 }
 
-
 # CLEAN
 
-method clean () {
+method clean() {
     unless path_exists($!source_dir) {
         say("\nProject source dir '$!source_dir' does not exist; nothing to do.");
         return 1;
@@ -603,19 +591,19 @@ method clean () {
     }
 }
 
-method clean_make () {
+method clean_make() {
     return do_run(%*BIN<make>, 'clean');
 }
 
-method clean_rake () {
+method clean_rake() {
     return do_run(%*BIN<rake>, 'clean');
 }
 
-method clean_parrot_setup () {
+method clean_parrot_setup() {
     return do_run(%*BIN<parrot>, 'setup.pir', 'clean');
 }
 
-method clean_nqp_setup () {
+method clean_nqp_setup() {
     return do_run(%*BIN<parrot-nqp>, 'setup.nqp', 'clean');
 }
 
@@ -623,10 +611,9 @@ method clean_winxed_setup() {
     return do_run(_get_winxed(), 'setup.winxed', 'clean');
 }
 
-
 # REALCLEAN
 
-method realclean () {
+method realclean() {
     unless path_exists($!source_dir) {
         say("\nProject source dir '$!source_dir' does not exist; nothing to do.");
         return 1;
@@ -646,10 +633,12 @@ method realclean () {
     }
 }
 
-method realclean_make () {
+method realclean_make() {
     return do_run(%*BIN<make>, 'realclean');
 }
 
-method realclean_rake () {
+method realclean_rake() {
     return do_run(%*BIN<rake>, 'clobber');
 }
+
+# vim: ft=perl6
