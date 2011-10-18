@@ -28,6 +28,16 @@ stage).
 \fB-i\fR, \fB\-\-ignore\-fail\fR=\fISTAGE\fR=\fI0\fR
 Doesn't ignore failures in \fISTAGE\fR.
 .SH COMMANDS
+.SS General:
+.TP
+\fBcli\fR
+Starts interactive command-line interface (default with no commands).
+.TP
+\fBversion\fR
+Displays Plumage version and copyright statement.
+.TP
+\fBhelp\fR [\fICOMMAND\fR]
+Displays a help message on \fICOMMAND\fR usage (defaults to all).
 .SS Query metadata and project info:
 .TP
 \fBprojects\fR
@@ -78,13 +88,6 @@ Performs basic cleanup of source tree for \fIPROJECT\fR.
 .TP
 \fBrealclean\fR \fIPROJECT\fR
 Removes all generated files during the build process for \fIPROJECT\fR.
-.SS Get info about Plumage itself:
-.TP
-\fBversion\fR
-Displays Plumage version and copyright statement.
-.TP
-\fBhelp\fR [\fICOMMAND\fR]
-Displays a help message on \fICOMMAND\fR usage (defaults to all).
 .SH AUTHORS
 Written by Geoffrey Broadwell.
 .PP

@@ -23,8 +23,8 @@ my  %COMMANDS  := hash(
     cli         => Plumage::Command.new(:action(command_cli),
                                         :args('none'),
                                         :usage('cli'),
-                                        :help('Starts the interactive command-line interface. '
-                                            ~ 'Invoked by default if no command was specified.')),
+                                        :help('Starts interactive command-line interface. '
+                                            ~ '(default with no commands).')),
 
     help        => Plumage::Command.new(:action(command_help),
                                         :args('opt_command'),
@@ -347,6 +347,11 @@ Options:
 
 Commands:
 
+  General:
+    cli                     Starts interactive command-line interface (default with no commands).
+    version                 Displays Plumage version and copyright statement.
+    help        [<command>] Displays a help message on <command> usage (defaults to all).
+
   Query metadata and project info:
     projects                Lists all known projects.
     status      [<project>] Shows status of <project> (defaults to all).
@@ -366,10 +371,6 @@ Commands:
     uninstall    <project>  Uninstalls <project> from system (not always available).
     clean        <project>  Performs basic cleanup of source tree for <project>.
     realclean    <project>  Removes all generated files during the build process for <project>.
-
-  Get information about Plumage:
-    version                 Displays Plumage version and copyright statement.
-    help        [<command>] Displays a help message on <command> usage (defaults to all).
 ";
 }
 
