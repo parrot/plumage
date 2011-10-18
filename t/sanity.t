@@ -21,7 +21,7 @@ sub MAIN() {
 }
 
 sub run_tests() {
-    plan(22);
+    plan(20);
 
     # Fuzz tests
     test_invalid();
@@ -33,7 +33,6 @@ sub run_tests() {
     test_plumage_install_invalid();
 
     # Missing argument tests
-    test_plumage_no_args();
     test_plumage_fetch_no_args();
 
     # Behavior tests
@@ -99,13 +98,6 @@ sub test_plumage_install_invalid() {
 # MISSING ARGUMENT TESTS
 #
 
-sub test_plumage_no_args() {
-    my $output := qx($PLUMAGE);
-
-    ok($output ~~ /:s Print program version and copyright/,      'no args give usage');
-    ok($output ~~ /:s Print summary about a particular project/, 'no args give usage');
-}
-
 sub test_plumage_fetch_no_args() {
     my $output := qx($PLUMAGE, 'fetch');
 
@@ -128,22 +120,22 @@ sub test_plumage_usage() {
 sub test_plumage_help() {
     my $output := qx($PLUMAGE, 'help');
 
-    ok($output ~~ /:s Print program version and copyright/,
+    ok($output ~~ /:s Displays a help message on \<command\> usage \(defaults to all\)\./,
         'help explains how to view version and copyright');
-    ok($output ~~ /:s Print summary about a particular project/,
+    ok($output ~~ /:s Displays detailed description of \<project\>\./,
         'help explains how to get info on a project');
 
     $output    := qx($PLUMAGE, 'help', 'info');
 
-    ok($output ~~ /:s info \<project\>/,                           'help info displays usage');
-    ok($output ~~ /:s Print summary about a particular project\./, 'help info displays help');
+    ok($output ~~ /:s info \<project\>/,                               'help info displays usage');
+    ok($output ~~ /:s Displays detailed description of \<project\>\./, 'help info displays help');
 }
 
 sub test_plumage_version() {
     my $output := qx($PLUMAGE, 'version');
 
     ok($! == 0,                           'plumage version returns success');
-    ok($output ~~ /:s Parrot Plumage/,    'plumage version knows its name');
+    ok($output ~~ /:s Plumage/,           'plumage version knows its name');
     ok($output ~~ /:s Parrot Foundation/, 'version mentions Parrot Foundation');
     ok($output ~~ /:s Artistic License/,  'version mentions Artistic License');
 }
