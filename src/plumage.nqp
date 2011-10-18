@@ -296,9 +296,7 @@ sub find_binaries() {
 }
 
 sub parse_command_line() {
-    my $command := @*ARGS ?? @*ARGS.shift !! 'cli';
-
-    return $command;
+    return @*ARGS ?? @*ARGS.shift !! 'cli';
 }
 
 sub execute_command($command) {
@@ -309,15 +307,13 @@ sub execute_command($command) {
         if $args eq 'project' && !@*ARGS {
             say('Please specify a project to act on.');
         }
-        #elsif $args eq 'opt_project' {
-        #}
         else {
             $action(@*ARGS, :command($command));
         }
     }
     else {
         say("No such command: $command. Please use $*PROGRAM_NAME --help");
-        pir::exit(1);
+        pir::exit__vi(1);
     }
 }
 
@@ -393,11 +389,35 @@ sub command_help($help_cmd, :$command) {
 sub command_cli() {
     pir::load_bytecode('Plumage/Interactive.pbc');
 
-    my $session := Plumage::Interactive.new;
+    my $session := Plumage::Interactive.new(:prompt_string('plumage'));
+    my $input;
 
-    my $command := $session.prompt('plumage');
+    # Main runloop
+    while 1 {
+        $session.prompt();
 
-    say("COMMAND: $command");
+        pir::exit__vi(0) if $session.input eq 'quit';
+
+        # @command[0] contains the given command
+        # @command[1] contains the arguments
+        my @command := $session.parse_command_line();
+
+        my $action  := %COMMANDS{@command[0]}.action;
+        my $args    := %COMMANDS{@command[0]}.args;
+
+        if $action {
+            if $args eq 'project' && !@command[1] {
+                say('Please specify a project to act on.');
+            }
+            else {
+                $action([@command[1]], :command(@command[0]));
+            }
+        }
+        else {
+            say("No such command: $input. Trying using 'help'.");
+            pir::exit__vi(1);
+        }
+    }
 }
 
 sub command_version() {
@@ -467,9 +487,7 @@ sub command_status(@projects, :$command) {
 }
 
 sub command_info(@projects, :$command) {
-    unless (@projects) {
-        say('Please include the name of the project you wish info for.');
-    }
+    say('You must specify the name of the project.') unless @projects;
 
     for @projects -> $project {
         my $meta  := Plumage::Metadata.new();

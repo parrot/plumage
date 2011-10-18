@@ -6,27 +6,41 @@
 
 Plumage::Command - represents a Plumage command
 
-=head1 SYNOPSIS
-
-    # Load library
-    pir::load_bytecode('Plumage/Command.pbc')
-
-    # Class methods    
-    my $help_cmd := Plumage::Command.new(:action(command_help),
-                                         :args('opt_command'),
-                                         :usage('help [<command>]'),
-                                         :help('Displays a help message on command usage.')),
-
-    # Accessors
-    my $help_cmd.action;
-    my $help_cmd.args;
-    my $help_cmd.usage;
-    my $help_cmd.help;
-
 =head1 DESCRIPTION
 
 The C<Plumage::Command> class is an abstract representation of a Plumage
-command.
+command. It keeps track of the command name, its arguments, and any associated
+help/usage information.
+
+=head2 Object Initialization
+
+=item C<new()>
+
+Returns a new C<Plumage::Command> instance.
+
+=head2 Public Attributes
+
+=item C<$!action>
+
+Contains a reference to the callback subroutine to execute.
+
+=item C<$!args>
+
+A string representing the type of arguments the command takes. It can take the
+following forms: 
+
+    * 'none'        - no arguments
+    * 'opt_command' - optional command
+    * 'opt_project' - optional project
+    * 'project'     - project name
+
+=item C<$!usage>
+
+A string which describes the semantics of using the command.
+
+=item C<$!help>
+
+A string which describes the purpose of the command in more detail.
 
 =end pod
 
@@ -36,6 +50,12 @@ has $!action;    # Subroutine to execute
 has $!args;      # Type of argument(s) command takes
 has $!usage;     # Describes semantics of command usage
 has $!help;      # Describes purpose of command in more detail
+
+# Accessors
+method action() { $!action }
+method args()   { $!args   }
+method usage()  { $!usage  }
+method help()   { $!help   }
 
 method new(:$action, :$args, :$usage, :$help) {
     my $class := pir::getattribute__PPs(self.HOW, "parrotclass");
@@ -52,11 +72,5 @@ method new(:$action, :$args, :$usage, :$help) {
 
     return self;
 }
-
-# Accessors
-method action() { $!action }
-method args()   { $!args   }
-method usage()  { $!usage  }
-method help()   { $!help   }
 
 # vim: ft=perl6
