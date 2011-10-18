@@ -12,7 +12,7 @@ sub MAIN() {
 }
 
 sub run_tests() {
-    plan(11);
+    plan(13);
 
     test_load_pbcs();
 }
@@ -28,7 +28,9 @@ sub test_load_pbcs() {
                  Plumage/Util.pbc
                  Plumage/Metadata.pbc
                  Plumage/Dependencies.pbc
-                 Plumage/Project.pbc>;
+                 Plumage/Project.pbc
+                 Plumage/Interactive.pbc
+                 Plumage/Command.pbc>;
 
     for @pbcs -> $pbc {
         pir::load_bytecode($pbc);
