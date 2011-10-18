@@ -160,6 +160,34 @@ our %OPTIONS;    # Command-line switches
 my %*CONF;       # Configuration options
 my %*BIN;        # System binaries
 
+sub get_version() {
+    my $file := 'VERSION';
+    my $version;
+
+    # Read string from 'VERSION' and store it in $version
+    Q:PIR {
+        $P0 = find_lex '$file'
+        $S0 = $P0
+
+        load_bytecode 'String/Utils.pbc'
+
+        $P1 = new 'FileHandle'
+        $S1 = $P1.'readall'($S0)
+        $P1.'close'()
+
+        .local pmc chomp
+        chomp = get_global ['String';'Utils'], 'chomp'
+
+        $S1 = chomp($S1)
+        $P2 = new 'String'
+        $P2 = $S1
+
+        store_lex '$version', $P2
+    };
+
+    return $version;
+}
+
 sub load_libraries() {
     # Object-oriented interface
     pir::load_bytecode('P6object.pbc');
@@ -431,7 +459,7 @@ sub command_version() {
 }
 
 sub version_info() {
-    my $version := '0';
+    my $version := get_version();
     return
 "This is Plumage, version $version.
 

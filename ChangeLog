@@ -1,0 +1,9 @@
+2011-10-18  Kevin Polulak  <kpolulak@gmail.com>
+    * Version 1.0.0
+    - New interactive command-line interface
+    - Improved documentation
+    - Various code cleanups
+
+2009-04-23  Geoffrey Broadwell  <geoff@broadwell.org>
+    * Version 0.0.0
+    - Initial commit
