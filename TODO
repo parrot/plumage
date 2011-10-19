@@ -175,8 +175,7 @@ CLI:
 ----
 * Support temporary and permanent modification of config file
 * Fully document usage in docs/interactive.pod
-* Set version to 1.0 after soh-cah-toa/interactive is merged into master
-  * Display Plumage version in welcome message (update example in docs/interactive.pod)
+* Display Plumage version in welcome message (update example in docs/interactive.pod)
 
 
 Misc:
