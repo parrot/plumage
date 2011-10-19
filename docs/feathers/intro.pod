@@ -38,4 +38,5 @@ contains the metadata about itself. It must be in valid JSON format.
 The metadata includes information such as the package name, version,
 dependencies, etc.
 
-For more details, see the full specification in F<docs/feather/featherspec.pod>.
+For more details, see the full specification in
+F<docs/feathers/featherspec.pod>.
