@@ -1,0 +1,135 @@
+=head1 Featherspec Specification
+
+A C<FEATHER.spec> featherspec file uses the JSON format to store the metadata
+for the feather it describes. It contains a single hash with any of the fields
+described below.
+
+The featherspec must appear in the top directory of the C<.pf> archive. It
+will not be searched for in any subdirectories.
+
+=head2 Valid Fields
+
+The following fields are recognized by Plumage. Feather packagers are free to
+use any other fields for their own purposes but they will not be recognized
+by Plumage.
+
+=head3 Required Fields
+
+=over 4
+
+=item B<name>
+
+The full name of the package/project to be installed.
+
+Example: C<Cardinal>
+
+=item B<version>
+
+The package/project version. The string C<*> may be used if the version is not
+significant.
+
+Example: C<1.9.2>
+
+=item B<description>
+
+=over 4
+
+=item B<summary>
+
+A brief, one-line description of the package/project.
+
+Example: C<A general-purpose dynamic language similar to Perl and Smalltalk.>
+
+=item B<detailed>
+
+A longer, more detailed description of the package/project.
+
+Example:
+
+    "Cardinal is an implementation of Ruby: an interpreted language which
+    supports multiple paradigms including object-oriented, functional, and
+    reflective. It features a dynamic type system, garbage collection, and
+    native threads. Its syntax is very similar to that of Perl, Python, Ada,
+    and Smalltalk."
+
+=item B<license>
+
+The license under which the package/project is released.
+
+Example: C<GNU General Public License v2>
+
+=item B<homepage>
+
+A URI that points to the homepage for the package/project.
+
+Example: C<http://ruby-lang.org>
+
+=back
+
+=item B<dependencies>
+
+An array whose elements describe any other packages/projects it depends on.
+It can be left empty if the package/project has no dependencies.
+
+Example: C<[ "gcc", "libpthread" ]>
+
+=item B<platforms>
+
+An array whose elements are platform identifiers describing the platforms
+supported by the package/project.
+
+If the array is empty, it is assumed that the package/project is portable to
+all platforms.
+
+Example: C<[ "Linux", "MacOS", "MSWin32" ]>
+
+=item B<source>
+
+=over 4
+
+=item B<file>
+
+Filename of the source archive to package.
+
+Example: C<cardinal-1.9.2.tar.gz>
+
+=item B<sha256>
+
+The SHA256 message digest of the source archive.
+
+Example: C<c53c6b96081b0a5b9b2fb4d0133d55c20e5e00e4c127ade62f03434ee7b3d2de>
+
+=back
+
+=back
+
+=head3 Optional Fields
+
+=over 4
+
+=item B<build>
+
+=over 4
+
+=item B<type>
+
+The build system to use for source feathers.
+
+Example: C<make>
+
+=item B<copy-dir>
+
+An array whose elements specify the directories to copy to the installation
+directory. Useful for installing extra documentation or examples.
+
+Example: C<[ "docs", "man" ]>
+
+=back
+
+=item B<keywords>
+
+An array whose elements represent keywords associated with the package/project.
+
+Example: C<[ "ruby", "gems", "language" ]>
+
+=back

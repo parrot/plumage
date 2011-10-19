@@ -1,0 +1,41 @@
+=head1 Plumage Feathers
+
+Plumage uses a special type of package called a I<feather>. A feather is really
+just a ZIP archive with the C<.pf> file extension (short for
+I<Plumage Feather>).
+
+=head2 Types of Feathers
+
+There are two different types of feathers: source feathers and binary feathers.
+
+=over 4
+
+=item Source Feather
+
+Source feathers contain the featherspec along with the original source code.
+When installed, the source code must be compiled. As such, source feathers
+tend to be larger and take much longer to install.
+
+Source feathers are distingushed by their C<.src.pf> file extension.
+
+=item Binary Feather
+
+Binary feathers contain the featherspec and module/project in compiled form.
+When installed, the compiled binaries are merely copied into the installation
+directory. Binary feathers are usually smaller in size and install faster
+than source feathers.
+
+Binary feathers are distingushed by their I<.system.arch>C<.pf> file extension
+where C<system> is the operating system (e.g. Linux, MacOS, MSWin32) and
+C<arch> is the system architecture (e.g. x86, x86-64).
+
+=back
+
+=head2 Featherspec
+
+A I<featherspec> is a special file named C<FEATHER.spec> in a feather that
+contains the metadata about itself. It must be in valid JSON format.
+The metadata includes information such as the package name, version,
+dependencies, etc.
+
+For more details, see the full specification in F<docs/feather/featherspec.pod>.
