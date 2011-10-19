@@ -179,6 +179,15 @@ CLI:
   * Display Plumage version in welcome message (update example in docs/interactive.pod)
 
 
+Featherspec:
+------------
+* Add tests for creating and unpacking feathers
+* Create binary and source feathers for all projects
+  * Place feathers on remote server (http://parrot.org)
+* Make feathers installable from http://, ftp://, and file:// URI's
+* Create 'plumage-admin' tool for creating feathers from featherspec file
+
+
 Misc:
 -----
 * Move all perldoc to top of file so code is easier to read
