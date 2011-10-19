@@ -101,6 +101,12 @@ Example: C<c53c6b96081b0a5b9b2fb4d0133d55c20e5e00e4c127ade62f03434ee7b3d2de>
 
 =back
 
+=item B<type>
+
+The feather type: C<source> or C<binary>.
+
+Example: C<binary>
+
 =back
 
 =head3 Optional Fields
