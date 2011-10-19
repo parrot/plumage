@@ -1,5 +1,3 @@
-=begin pod
-
 =head1 Using the Plumage Interactive Command-Line Interface
 
 In addition to the basic single command interface from the shell, Plumage
@@ -22,8 +20,6 @@ temporarily or permanently.
 
 After you've started Plumage, you will be greeted by the welcome message.
 
-=begin code
-
     Plumage: Package Manager for Parrot
     Copyright (C) 2009-2011, Parrot Foundation.
 
@@ -31,12 +27,8 @@ After you've started Plumage, you will be greeted by the welcome message.
 
     plumage>
 
-=end code
-
 As the above message suggests, if you aren't sure of something, use the C<help>
 command.
-
-=begin code
 
     plumage> help
     List of commands:
@@ -66,12 +58,8 @@ command.
         clean        <project>  Performs basic cleanup of source tree for <project>.
         realclean    <project>  Removes all generated files during the build process for <project>.
 
-=end code
-
 Suppose you want to try a new programming language but aren't sure which. Let's
 see what's available.
-
-=begin code
 
     plumage> projects
     Known projects:
@@ -96,13 +84,9 @@ see what's available.
 
     # Output truncated for brevity
 
-=end code
-
 As you can see, the C<projects> command lists all the projects in the
 ecosystem. Maybe you're feeling a little silly and want to write some
 LOLCODE. Let's find out a little bit more about LOLCODE.
-
-=begin code
 
     plumage> info lolcode
     Name        : lolcode
@@ -113,12 +97,8 @@ LOLCODE. Let's find out a little bit more about LOLCODE.
     License     : Artistic License 2.0
     Description : Lolcode
 
-=end code
-
 Looks like someone was lazy and didn't fully fill out the LOLCODE metadata
 file. That's alright, it'll be a surprise!
-
-=begin code
 
     plumage> install lolcode
     /usr/bin/git clone git://github.com/parrot/lolcode.git /home/foo/.parrot/plumage/build/lolcode
@@ -131,19 +111,12 @@ file. That's alright, it'll be a surprise!
 
     # Output truncated for brevity
 
-=end code
-
 This builds, tests, and installs a particular project/module; in this case,
 C<lolcode>. It could be that you're not really in a lolcatz mood right now.
 Uninstalling a project is done with the aptly named C<uninstall> command.
-
-=begin code
 
     plumage> uninstall lolcode
     Uninstalling lolcode ...
     /home/foo/bin/bin/parrot setup.pir uninstall
     Successful.
 
-=end code
-
-=end pod

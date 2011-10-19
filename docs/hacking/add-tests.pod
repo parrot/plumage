@@ -1,5 +1,3 @@
-=begin pod
-
 =head1 Adding Tests
 
 This document lists a few general conventions that will make it easier for
@@ -9,13 +7,9 @@ developers to work together on the test suite.
 
 Test files should be named as follows:
 
-=begin code
-
     (01-09)-foo.t              Basic tests of low-level infrastructure
     (10-49)-lib-plumage-foo.t  Tests for Plumage::Foo libraries in layer order
     (50-99)-plumage-type.t     Various types of tests for the Plumage CLI tool
-
-=end code
 
 =head2 Test File Layout
 
@@ -44,14 +38,20 @@ PIR-based design shows through and NQP provides better native tools.
 
 In particular:
 
-=item Instead of C<like()>, please use C<ok()> with a native NQP-rx
+=over 4
+
+=item *
+
+Instead of C<like()>, please use C<ok()> with a native NQP-rx
 C<$string ~~ /regex/> match.
 
-=item Instead of C<lives_ok()>, C<dies_ok()>, or C<throws_like()>, please use
+=item *
+
+Instead of C<lives_ok()>, C<dies_ok()>, or C<throws_like()>, please use
 the native NQP-rx C<try {}> and/or C<CATCH {}>.
+
+=back
 
 If you do end up using a C<Test::More> subroutine not already sanity-checked
 in F<t/01-sanity.t>, please add a quick test there as well just to verify that
 we know what happened if a future change in Parrot breaks the test suite.
-
-=end pod

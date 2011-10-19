@@ -1,5 +1,3 @@
-=begin pod
-
 =head1 Internal Design
 
 Plumage is designed as a set of layered libraries providing the bulk of
@@ -8,8 +6,6 @@ At this time, Plumage ships with only one default interface, the C<plumage>
 command-line tool.
 
 The Plumage stack currently looks like this:
-
-=begin code
 
     ,---------------------------------------------------.
     |                User Interface                     |
@@ -27,8 +23,6 @@ The Plumage stack currently looks like this:
     |   * Getopt::Obj       | * data_json               |
     |   * Config::JSON      |                           |
     `---------------------------------------------------'
-
-=end code
 
 It is intended that as Plumage's functionality grows, more libraries (and
 probably more layers) will be added in the C<Plumage::*> namespace. There
@@ -86,5 +80,3 @@ user's input, showing feedback, displaying query results, and giving help.
 
 Adding a new command to the F<plumage> command-line tool is described in the
 L<Adding a New Command|add-command.pod> document.
-
-=end pod

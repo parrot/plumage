@@ -1,5 +1,3 @@
-=begin pod
-
 =head1 Adding a New Project Action
 
 This document describes how to add a new action that can be performed on a
@@ -12,15 +10,13 @@ L<Adding a New Command|add-command.pod> instead.
 You will need to update F<src/lib/Plumage/Project.nqp> to implement the
 action, as follows:
 
-=over 4
-
-=item New Subsection
+=head3 New Subsection
 
 Add a new subsection for the new action within the C<ACTIONS> section of
 the code. Try to place the new subsection roughly in the sequence the
 action is likely to be used.
 
-=item Base Action Method
+=head3 Base Action Method
 
 Add the base action method at the top of the new subsection. It should
 be named for the action itself and take no arguments. For instance, the
@@ -36,7 +32,7 @@ If the instructions do exist, the base method should let the user know
 the action is about to be executed and then redispatch to a method
 specific to the action type specified in the metadata instructions.
 
-=item Specific Action Methods
+=head3 Specific Action Methods
 
 Add specific action methods for each type supported by the new action.
 Each specific method name should have the base method name and the action
@@ -44,8 +40,6 @@ type separated by an underscore, e.g. C<fetch_git()> and C<fetch_svn()>.
 
 These should actually perform the task at hand and return 1 on success and 0
 on failure.
-
-=back
 
 =head2 Known Actions List
 
@@ -70,5 +64,3 @@ C<Plumage::Project> does not have a test suite yet.
 Once the new action is implemented, documented, and tested, continue with
 L<Adding a New Command|add-command.pod> to add a command for this action to
 the C<plumage> command-line tool.
-
-=end pod
