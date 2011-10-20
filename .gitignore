@@ -12,6 +12,7 @@ MANIFEST
 *.gz
 *.pir
 installable_plumage
+installable_plumage-admin
 
 # Exuberant Ctags files
 tags

@@ -30,7 +30,9 @@ sub test_load_pbcs() {
                  Plumage/Dependencies.pbc
                  Plumage/Project.pbc
                  Plumage/Interactive.pbc
-                 Plumage/Command.pbc>;
+                 Plumage/Command.pbc
+                 Plumage/Feather.pbc
+                 Plumage/FeatherSpec.pbc>;
 
     for @pbcs -> $pbc {
         pir::load_bytecode($pbc);

@@ -1,4 +1,5 @@
-#!/usr/bin/env parrot
+#! parrot
+
 # Copyright (C) 2011, Parrot Foundation.
 
 =head1 NAME
@@ -56,7 +57,10 @@ No Configure step, no Makefile generated.
     $P2['src/lib/Plumage/NQPUtil.pir']      = 'src/lib/Plumage/NQPUtil.nqp'
     $P2['src/lib/Plumage/Interactive.pir']  = 'src/lib/Plumage/Interactive.nqp'
     $P2['src/lib/Plumage/Command.pir']      = 'src/lib/Plumage/Command.nqp'
+    $P2['src/lib/Plumage/Feather.pir']      = 'src/lib/Plumage/Feather.nqp'
+    $P2['src/lib/Plumage/FeatherSpec.pir']  = 'src/lib/Plumage/FeatherSpec.nqp'
     $P2['src/plumage.pir']                  = 'src/plumage.nqp'
+    $P2['src/plumage-admin.pir']            = 'src/plumage-admin.nqp'
     $P0['pir_nqp']                          = $P2
 
     $P3                             = new 'Hash'
@@ -67,11 +71,15 @@ No Configure step, no Makefile generated.
     $P3['Plumage/NQPUtil.pbc']      = 'src/lib/Plumage/NQPUtil.pir'
     $P3['Plumage/Interactive.pbc']  = 'src/lib/Plumage/Interactive.pir'
     $P3['Plumage/Command.pbc']      = 'src/lib/Plumage/Command.pir'
+    $P3['Plumage/Feather.pbc']      = 'src/lib/Plumage/Feather.pir'
+    $P3['Plumage/FeatherSpec.pbc']  = 'src/lib/Plumage/FeatherSpec.pir'
     $P3['plumage.pbc']              = 'src/plumage.pir'
+    $P3['plumage-admin.pbc']        = 'src/plumage-admin.pir'
     $P0['pbc_pir']                  = $P3
 
     $P4                    = new 'Hash'
     $P4['plumage']         = 'plumage.pbc'
+    $P4['plumage-admin']   = 'plumage-admin.pbc'
     $P0['installable_pbc'] = $P4
 
     # Test
@@ -93,6 +101,8 @@ Plumage/Util.pbc
 Plumage/NQPUtil.pbc
 Plumage/Interactive.pbc
 Plumage/Command.pbc
+Plumage/Feather.pbc
+Plumage/FeatherSpec.pbc
 LIBS
 
     $S0              = pop $P5

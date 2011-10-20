@@ -13,7 +13,7 @@ my $*OS;
 load_libraries();
 
 # Global structure of recognized commands
-my  %COMMANDS  := hash(
+my %COMMANDS   := hash(
     usage       => Plumage::Command.new(:action(command_usage),
                                         :args('none'),
                                         :usage('usage'),
