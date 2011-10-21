@@ -29,10 +29,21 @@ Contains a reference to the callback subroutine to execute.
 A string representing the type of arguments the command takes. It can take the
 following forms: 
 
-    * 'none'        - no arguments
-    * 'opt_command' - optional command
-    * 'opt_project' - optional project
-    * 'project'     - project name
+=item2 C<none>
+
+Command takes no arguments.
+
+=item2 C<opt_command>
+
+Argument is optional and represents a command name.
+
+=item2 C<opt_project>
+
+Argument is optional and represents a project name.
+
+=item2 C<project>
+
+Argument is required and represents a project name.
 
 =item C<$!usage>
 
