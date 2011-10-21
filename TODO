@@ -196,6 +196,7 @@ Misc:
 * Reword all comments that say Plumage is the "module ecosystem" because that's not
   true: it's a package manager for the module ecosystem
 * Cleanup code for probe tests
+* Refactor common code in plumage.nqp and plumage-admin.nqp to eliminate duplication
 
 
 Parrot:
