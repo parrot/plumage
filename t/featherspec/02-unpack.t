@@ -36,7 +36,7 @@ OUTPUT
     my $output  = `./installable_plumage-admin unpack testlib/invalid/$package`;
 
     my $expected_output = <<OUTPUT;
-[ERROR] File testlib/invalid/$package is not a valid feather
+[ERROR] File testlib/invalid/$package is not a valid feather.
 OUTPUT
 
     is $output, $expected_output, "Check output of 'unpack' command with invalid source feather";
@@ -74,7 +74,7 @@ OUTPUT
     my $cwd = getcwd;
 
     my $expected_output = <<OUTPUT;
-[ERROR] File testlib/invalid/$package is not a valid feather
+[ERROR] File testlib/invalid/$package is not a valid feather.
 OUTPUT
 
     is $output, $expected_output, "Check output of 'unpack' command with invalid binary feather";
@@ -87,7 +87,7 @@ OUTPUT
     my $output = `./installable_plumage-admin unpack testlib/foo.bar`;
 
     my $expected_output = <<OUTPUT;
-[ERROR] File testlib/foo.bar is not a valid feather
+[ERROR] File testlib/foo.bar is not a valid feather.
 OUTPUT
 
     is $output, $expected_output, "Check output of 'unpack' command with non-feather";

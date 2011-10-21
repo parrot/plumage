@@ -23,7 +23,7 @@ OUTPUT
     my $output = `./installable_plumage-admin pack testlib/invalid/FEATHER.spec`;
 
     my $expected_output = <<OUTPUT;
-[ERROR] File testlib/invalid/FEATHER.spec is not a valid featherspec
+[ERROR] File testlib/invalid/FEATHER.spec is not a valid featherspec.
 OUTPUT
 
     like $output, $expected_output, "Check output of 'pack' command with invalid featherspec";
@@ -36,7 +36,7 @@ OUTPUT
     my $output = `./installable_plumage-admin pack testlib/foo.bar`;
 
     my $expected_output = <<OUTPUT;
-[ERROR] Featherspec files must be named FEATHER.spec
+[ERROR] Featherspec files must be named FEATHER.spec.
 OUTPUT
 
     like $output, $expected_output, "Check output of 'pack' command with non-featherspec";
