@@ -192,9 +192,9 @@ sub output_error($msg) {
         $S0  = $P0
         $S0 .= "\n"
 
-        $P0  = getinterp
-        $P1  = $P0.'stderr_handle'()
-        $P1.'print'($S0)
+        .local pmc stderr
+        stderr = getstderr
+        print stderr, $S0
     };
 }
 
@@ -306,6 +306,7 @@ sub command_pack(@args, :$command) {
 
     my $featherspec := Plumage::FeatherSpec.new(:filename(@args[0]));
 
+    # Load and validate featherspec
     if $featherspec.parse {
         # XXX Do something
     }
