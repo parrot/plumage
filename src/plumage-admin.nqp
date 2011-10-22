@@ -59,20 +59,6 @@ our %OPTIONS;    # Command-line switches
 my %*CONF;       # Configuration options
 my %*BIN;        # System binaries
 
-sub output_error($msg) {
-    $msg := '[ERROR] ' ~ $msg;
-
-    Q:PIR {
-        $P0  = find_lex '$msg'
-        $S0  = $P0
-        $S0 .= "\n"
-
-        $P0  = getinterp
-        $P1  = $P0.'stderr_handle'()
-        $P1.'print'($S0)
-    };
-}
-
 sub execute_command($command) {
     my $action := %COMMANDS{$command}.action;
     my $args   := %COMMANDS{$command}.args;
@@ -196,6 +182,20 @@ sub merge_tree_structures($dst, $src) {
     }
 
     return $dst;
+}
+
+sub output_error($msg) {
+    $msg := '[ERROR] ' ~ $msg;
+
+    Q:PIR {
+        $P0  = find_lex '$msg'
+        $S0  = $P0
+        $S0 .= "\n"
+
+        $P0  = getinterp
+        $P1  = $P0.'stderr_handle'()
+        $P1.'print'($S0)
+    };
 }
 
 sub parse_command_line() {
