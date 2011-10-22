@@ -299,7 +299,7 @@ sub command_help($help_cmd, :$command) {
 
 sub command_pack(@args, :$command) {
     # Make sure file is a featherspec
-    if !(@args[0] ~~ /^FEATHER\.spec$/) {
+    if !(@args[0] ~~ /FEATHER\.spec$/) {
         output_error('File ' ~ @args[0] ~ ' is not a featherspec.');
         pir::exit__vi(1);
     }
