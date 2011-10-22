@@ -59,20 +59,38 @@ our %OPTIONS;    # Command-line switches
 my %*CONF;       # Configuration options
 my %*BIN;        # System binaries
 
+sub output_error($msg) {
+    $msg := '[ERROR] ' ~ $msg;
+
+    Q:PIR {
+        $P0  = find_lex '$msg'
+        $S0  = $P0
+        $S0 .= "\n"
+
+        $P0  = getinterp
+        $P1  = $P0.'stderr_handle'()
+        $P1.'print'($S0)
+    };
+}
+
 sub execute_command($command) {
     my $action := %COMMANDS{$command}.action;
     my $args   := %COMMANDS{$command}.args;
 
     if $action {
-        if $args eq 'project' && !@*ARGS {
-            say('Please specify a project to act on.');
+        # Make sure an argument was given, if required
+        if !($args ~~ /opt_\w+/) && !@*ARGS {
+            my $error := "Invalid argument, '$command' requires a $args.";
+
+            output_error($error);
+            pir::exit__vi(1);
         }
         else {
             $action(@*ARGS, :command($command));
         }
     }
     else {
-        say("No such command: $command. Please use $*PROGRAM_NAME --help");
+        output_error("No such command: $command. Please use `$*PROGRAM_NAME --help`.");
         pir::exit__vi(1);
     }
 }
@@ -155,6 +173,12 @@ sub load_libraries() {
 
     # Represents Plumage commands
     pir::load_bytecode('Plumage/Command.pbc');
+
+    # Represents feathers
+    pir::load_bytecode('Plumage/Feather.pbc');
+
+    # Represents featherspec files
+    pir::load_bytecode('Plumage/FeatherSpec.pbc');
 }
 
 sub merge_tree_structures($dst, $src) {
@@ -271,6 +295,20 @@ sub command_help($help_cmd, :$command) {
     else {
         usage();
     }
+}
+
+sub command_pack(@args, :$command) {
+    my $featherspec := Plumage::FeatherSpec.new(:filename(@args[0]));
+
+    if $featherspec.parse {
+        # XXX Do something
+    }
+    else {
+        output_error($featherspec.error);
+    }
+}
+
+sub command_unpack(@args, :$command) {
 }
 
 sub MAIN() {
