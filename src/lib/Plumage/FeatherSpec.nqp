@@ -63,7 +63,7 @@ method parse() {
     return self.validate;
 
     CATCH {
-        $!error    := "[ERROR] Failed to parse featherspec file '$!filename'.";
+        $!error    := "Failed to parse featherspec file '$!filename'.";
         %!metadata := 0;
 
         return 0;
@@ -88,7 +88,7 @@ method validate() {
 
     $!error := $!is_valid
         ?? ''
-        !! "[ERROR] File $!filename is not a valid featherspec.";
+        !! "File $!filename is not a valid featherspec.";
 
     return $!is_valid;
 }
