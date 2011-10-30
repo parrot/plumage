@@ -864,7 +864,7 @@ INIT {
     store_dynlex_safely('@*ARGS',         @argv);
 
     # INTERPINFO_EXECUTABLE_FULLNAME
-    store_dynlex_safely('$*EXECUTABLE_NAME', pir::interpinfo__si(21));
+    store_dynlex_safely('$*EXECUTABLE_NAME', pir::interpinfo__si(22));
 
     store_dynlex_safely('$*OSNAME', $config<osname>);
     store_dynlex_safely('%*OSVER', $config<VERSION>);
