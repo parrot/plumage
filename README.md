@@ -1,5 +1,4 @@
-OVERVIEW
---------
+# Parrot Plumage
 
 Parrot Plumage is the Parrot Virtual Machine module ecosystem.  It includes
 tools to search metadata, handle dependencies, install modules, and so forth.
@@ -19,37 +18,39 @@ vortex to begin our descent".  We expect to make many changes as we
 discover new issues during implementation.
 
 
-BUILDING AND INSTALLING
------------------------
+# Building
 
-  $ parrot setup.pir build
-  $ parrot setup.pir test
-  $ parrot setup.pir install
+    parrot setup.pir build
+# Testing
 
-USING
------
+    parrot setup.pir test
+
+# Installing
+
+    parrot setup.pir install
+
+# Using
 
 Once built, Plumage is relatively easy to use, especially if you've used
 another install tool such as apt-get or yum.  For example, to install
 Rakudo (a Perl 6 implementation), run the following command:
 
-  $ ./plumage install rakudo
+    ./plumage install rakudo
 
 This will automatically install any dependencies that Rakudo may need.
 To see what those dependencies are, try this:
 
-  $ ./plumage showdeps rakudo
+    ./plumage showdeps rakudo
 
 To see what other commands and options are available, ask for usage info:
 
-  $ ./plumage usage
+    ./plumage usage
 
 If you have any problems, just come by #parrot at irc.parrot.org and ask.
 We're happy to help!
 
 
-CONTRIBUTING
-------------
+# Contributing
 
 We aim to be very contributor-friendly here; take a look at the documents
 in the docs/hacking/ directory (starting with contributing.pod) to get up
@@ -57,10 +58,8 @@ to speed.
 
 Welcome to the crew, and don't forget to be bold!
 
+# License
 
-LICENSE
--------
-
-Parrot Plumage is Copyright (C) 2009, The Parrot Foundation, and is
+Parrot Plumage is Copyright (C) 2009-2012, The Parrot Foundation, and is
 distributed under the terms of the Artistic License 2.0.  For more
 details, see the full text of the license in the file LICENSE.
