@@ -6,7 +6,7 @@ before_script:
 #    - mkdir ~/perl5 && perl -Mlocal::lib >> /tmp/local_lib.sh && source /tmp/local_lib.sh
 #    - sudo chown -R $CI_USER ~/.cpanm
 #    - sudo chown -R $CI_USER ~/perl5
-    - pushd /tmp && git clone git://github.com/parrot/parrot.git && cd parrot && perl Configure.pl --prefix=/tmp/parrot_install && make install && popd
+    - pushd /tmp && git clone --depth 10 git://github.com/parrot/parrot.git && cd parrot && perl Configure.pl --prefix=/tmp/parrot_install && make install && popd
     - export PATH=$PATH:/tmp/parrot_install/bin
     - parrot --version
 
