@@ -1,0 +1,26 @@
+before_script:
+    - sudo apt-get install libffi-dev libicu-dev libgmp3-dev liblocal-lib-perl zlib1g-dev git
+#    - curl -L http://cpanmin.us | sudo perl - --self-upgrade
+#    - export CI_USER=$USER
+#    - env
+#    - mkdir ~/perl5 && perl -Mlocal::lib >> /tmp/local_lib.sh && source /tmp/local_lib.sh
+#    - sudo chown -R $CI_USER ~/.cpanm
+#    - sudo chown -R $CI_USER ~/perl5
+    - cd /tmp && git clone git://github.com/parrot/parrot.git && cd parrot && perl Configure.pl --prefix=/tmp/parrot_install && make install
+    - export PATH=$PATH:/tmp/parrot_install/bin
+    - parrot --version
+
+script: "parrot setup.pir build && parrot setup.pir test"
+# branches:
+#   only:
+#     - master
+notifications:
+  recipients:
+    - duke@leto.net
+  email:
+    on_success: change
+    on_failure: always
+#  irc:
+#      - "irc.parrot.org#parrot"
+#      - "irc.freenode.net#perl6"
+#env:
